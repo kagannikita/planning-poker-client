@@ -11,6 +11,7 @@ import Head from 'next/head'
 export default function TransitionLayout({ children }: ILayout) {
 	const [displayChildren, setDisplayChildren] = useState(children)
 	const [transitionStage, setTransitionStage] = useState('fadeOut')
+
 	useEffect(() => {
 		setTransitionStage('fadeIn')
 	}, [])
