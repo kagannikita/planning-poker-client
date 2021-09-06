@@ -1,7 +1,8 @@
 import Head from 'next/head'
 import React from 'react'
 import { Container } from 'semantic-ui-react'
-import DealerLayout from '../../components/lobby/DealerLayout/DealerLayout'
+import Chat from '../../components/Chat/Chat'
+import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
 
 const LobbyPage = (): JSX.Element => {
 	return (
@@ -9,6 +10,7 @@ const LobbyPage = (): JSX.Element => {
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
+			<Chat />
 			<Container>
 				<DealerLayout />
 			</Container>
