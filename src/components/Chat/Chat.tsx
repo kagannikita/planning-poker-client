@@ -4,11 +4,7 @@ import s from './Chat.module.scss'
 import ChatInput from './ChatInput'
 import ChatMessage, { ChatMessageProps } from './ChatMessage'
 
-// interface ChatProps {
-
-// }
-
-const Chat: FC<{}> = () => {
+const Chat: FC = () => {
 	const messages: ChatMessageProps[] = [
 		{ date: '03/09/21 14:00', author: 'Jessica', message: 'Hello World', isYou: false },
 		{ date: '03/09/21 14:20', author: 'Jimmy', message: 'Hello World', isYou: false },

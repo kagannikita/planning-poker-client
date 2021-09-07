@@ -35,7 +35,7 @@ export const ModalConnectToLobby = ({ isClosed, setModalState, dimmer }: ModalLo
 					</Form.Field>
 					<label htmlFor="avatar">Image:</label>
 					<Form.Group>
-						<Form.Input id="avatar" label="Choose File" type="file"></Form.Input>
+						<Form.Input id="avatar" label="Choose File" type="file" />
 					</Form.Group>
 				</Modal.Content>
 				<Modal.Actions>

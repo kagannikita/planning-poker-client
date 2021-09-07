@@ -24,7 +24,7 @@ const Home = (): JSX.Element => {
 		error: false,
 	})
 
-	const playerID = '60951fe9-7fd6-43b0-aa7d-65b63f060b64'
+	const playerID = ''
 
 	const modalHandler = (): void =>
 		setModalState({
@@ -60,7 +60,7 @@ const Home = (): JSX.Element => {
 	return (
 		<>
 			<Container className="center aligned">
-				<Image src={mainImage.src} centered></Image>
+				<Image src={mainImage.src} centered />
 				<Form id={s.form} className="center aligned">
 					<Header as="h1" className={s.heading} size="huge">
 						Start your planning:

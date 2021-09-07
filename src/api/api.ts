@@ -8,22 +8,19 @@ export enum API {
 
 export class Apis {
 	async createPlayer(data: FormData) {
-		const res = await axios.put(`${API.MAIN_API}${API.PLAYER}`, data)
-		return res
+		return await axios.post(`${API.MAIN_API}${API.PLAYER}`, data)
 	}
 
 	async createLobby(name: string) {
-		const res = await axios.put(`${API.MAIN_API}${API.LOBBY}`, name)
-		return res
+		return await axios.post(`${API.MAIN_API}${API.LOBBY}`, name)
 	}
 
 	async addPlayerToLobby(lobbyID: string, playerID: string) {
-		const res = await axios
+		return await axios
 			.put(`${API.MAIN_API}${API.LOBBY}${lobbyID}`, {
 				player_id: playerID,
 			})
 			.then((res) => res.data)
 			.catch((err) => err)
-		return res
 	}
 }

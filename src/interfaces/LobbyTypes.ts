@@ -1,7 +1,7 @@
 export type Role = 'dealer' | 'player' | 'spectator'
 
 export interface IMember {
-	id: number
+	id: string
 	role: Role
 	firstName: string
 	lastName: string
@@ -10,6 +10,7 @@ export interface IMember {
 }
 
 export interface ILobby {
-	lobbyID: number
+	id: string
+	name: string
 	members: IMember[]
 }

@@ -19,7 +19,7 @@ const CopyLink: FC<CopyLinkProps> = ({ router }): JSX.Element => {
 			<div className="ui action input">
 				<input ref={input} type="text" readOnly defaultValue={router.asPath} />
 				<button onClick={clickCopy} className="ui teal right labeled icon button">
-					<i className="copy icon"></i>
+					<i className="copy icon" />
 					Copy
 				</button>
 			</div>
