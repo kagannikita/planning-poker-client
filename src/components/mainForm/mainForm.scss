@@ -1,0 +1,16 @@
+.heading {
+	text-align: left;
+	color: $blue-sky !important;
+	margin-bottom: 0;
+}
+
+#form {
+	padding: 2rem;
+	margin: 0 auto;
+	max-width: 600px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+.ui.header.header__main {
+	margin-bottom: 0;
+}

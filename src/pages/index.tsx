@@ -1,16 +1,21 @@
 import React, { useState } from 'react'
-import { Container, Form, Header, Image } from 'semantic-ui-react'
+import { Container, Image } from 'semantic-ui-react'
 
-import s from './home.module.scss'
 import mainImage from '../../public/images/main_logo.png'
-import { ModalConnectToLobby } from '../components/ModalConnectToLobby/ModalConnectToLobby'
+import { ModalConnectToGame } from '../components/ModalConnectToGame/ModalConnectToGame'
 import getLobby from '../data/getLobby'
+import MainForm from '../components/mainForm/mainForm'
+
+export type TModalState = {
+	dimmer: 'blurring' | undefined
+	isClosed: boolean
+}
 
 const Home = (): JSX.Element => {
-	const [modalState, setModalState] = useState({
+	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
 		isClosed: true,
-	} as { dimmer: 'blurring' | undefined; isClosed: boolean })
+	})
 	const [lobbyID, setLobbyID] = useState('')
 
 	const modalHandler = (): void =>
@@ -23,41 +28,13 @@ const Home = (): JSX.Element => {
 		const lobby = await getLobby(lobbyID)
 		if (lobby) location.pathname = `lobby/${lobby.lobbyID}`
 	}
-
 	return (
 		<>
 			<Container className="center aligned">
-				<Image src={mainImage.src} className={s.mainLogo} centered></Image>
-				<Form id={s.form} className="center aligned">
-					<Header as="h1" className={s.heading} size="huge">
-						Start your planning:
-					</Header>
-					<Form.Group inline widths="two">
-						<Header as="h4">Create session:</Header>
-						<Form.Button color="blue" onClick={modalHandler}>
-							Start new game
-						</Form.Button>
-					</Form.Group>
-					<Header as="h1" className={s.heading} size="huge">
-						OR:
-					</Header>
-					<Form.Group inline widths="one">
-						<Header as="h4">Connect to lobby by URL:</Header>
-						<div className="ui action input">
-							<input
-								type="text"
-								value={lobbyID}
-								onChange={(e) => setLobbyID(e.target.value)}
-								placeholder="Create session:"
-							/>
-							<button onClick={() => findLobby(lobbyID)} className="ui button teal">
-								Connect
-							</button>
-						</div>
-					</Form.Group>
-				</Form>
+				<Image src={mainImage.src} className="mainLogo" centered />
+				<MainForm lobbyID={lobbyID} modalHandler={modalHandler} setLobbyID={setLobbyID} findLobby={findLobby} />
 			</Container>
-			<ModalConnectToLobby isClosed={modalState.isClosed} dimmer={modalState.dimmer} setModalState={setModalState} />
+			<ModalConnectToGame isClosed={modalState.isClosed} dimmer={modalState.dimmer} setModalState={setModalState} />
 		</>
 	)
 }

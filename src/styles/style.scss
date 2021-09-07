@@ -1,3 +1,7 @@
+@import 'colors.scss';
+@import 'src/components/mainForm/mainForm.scss';
+@import 'src/components/ModalConnectToGame/ModalConnectToGame.scss';
+
 * {
 	margin: 0;
 	padding: 0;
@@ -5,4 +9,9 @@
 
 .ui.container {
 	max-width: 1000px !important;
+}
+
+.mainLogo {
+	overflow: auto !important;
+	margin-top: 130px !important;
 }

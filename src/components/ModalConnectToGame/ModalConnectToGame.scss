@@ -1,0 +1,34 @@
+.ui.modal > .header.modal-title {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.ui.form .field.avatar-field {
+	display: flex;
+	margin-bottom: 10px;
+}
+
+.avatar,
+#avatar {
+	width: 70px;
+	height: 70px;
+	border-radius: 50%;
+	box-shadow: inset 0 0 5px 2px rgba(50, 50, 50, 0.5);
+}
+
+.avatar {
+	margin-left: 10px;
+	background-image: url('https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg');
+	background-size: cover;
+}
+
+#avatar {
+	opacity: 0;
+}
+
+.actions {
+	padding-top: 10px;
+	display: flex;
+	justify-content: end;
+}
