@@ -1,0 +1,41 @@
+@import 'colors';
+
+.comments .comment.yourMessage {
+	background: $light-dark;
+}
+
+.ui.comments .comment.yourMessage {
+	// float: right;
+	display: flex;
+	flex-direction: row-reverse;
+
+	& .content .metadata {
+		margin-left: 0;
+		margin-right: 0.5em;
+	}
+}
+
+.ui.minimal.comments .comment.yourMessage .actions {
+	right: 0;
+	left: 5px;
+}
+
+.ui.comments .comment.yourMessage > .avatar ~ * {
+	margin: 0 0.5em 0 2.5rem;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row-reverse;
+}
+
+.chat {
+	width: inherit;
+	min-height: 100px;
+	max-height: 250px;
+	overflow: auto;
+	display: flex;
+	flex-direction: column-reverse;
+}
+.chat__content {
+	display: flex;
+	flex-direction: column;
+}
