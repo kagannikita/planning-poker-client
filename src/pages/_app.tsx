@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import { store } from '../store/store'
 import { HeaderBlock } from '../components/Header/header'
 import 'semantic-ui-css/semantic.min.css'
+import '../styles/Chat.scss'
 
 const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 	const router = useRouter()
