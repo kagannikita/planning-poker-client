@@ -3,8 +3,8 @@ import { Container, Form, Header, Image, Input } from 'semantic-ui-react'
 import s from './home.module.scss'
 import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToLobby } from '../components/ModalConnectToLobby/ModalConnectToLobby'
-import getLobby from '../data/getLobby'
 import ModalError from '../components/ModalConnectToLobby/ModalError'
+import { Apis } from '../api/api'
 
 interface LobbyInputState {
 	isSearching: boolean
@@ -24,24 +24,25 @@ const Home = (): JSX.Element => {
 		error: false,
 	})
 
+	const playerID = '60951fe9-7fd6-43b0-aa7d-65b63f060b64'
+
 	const modalHandler = (): void =>
 		setModalState({
 			dimmer: 'blurring',
 			isClosed: false,
 		})
 
-	const findLobby = async (lobbyName: string) => {
+	const connectToLobby = async (lobbyID: string) => {
 		if (!lobbyState.name) return
 		setLobbyState({
 			isSearching: true,
-			name: lobbyName,
+			name: lobbyID,
 			error: false,
 		})
 
-		const lobby = await getLobby(lobbyName)
-
-		if (lobby) {
-			location.pathname = `lobby/${lobby.lobbyID}`
+		if (lobbyID && playerID !== '') {
+			await new Apis().addPlayerToLobby(lobbyID, playerID)
+			location.pathname = `lobby/${lobbyID}`
 			setLobbyState({
 				isSearching: false,
 				name: '',
@@ -82,7 +83,7 @@ const Home = (): JSX.Element => {
 							labelPosition: 'left',
 							icon: 'search',
 							content: 'Connect',
-							onClick: () => findLobby(lobbyState.name),
+							onClick: () => connectToLobby(lobbyState.name),
 						}}
 						iconPosition="left"
 						error={lobbyState.error}

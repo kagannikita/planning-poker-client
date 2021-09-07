@@ -1,11 +1,11 @@
 // import TransitionLayout from '../components/layout/Layout'
-import '../styles/style.scss'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { Provider } from 'react-redux'
 import { store } from '../store/store'
 import { HeaderBlock } from '../components/Header/header'
 import 'semantic-ui-css/semantic.min.css'
+import '../styles/style.scss'
 import '../styles/Chat.scss'
 
 const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
