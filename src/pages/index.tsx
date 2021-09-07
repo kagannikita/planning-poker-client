@@ -4,6 +4,7 @@ import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToGame } from '../components/ModalConnectToGame/ModalConnectToGame'
 import getLobby from '../data/getLobby'
 import MainForm from '../components/mainForm/mainForm'
+
 export type TModalState = {
 	dimmer: 'blurring' | undefined
 	isClosed: boolean

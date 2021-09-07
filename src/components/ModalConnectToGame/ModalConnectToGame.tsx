@@ -1,13 +1,14 @@
 import React from 'react'
-
 import { Button, Form, Modal } from 'semantic-ui-react'
 import { TModalState } from '../../pages'
+
 interface ModalProps {
 	isClosed: boolean
 	setModalState: React.Dispatch<React.SetStateAction<TModalState>>
 	dimmer: 'blurring' | undefined
 	formName: string
 }
+
 export const ModalConnectToGame = ({ isClosed, setModalState, dimmer, formName }: ModalProps): JSX.Element => {
 	const onClose = (): void => setModalState({ isClosed: !isClosed, dimmer: undefined, formName: '' })
 	return (
