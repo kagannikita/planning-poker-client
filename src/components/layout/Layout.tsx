@@ -5,7 +5,7 @@ import { ILayout } from '../../interfaces/ILayout'
 import Head from 'next/head'
 import { HeaderBlock } from '../header/header'
 
-export default function TransitionLayout({ children }: ILayout) {
+export default function TransitionLayout({ children, title = 'Planning Poker' }: ILayout) {
 	const [displayChildren, setDisplayChildren] = useState(children)
 	const [transitionStage, setTransitionStage] = useState('fadeOut')
 
@@ -20,11 +20,11 @@ export default function TransitionLayout({ children }: ILayout) {
 	return (
 		<div>
 			<Head>
-				<title>Plaining Poker</title>
+				<title>{title}</title>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 			</Head>
 			<HeaderBlock />
-			<div
+			<main
 				onTransitionEnd={() => {
 					if (transitionStage === 'fadeOut') {
 						setDisplayChildren(children)
@@ -34,7 +34,7 @@ export default function TransitionLayout({ children }: ILayout) {
 				className={`${styles.content} ${styles[transitionStage]}`}
 			>
 				{displayChildren}
-			</div>
+			</main>
 		</div>
 	)
 }
