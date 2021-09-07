@@ -1,17 +1,28 @@
 import React, { useState } from 'react'
-import { Container, Form, Header, Image } from 'semantic-ui-react'
-
+import { Container, Form, Header, Image, Input } from 'semantic-ui-react'
 import s from './home.module.scss'
 import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToLobby } from '../components/ModalConnectToLobby/ModalConnectToLobby'
 import getLobby from '../data/getLobby'
+import ModalError from '../components/ModalConnectToLobby/ModalError'
+
+interface LobbyInputState {
+	isSearching: boolean
+	name: string
+	error: boolean
+}
 
 const Home = (): JSX.Element => {
 	const [modalState, setModalState] = useState({
 		dimmer: undefined,
 		isClosed: true,
 	} as { dimmer: 'blurring' | undefined; isClosed: boolean })
-	const [lobbyID, setLobbyID] = useState('')
+
+	const [lobbyState, setLobbyState] = useState<LobbyInputState>({
+		isSearching: false,
+		name: '',
+		error: false,
+	})
 
 	const modalHandler = (): void =>
 		setModalState({
@@ -19,15 +30,36 @@ const Home = (): JSX.Element => {
 			isClosed: false,
 		})
 
-	const findLobby = async (lobbyID?: string) => {
-		const lobby = await getLobby(lobbyID)
-		if (lobby) location.pathname = `lobby/${lobby.lobbyID}`
+	const findLobby = async (lobbyName: string) => {
+		if (!lobbyState.name) return
+		setLobbyState({
+			isSearching: true,
+			name: lobbyName,
+			error: false,
+		})
+
+		const lobby = await getLobby(lobbyName)
+
+		if (lobby) {
+			location.pathname = `lobby/${lobby.lobbyID}`
+			setLobbyState({
+				isSearching: false,
+				name: '',
+				error: false,
+			})
+		} else {
+			setLobbyState({
+				isSearching: false,
+				name: '',
+				error: true,
+			})
+		}
 	}
 
 	return (
 		<>
 			<Container className="center aligned">
-				<Image src={mainImage.src} className={s.mainLogo} centered></Image>
+				<Image src={mainImage.src} centered></Image>
 				<Form id={s.form} className="center aligned">
 					<Header as="h1" className={s.heading} size="huge">
 						Start your planning:
@@ -41,23 +73,36 @@ const Home = (): JSX.Element => {
 					<Header as="h1" className={s.heading} size="huge">
 						OR:
 					</Header>
-					<Form.Group inline widths="one">
-						<Header as="h4">Connect to lobby by URL:</Header>
-						<div className="ui action input">
-							<input
-								type="text"
-								value={lobbyID}
-								onChange={(e) => setLobbyID(e.target.value)}
-								placeholder="Create session:"
-							/>
-							<button onClick={() => findLobby(lobbyID)} className="ui button teal">
-								Connect
-							</button>
-						</div>
-					</Form.Group>
+					<Header as="h4" textAlign="left">
+						Connect to lobby by URL:
+					</Header>
+					<Input
+						action={{
+							color: 'blue',
+							labelPosition: 'left',
+							icon: 'search',
+							content: 'Connect',
+							onClick: () => findLobby(lobbyState.name),
+						}}
+						iconPosition="left"
+						error={lobbyState.error}
+						onChange={(e) =>
+							setLobbyState({
+								...lobbyState,
+								name: e.target.value,
+							})
+						}
+						type="text"
+						input={{
+							value: lobbyState.name,
+						}}
+						loading={lobbyState.isSearching}
+						placeholder="Search..."
+					/>
 				</Form>
 			</Container>
 			<ModalConnectToLobby isClosed={modalState.isClosed} dimmer={modalState.dimmer} setModalState={setModalState} />
+			{lobbyState.error && <ModalError message="Lobby not found or incorrect ID" />}
 		</>
 	)
 }
