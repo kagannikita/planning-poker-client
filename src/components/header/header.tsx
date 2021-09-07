@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import s from './header.module.scss'
 
-const HeaderBlock = () => {
+export const HeaderBlock = () => {
 	return (
 		<header className={s.header}>
 			<div className={s['header__first_row']} />
@@ -17,5 +17,3 @@ const HeaderBlock = () => {
 		</header>
 	)
 }
-
-export default HeaderBlock

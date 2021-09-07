@@ -9,24 +9,27 @@ import MainForm from '../components/mainForm/mainForm'
 export type TModalState = {
 	dimmer: 'blurring' | undefined
 	isClosed: boolean
+	formName: string
 }
 
 const Home = (): JSX.Element => {
 	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
 		isClosed: true,
+		formName: '',
 	})
 	const [lobbyID, setLobbyID] = useState('')
 
-	const modalHandler = (): void =>
+	const modalHandler = (formName: string): void =>
 		setModalState({
 			dimmer: 'blurring',
 			isClosed: false,
+			formName,
 		})
 
 	const findLobby = async (lobbyID?: string) => {
 		const lobby = await getLobby(lobbyID)
-		if (lobby) location.pathname = `lobby/${lobby.lobbyID}`
+		if (lobby) modalHandler('Connect to lobby ' + lobbyID)
 	}
 	return (
 		<>
@@ -34,7 +37,12 @@ const Home = (): JSX.Element => {
 				<Image src={mainImage.src} className="mainLogo" centered />
 				<MainForm lobbyID={lobbyID} modalHandler={modalHandler} setLobbyID={setLobbyID} findLobby={findLobby} />
 			</Container>
-			<ModalConnectToGame isClosed={modalState.isClosed} dimmer={modalState.dimmer} setModalState={setModalState} />
+			<ModalConnectToGame
+				isClosed={modalState.isClosed}
+				dimmer={modalState.dimmer}
+				setModalState={setModalState}
+				formName={modalState.formName}
+			/>
 		</>
 	)
 }

@@ -3,7 +3,7 @@ import { Form, Header } from 'semantic-ui-react'
 
 type MainFormProps = {
 	lobbyID: string
-	modalHandler: () => void
+	modalHandler: (formName: string) => void
 	setLobbyID: React.Dispatch<React.SetStateAction<string>>
 	findLobby: (lobbyID?: string) => Promise<void>
 }
@@ -19,7 +19,7 @@ const MainForm: React.FC<MainFormProps> = ({ modalHandler, lobbyID, setLobbyID, 
 					<label htmlFor="new game" className="header__main">
 						Create session:
 					</label>
-					<Form.Button className="input" color="blue" onClick={modalHandler}>
+					<Form.Button className="input" color="blue" onClick={() => modalHandler('Create new game')}>
 						Start new game
 					</Form.Button>
 				</Form.Group>

@@ -2,19 +2,20 @@ import React from 'react'
 import { Button, Form, Modal } from 'semantic-ui-react'
 import { TModalState } from '../../pages'
 
-interface ModalLobbyProps {
+interface ModalProps {
 	isClosed: boolean
 	setModalState: React.Dispatch<React.SetStateAction<TModalState>>
 	dimmer: 'blurring' | undefined
+	formName: string
 }
 
-export const ModalConnectToGame = ({ isClosed, setModalState, dimmer }: ModalLobbyProps): JSX.Element => {
-	const onClose = (): void => setModalState({ isClosed: !isClosed, dimmer: undefined })
+export const ModalConnectToGame = ({ isClosed, setModalState, dimmer, formName }: ModalProps): JSX.Element => {
+	const onClose = (): void => setModalState({ isClosed: !isClosed, dimmer: undefined, formName: '' })
 
 	return (
 		<Modal dimmer={dimmer} open={!isClosed} onClose={onClose}>
 			<Modal.Header className="modal-title">
-				<h2>Connect to lobby</h2>
+				<h2>{formName}</h2>
 				<Form.Radio toggle label="Connect as Observer" />
 			</Modal.Header>
 			<Form style={{ padding: '2rem' }}>
