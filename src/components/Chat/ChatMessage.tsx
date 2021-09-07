@@ -1,6 +1,5 @@
 import { FC } from 'react'
 import { Comment } from 'semantic-ui-react'
-import s from './Chat.module.scss'
 
 export interface ChatMessageProps {
 	author: string
@@ -12,7 +11,7 @@ export interface ChatMessageProps {
 
 const ChatMessage: FC<ChatMessageProps> = ({ author, message, date, isYou }) => {
 	return (
-		<Comment className={isYou ? s.yourMessage : ''}>
+		<Comment className={isYou ? 'yourMessage' : ''}>
 			<Comment.Avatar src="https://react.semantic-ui.com/images/avatar/small/matt.jpg" />
 			<Comment.Content>
 				<Comment.Author as="a">{author}</Comment.Author>

@@ -11,7 +11,6 @@ interface ModalProps {
 
 export const ModalConnectToGame = ({ isClosed, setModalState, dimmer, formName }: ModalProps): JSX.Element => {
 	const onClose = (): void => setModalState({ isClosed: !isClosed, dimmer: undefined, formName: '' })
-
 	return (
 		<Modal dimmer={dimmer} open={!isClosed} onClose={onClose}>
 			<Modal.Header className="modal-title">

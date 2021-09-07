@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Container, Image } from 'semantic-ui-react'
-
 import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToGame } from '../components/ModalConnectToGame/ModalConnectToGame'
 import getLobby from '../data/getLobby'
