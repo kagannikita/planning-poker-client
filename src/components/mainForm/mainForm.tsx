@@ -5,7 +5,7 @@ type MainFormProps = {
 	lobbyID: string
 	modalHandler: (formName: string) => void
 	setLobbyID: React.Dispatch<React.SetStateAction<string>>
-	findLobby: (lobbyID?: string) => Promise<void>
+	findLobby: (lobbyID: string) => Promise<void>
 }
 
 const MainForm: React.FC<MainFormProps> = ({ modalHandler, lobbyID, setLobbyID, findLobby }: MainFormProps) => {

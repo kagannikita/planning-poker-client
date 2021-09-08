@@ -7,10 +7,16 @@ interface ModalProps {
 	setModalState: React.Dispatch<React.SetStateAction<TModalState>>
 	dimmer: 'blurring' | undefined
 	formName: string
+	playerID: string
+	setPlayerID: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const ModalConnectToGame = ({ isClosed, setModalState, dimmer, formName }: ModalProps): JSX.Element => {
+export const ModalConnectToGame = ({ isClosed, setModalState, dimmer, formName, playerID, setPlayerID }: ModalProps): JSX.Element => {
 	const onClose = (): void => setModalState({ isClosed: !isClosed, dimmer: undefined, formName: '' })
+
+	const connectHander = () => {
+		
+	}
 	return (
 		<Modal dimmer={dimmer} open={!isClosed} onClose={onClose}>
 			<Modal.Header className="modal-title">
