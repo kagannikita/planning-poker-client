@@ -1,0 +1,53 @@
+@import '../../styles/colors.scss';
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	background: $primary-blue;
+	height: 70px;
+}
+
+.footer-link {
+	color: white;
+	opacity: 0.7;
+	transition: all 0.5s;
+
+	&:hover {
+		color: white;
+		opacity: 1;
+	}
+}
+
+.description {
+	margin: 0;
+	color: white;
+}
+
+.contact-list {
+	display: flex;
+	list-style-type: none;
+}
+
+.contact-link {
+	margin-right: 10px;
+	width: fit-content;
+	display: flex;
+	align-items: center;
+	color: white;
+	opacity: 0.7;
+	transition: all 0.5s;
+
+	&:hover {
+		color: white;
+		opacity: 1;
+	}
+}
+
+.contact-ico {
+	margin-right: 5px;
+	width: 25px;
+	height: 25px;
+	background-image: url('https://edwinkirabo.me/UI/Images/GitHub%20Icon.png');
+	background-size: cover;
+}

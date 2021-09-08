@@ -4,6 +4,7 @@ import 'semantic-ui-css/semantic.min.css'
 import { ILayout } from '../../interfaces/ILayout'
 import Head from 'next/head'
 import { HeaderBlock } from '../header/header'
+import Footer from '../footer/footer'
 
 export default function TransitionLayout({ children, title = 'Planning Poker' }: ILayout) {
 	const [displayChildren, setDisplayChildren] = useState(children)
@@ -18,7 +19,7 @@ export default function TransitionLayout({ children, title = 'Planning Poker' }:
 	}, [children, setDisplayChildren, displayChildren])
 
 	return (
-		<div>
+		<>
 			<Head>
 				<title>{title}</title>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -35,6 +36,7 @@ export default function TransitionLayout({ children, title = 'Planning Poker' }:
 			>
 				{displayChildren}
 			</main>
-		</div>
+			<Footer />
+		</>
 	)
 }
