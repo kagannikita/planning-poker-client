@@ -7,10 +7,6 @@ export interface IssueLobbyProps {
 	priority: string
 }
 
-interface IssueLobbyState {
-	title: string
-	priority: string
-}
 const IssueLobby = ({ title, priority }: IssueLobbyProps) => {
 	const [titleState, setTitle] = useState('')
 	const [priorityState, setPriority] = useState('')

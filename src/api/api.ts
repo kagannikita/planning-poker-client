@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ILobby, IPlayer } from 'src/interfaces/LobbyTypes'
+import { ILobby, IPlayer } from '../interfaces/LobbyTypes'
 
 export enum API {
 	MAIN_API = 'http://localhost:8080/',
@@ -22,14 +22,14 @@ export class Apis {
 
 	async createPlayer(data: FormData): Promise<IPlayer> {
 		return await axios.post(`${API.MAIN_API}${API.PLAYER}`, data)
-		.then(res => res.data)
-		.catch(err => err)
+			.then(res => res.data)
+			.catch(err => err)
 	}
 
 	async getLobbyById(id: string): Promise<ILobby> {
 		return await axios.get(`${API.MAIN_API}${API.LOBBY}${id}`)
-		.then(res => res.data)
-		.catch(err => err)
+			.then(res => res.data)
+			.catch(err => err)
 	}
 	async createLobby(name: string): Promise<ILobby> {
 		return await axios.post(`${API.MAIN_API}${API.LOBBY}`, name)
