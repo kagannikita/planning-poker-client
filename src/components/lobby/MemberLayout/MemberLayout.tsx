@@ -5,22 +5,16 @@ import { IPlayer } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
-import IssueContainer from './IssueContainer'
-import { IssueLobbyProps } from '../Issue'
 
-interface DealerLayoutProps {
-	name: string,
-	players: IPlayer[]
+
+interface MemberLayoutProps {
+  name: string,
+  players: IPlayer[]
 }
 
-const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
+const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
 	const router = useRouter()
-	
-	const issues: IssueLobbyProps[] = [
-		{ title: 'Issue 1', priority: 'Low priority' },
-		{ title: 'Issue 2', priority: 'Mid priority' },
-		{ title: 'Issue 3', priority: 'High priority' },
-	]
+
 	return (
 		<>
 			<HeaderTitle as="h1" className={s.title}>
@@ -44,18 +38,15 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 					</Grid.Column>
 				</Grid.Row>
 				<Grid.Row columns="2">
-					<Grid.Column floated="left">
-						<Button positive>Start Game</Button>
-					</Grid.Column>
 					<Grid.Column floated="right">
 						<Button negative floated="right">
-							Cancel Game
+              Exit Game
 						</Button>
 					</Grid.Column>
 				</Grid.Row>
 			</Grid>
 			<HeaderTitle as="h1" textAlign="center">
-				Members:
+        Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
 				{players.map((member) => {
@@ -65,9 +56,8 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 					return <MemberItem centered={true} key={member.id} {...(member as IPlayer)} />
 				})}
 			</Container>
-			<IssueContainer issues={issues} />
 		</>
 	)
 }
 
-export default DealerLayout
+export default MemberLayout
