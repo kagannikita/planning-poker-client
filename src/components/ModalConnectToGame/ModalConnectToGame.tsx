@@ -2,26 +2,58 @@ import React from 'react'
 import { Button, Form, Modal } from 'semantic-ui-react'
 import { TModalState } from '../../pages'
 import { Apis } from '../../api/api'
+import { ILobby } from '../../interfaces/LobbyTypes'
 
 interface ModalProps {
 	isClosed: boolean
 	setModalState: React.Dispatch<React.SetStateAction<TModalState>>
 	dimmer: 'blurring' | undefined
 	formName: string
+	createLobby: () => Promise<ILobby>
+	connectToLobby: () => void
+	playerID: string
+	setPlayerID: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const ModalConnectToGame = ({ isClosed, setModalState, dimmer, formName }: ModalProps): JSX.Element => {
+export const ModalConnectToGame = ({
+	isClosed,
+	setModalState,
+	dimmer,
+	formName,
+	createLobby,
+	connectToLobby,
+}: ModalProps): JSX.Element => {
 	const onClose = (): void => setModalState({ isClosed: !isClosed, dimmer: undefined, formName: '' })
 
-	const writePlayer = (player: FormData) => {
+	const writePlayer = async (player: FormData) => {
 		const api = new Apis()
-		console.log(api)
+		api.createPlayer(player)
+	}
+
+	const getRole = (formData: FormData) => {
+		if (formName === 'Create new game') {
+			formData.append('role', 'dealer')
+		} else {
+			const role = formData.get('role')
+			if (role === null) {
+				formData.set('role', 'player')
+			} else {
+				formData.set('role', 'spectator')
+			}
+		}
+		return formData
 	}
 
 	const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		const formData = new FormData(e.target as HTMLFormElement)
-		writePlayer(formData)
-		onClose()
+		writePlayer(getRole(formData)).then(() => {
+			if (formName === 'Create new game') {
+				createLobby()
+			} else {
+				connectToLobby()
+			}
+			onClose()
+		})
 	}
 
 	const symbol = ' ~ ! @ # $ % * () _ — + = | : ; " \' ` < > , . ? / ^'
@@ -29,9 +61,11 @@ export const ModalConnectToGame = ({ isClosed, setModalState, dimmer, formName }
 		<Modal dimmer={dimmer} open={!isClosed} onClose={onClose}>
 			<Modal.Header className="modal-title">
 				<h2>{formName}</h2>
-				<Form.Radio toggle label="Connect as Observer" />
+				{formName === 'Create new game' ? null : (
+					<Form.Radio form="regForm" name="role" toggle label="Connect as Observer" />
+				)}
 			</Modal.Header>
-			<Form style={{ padding: '2rem' }} onSubmit={(e) => formSubmit(e)}>
+			<Form id="regForm" style={{ padding: '2rem' }} onSubmit={(e) => formSubmit(e)}>
 				<Modal.Content>
 					<Form.Field>
 						<label htmlFor="firstName">
