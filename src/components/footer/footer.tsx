@@ -5,7 +5,7 @@ import React from 'react'
 const Footer: React.FC = () => {
 	return (
 		<footer className={cls.footer}>
-			<a href="" className={cls['footer-link']}>
+			<a href="https://github.com/kagannikita/planning-poker-client" className={cls['footer-link']}>
 				Poker Planning on GitHub
 			</a>
 			<p className={cls['description']}>&copy;Team 2021</p>

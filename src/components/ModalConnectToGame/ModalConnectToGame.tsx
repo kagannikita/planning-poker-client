@@ -27,6 +27,7 @@ export const ModalConnectToGame = ({
 
 	const writePlayer = async (player: FormData) => {
 		const api = new Apis()
+		console.log(Object.fromEntries(player.entries()))
 		api.createPlayer(player)
 	}
 
@@ -80,7 +81,10 @@ export const ModalConnectToGame = ({
 							required
 							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
 							maxLength={30}
-							title={`First Name can not be made of only numbers or consist of symbols ${symbol}. The name\`s lengths is up to 30 symbols`}
+							title={`
+							First Name can not be made of only numbers or consist of symbols ${symbol}. 
+							The name\`s lengths is up to 30 symbols
+							`}
 						/>
 					</Form.Field>
 					<Form.Field>
@@ -92,7 +96,10 @@ export const ModalConnectToGame = ({
 							type="text"
 							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
 							maxLength={30}
-							title={`Last Name can not be made of only numbers or consist of symbols ${symbol}. The name\`s lengths is up to 30 symbols`}
+							title={`
+							Last Name can not be made of only numbers or consist of symbols ${symbol}. 
+							The name\`s lengths is up to 30 symbols
+							`}
 						/>
 					</Form.Field>
 					<Form.Field>
@@ -104,13 +111,16 @@ export const ModalConnectToGame = ({
 							type="text"
 							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
 							maxLength={40}
-							title={`Last Name can not be made of only numbers or consist of symbols ${symbol}. The name\`s lengths is up to 40 symbols`}
+							title={`
+							Last Name can not be made of only numbers or consist of symbols ${symbol}. 
+							The name\`s lengths is up to 40 symbols
+							`}
 						/>
 					</Form.Field>
 					<Form.Field className="avatar-field">
 						<label htmlFor="avatar">Photo:</label>
 						<div className="avatar">
-							<Form.Input id="avatar" name="avatar" type="file" accept="image/*" />
+							<Form.Input id="avatar" name="image" type="file" accept="image/*" />
 						</div>
 					</Form.Field>
 				</Modal.Content>
