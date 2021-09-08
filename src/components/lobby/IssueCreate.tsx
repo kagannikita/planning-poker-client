@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Card } from 'semantic-ui-react'
 
-interface IssueCreateState {
-	isModalOpen: boolean
-}
-
 const IssueCreate = () => {
 	const [isModalOpen, setModalOpen] = useState(false)
 	return (

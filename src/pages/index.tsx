@@ -3,8 +3,8 @@ import { Container, Image } from 'semantic-ui-react'
 import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToGame } from '../components/ModalConnectToGame/ModalConnectToGame'
 import MainForm from '../components/mainForm/mainForm'
-import ModalError from 'src/components/ModalConnectToGame/ModalError'
-import { Apis } from 'src/api/api'
+import ModalError from '../components/ModalConnectToGame/ModalError'
+import { Apis } from '../api/api'
 // import { useRouter } from 'next/router'
 
 export type TModalState = {
@@ -41,13 +41,12 @@ const Home = (): JSX.Element => {
 		})
 
 	const modalErrorHander = (message: string) => 
-	setErrorModalState({
-		message,
-		isError: !errorModalState.isError
-	});
+		setErrorModalState({
+			message,
+			isError: !errorModalState.isError
+		});
 
-	// router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: "60951fe9-7fd6-43b0-aa7d-65b63f060b64" }})
-
+		
 	const findLobby = async (lobbyID: string) => {
 		// const lobby = await new Apis().addPlayerToLobby(lobbyID, '')
 		const lobby = await new Apis().getLobbyById(lobbyID)
@@ -55,6 +54,7 @@ const Home = (): JSX.Element => {
 		// location.pathname = `lobby/` + lobbyID
 		if (lobby) {
 			modalHandler('Connect to lobby ' + lobbyID)
+			// router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: "60951fe9-7fd6-43b0-aa7d-65b63f060b64" }})
 		} else {
 			modalErrorHander('Lobby not found or Incorrect lobby id')
 		}
@@ -64,10 +64,10 @@ const Home = (): JSX.Element => {
 			<Container className="center aligned">
 				<Image src={mainImage.src} className="mainLogo" centered />
 				<MainForm 
-				lobbyID={lobbyID} 
-				modalHandler={modalHandler} 
-				setLobbyID={setLobbyID} 
-				findLobby={findLobby} />
+					lobbyID={lobbyID} 
+					modalHandler={modalHandler} 
+					setLobbyID={setLobbyID} 
+					findLobby={findLobby} />
 			</Container>
 			<ModalConnectToGame
 				isClosed={modalState.isClosed}
@@ -78,8 +78,8 @@ const Home = (): JSX.Element => {
 				setPlayerID={setplayerID}
 			/>
 			<ModalError 
-			{...errorModalState}  
-			setErrorModalState={setErrorModalState} />
+				{...errorModalState}  
+				setErrorModalState={setErrorModalState} />
 		</>
 	)
 }

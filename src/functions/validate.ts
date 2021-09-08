@@ -1,5 +1,5 @@
 import { ValidateValue, ValidationRule } from '../types/TValidate'
-import { IPlayer } from '../interfaces/IPlayer'
+import { IPlayer } from '../interfaces/LobbyTypes'
 // const isTruthy = (value: ValidateValue) => !!value
 // const isFalsy = (value: ValidateValue) => !value
 // const isEqual = (to: string) => (value: ValidateValue) => value === to
@@ -45,7 +45,7 @@ const values = {
 	firstName: 'Nikita',
 	lastName: 'Kagan',
 	position: 'dialer',
-	role: 'dialer',
+	role: 'dealer',
 }
 const errors = validateValues(values, exampleRules)
 console.log(errors)
