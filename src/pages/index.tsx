@@ -14,7 +14,7 @@ export type TModalState = {
 }
 
 export type ErrorModalState = {
-	isError: boolean,
+	isError: boolean
 	message: string
 }
 
@@ -24,14 +24,14 @@ const Home = (): JSX.Element => {
 		dimmer: undefined,
 		isClosed: true,
 		formName: '',
-	});
+	})
 	const [errorModalState, setErrorModalState] = useState<ErrorModalState>({
 		isError: false,
-		message: ''
-	});
+		message: '',
+	})
 
 	const [lobbyID, setLobbyID] = useState('')
-	const [playerID, setplayerID] = useState('');
+	const [playerID, setplayerID] = useState('')
 
 	const modalHandler = (formName: string): void =>
 		setModalState({
@@ -40,13 +40,20 @@ const Home = (): JSX.Element => {
 			formName,
 		})
 
-	const modalErrorHander = (message: string) => 
+	const modalErrorHander = (message: string) =>
 		setErrorModalState({
 			message,
-			isError: !errorModalState.isError
-		});
+			isError: !errorModalState.isError,
+		})
 
-		
+	const createLobby = async () => {
+		const newLobby = await new Apis().createLobby('123')
+		console.log(newLobby)
+		return newLobby
+	}
+
+	const connectToLobby = async () => {}
+
 	const findLobby = async (lobbyID: string) => {
 		// const lobby = await new Apis().addPlayerToLobby(lobbyID, '')
 		const lobby = await new Apis().getLobbyById(lobbyID)
@@ -63,11 +70,7 @@ const Home = (): JSX.Element => {
 		<>
 			<Container className="center aligned">
 				<Image src={mainImage.src} className="mainLogo" centered />
-				<MainForm 
-					lobbyID={lobbyID} 
-					modalHandler={modalHandler} 
-					setLobbyID={setLobbyID} 
-					findLobby={findLobby} />
+				<MainForm lobbyID={lobbyID} modalHandler={modalHandler} setLobbyID={setLobbyID} findLobby={findLobby} />
 			</Container>
 			<ModalConnectToGame
 				isClosed={modalState.isClosed}
@@ -76,10 +79,10 @@ const Home = (): JSX.Element => {
 				formName={modalState.formName}
 				playerID={playerID}
 				setPlayerID={setplayerID}
+				createLobby={createLobby}
+				connectToLobby={connectToLobby}
 			/>
-			<ModalError 
-				{...errorModalState}  
-				setErrorModalState={setErrorModalState} />
+			<ModalError {...errorModalState} setErrorModalState={setErrorModalState} />
 		</>
 	)
 }
