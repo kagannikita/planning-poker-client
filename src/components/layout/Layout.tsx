@@ -18,7 +18,7 @@ export default function TransitionLayout({ children, title = 'Planning Poker' }:
 	}, [children, setDisplayChildren, displayChildren])
 
 	return (
-		<div>
+		<>
 			<Head>
 				<title>{title}</title>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -35,6 +35,6 @@ export default function TransitionLayout({ children, title = 'Planning Poker' }:
 			>
 				{displayChildren}
 			</main>
-		</div>
+		</>
 	)
 }

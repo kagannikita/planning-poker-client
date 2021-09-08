@@ -1,7 +1,7 @@
 export type Role = 'dealer' | 'player' | 'spectator'
 
-export interface IMember {
-	id: string
+export interface IPlayer {
+	id: number
 	role: Role
 	firstName: string
 	lastName: string
@@ -12,5 +12,5 @@ export interface IMember {
 export interface ILobby {
 	id: string
 	name: string
-	members: IMember[]
+	players: IPlayer[]
 }

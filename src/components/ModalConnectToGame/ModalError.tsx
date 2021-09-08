@@ -1,18 +1,18 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Confirm } from 'semantic-ui-react'
+import { ErrorModalState } from '../../pages'
 
-interface ModalErrorProps {
-	message: string
+interface ModalErrorProps extends ErrorModalState {
+	setErrorModalState: React.Dispatch<React.SetStateAction<ErrorModalState>>
 }
 
-const ModalError: FC<ModalErrorProps> = ({ message }) => {
-	const [isClosed, setClosedState] = useState<boolean>(true)
+const ModalError: FC<ModalErrorProps> = ({ message, isError, setErrorModalState }) => {
 	return (
 		<Confirm
 			content={message}
-			open={isClosed}
-			onConfirm={() => setClosedState(!isClosed)}
-			onCancel={() => setClosedState(!isClosed)}
+			open={isError}
+			onConfirm={() => setErrorModalState({message, isError: !isError})}
+			onCancel={() => setErrorModalState({ message, isError: !isError })}
 		/>
 	)
 }
