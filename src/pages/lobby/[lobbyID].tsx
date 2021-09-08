@@ -26,11 +26,13 @@ const LobbyPage = ({player, ...props}: InferGetServerSidePropsType<typeof getSer
 interface LobbySSRProps {
 	name: string,
 	players: IPlayer[],
-	player?: IPlayer,
+	player: IPlayer | null,
 }
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({params, query}) => {
-	if (!params) return { props:{name: '', players: []}}
+	if (!params) return { props:{name: '', players: [], player: null}}
+	
 	const player = await new Apis().getPlayerById(query.playerid as string)
+	console.log(player);
 	const {name, players} = await new Apis().getLobbyById(params.lobbyID as string)
 
 	return { props: { name: name, players: players, player: player } }

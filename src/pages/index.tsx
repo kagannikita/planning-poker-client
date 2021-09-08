@@ -4,8 +4,8 @@ import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToGame } from '../components/ModalConnectToGame/ModalConnectToGame'
 import MainForm from '../components/mainForm/mainForm'
 import ModalError from '../components/ModalConnectToGame/ModalError'
-import { Apis } from '../api/api'
-// import { useRouter } from 'next/router'
+import { API, Apis } from '../api/api'
+import { useRouter } from 'next/router'
 
 export type TModalState = {
 	dimmer: 'blurring' | undefined
@@ -19,7 +19,7 @@ export type ErrorModalState = {
 }
 
 const Home = (): JSX.Element => {
-	// const router = useRouter();
+	const router = useRouter();
 	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
 		isClosed: true,
@@ -53,8 +53,8 @@ const Home = (): JSX.Element => {
 		// console.log(lobby);
 		// location.pathname = `lobby/` + lobbyID
 		if (lobby) {
-			modalHandler('Connect to lobby ' + lobbyID)
-			// router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: "60951fe9-7fd6-43b0-aa7d-65b63f060b64" }})
+			// modalHandler('Connect to lobby ' + lobbyID)
+			router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: "60951fe9-7fd6-43b0-aa7d-65b63f060b64" }})
 		} else {
 			modalErrorHander('Lobby not found or Incorrect lobby id')
 		}
