@@ -1,19 +1,23 @@
 import Link from 'next/link'
 import Head from 'next/head'
+
 const Page404 = () => {
 	return (
-		<div>
+		<div className="error-page">
 			<Head>
-				<title>404 Not Found</title>
+				<title>404 Page Not Found</title>
 			</Head>
-			<h1>404 Error Not Found</h1>
-			<p>
-				Please{' '}
-				<Link passHref href="/">
-					<a>Go back</a>
-				</Link>
-				to safety
-			</p>
+			<div className="error-block">
+				<h1>404 Error</h1>
+				<h2>Page Not Found</h2>
+				<p>
+					Please{' '}
+					<Link passHref href="/">
+						<a>Go back</a>
+					</Link>{' '}
+					to safety
+				</p>
+			</div>
 		</div>
 	)
 }
