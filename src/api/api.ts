@@ -10,52 +10,58 @@ export enum API {
 export class Apis {
 	getAllPlayers(): Promise<IPlayer[]> {
 		return new Promise((resolve, reject) => {
-			axios.get(`${API.MAIN_API}${API.PLAYER}`)
-				.then(res => resolve(res.data))
-				.catch(err => reject(err))
+			axios
+				.get(`${API.MAIN_API}${API.PLAYER}`)
+				.then((res) => resolve(res.data))
+				.catch((err) => reject(err))
 		})
 	}
 
 	getPlayerById(id: string): Promise<IPlayer> {
 		return new Promise((resolve, reject) => {
-			axios.get(`${API.MAIN_API}${API.PLAYER}${id}`)
-				.then(res => resolve(res.data))
-				.catch(err => reject(err))
-		}) 
+			axios
+				.get(`${API.MAIN_API}${API.PLAYER}${id}`)
+				.then((res) => resolve(res.data))
+				.catch((err) => reject(err))
+		})
 	}
 
-	async createPlayer(data: FormData){
+	async createPlayer(data: FormData) {
 		return await axios({
-			method: "post",
-			url: "myurl",
+			method: 'post',
+			url: `${API.MAIN_API}${API.PLAYER}`,
 			data: data,
-			headers: { "Content-Type": "multipart/form-data" },
-		}).then(res => res.data)
-			.catch(err => err)
+			headers: { 'Content-Type': 'multipart/form-data' },
+		})
+			.then((res) => res.data)
+			.catch((err) => err)
 	}
 
 	getLobbyById(id: string): Promise<ILobby> {
 		return new Promise((resolve, reject) => {
-			axios.get(`${API.MAIN_API}${API.LOBBY}${id}`)
-				.then(res => resolve(res.data))
-				.catch(err => reject(err))
-		}) 
+			axios
+				.get(`${API.MAIN_API}${API.LOBBY}${id}`)
+				.then((res) => resolve(res.data))
+				.catch((err) => reject(err))
+		})
 	}
 	createLobby(name: string): Promise<ILobby> {
 		return new Promise((resolve, reject) => {
-			axios.post(`${API.MAIN_API}${API.LOBBY}`, {name})
-				.then(res => resolve(res.data))
-				.catch(err => reject(err))
-		}) 
+			axios
+				.post(`${API.MAIN_API}${API.LOBBY}`, { name })
+				.then((res) => resolve(res.data))
+				.catch((err) => reject(err))
+		})
 	}
 
 	addPlayerToLobby(lobbyID: string, playerID: string) {
 		return new Promise((resolve, reject) => {
-			axios.put(`${API.MAIN_API}${API.LOBBY}${lobbyID}`, {
-				player_id: playerID,
-			})
+			axios
+				.put(`${API.MAIN_API}${API.LOBBY}${lobbyID}`, {
+					player_id: playerID,
+				})
 				.then((res) => resolve(res.data))
 				.catch((err) => reject(err))
-		}) 
+		})
 	}
 }

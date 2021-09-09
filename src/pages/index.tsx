@@ -14,24 +14,24 @@ export type TModalState = {
 }
 
 export type ErrorModalState = {
-	isError: boolean,
+	isError: boolean
 	message: string
 }
 
 const Home = (): JSX.Element => {
-	const router = useRouter();
+	const router = useRouter()
+
 	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
 		isClosed: true,
 		formName: '',
-	});
+	})
 	const [errorModalState, setErrorModalState] = useState<ErrorModalState>({
 		isError: false,
-		message: ''
-	});
+		message: '',
+	})
 
 	const [lobbyID, setLobbyID] = useState('')
-	const [playerID, setplayerID] = useState('');
 
 	const modalHandler = (formName: string): void =>
 		setModalState({
@@ -40,21 +40,29 @@ const Home = (): JSX.Element => {
 			formName,
 		})
 
-	const modalErrorHander = (message: string) => 
+	const modalErrorHander = (message: string) =>
 		setErrorModalState({
 			message,
-			isError: !errorModalState.isError
-		});
+			isError: true,
+		})
 
-		
+	const createLobby = async (lobbyName: string) => {
+		return await new Apis().createLobby(lobbyName)
+	}
+
+	const connectToLobby = async (lobbyID: string, playerID: string) => {
+		await new Apis().addPlayerToLobby(lobbyID, playerID)
+		router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: playerID } })
+	}
+
 	const findLobby = async (lobbyID: string) => {
-		// const lobby = await new Apis().addPlayerToLobby(lobbyID, '')
-		const lobby = await new Apis().getLobbyById(lobbyID)
-		// console.log(lobby);
-		// location.pathname = `lobby/` + lobbyID
-		if (lobby) {
-			// modalHandler('Connect to lobby ' + lobbyID)
-			router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: "60951fe9-7fd6-43b0-aa7d-65b63f060b64" }})
+		const lobbyisFound = await new Apis()
+			.getLobbyById(lobbyID)
+			.then(() => true)
+			.catch(() => false)
+
+		if (lobbyisFound) {
+			modalHandler('Connect to lobby by id:' + lobbyID)
 		} else {
 			modalErrorHander('Lobby not found or Incorrect lobby id')
 		}
@@ -63,23 +71,16 @@ const Home = (): JSX.Element => {
 		<>
 			<Container className="center aligned">
 				<Image src={mainImage.src} className="mainLogo" centered />
-				<MainForm 
-					lobbyID={lobbyID} 
-					modalHandler={modalHandler} 
-					setLobbyID={setLobbyID} 
-					findLobby={findLobby} />
+				<MainForm lobbyID={lobbyID} modalHandler={modalHandler} setLobbyID={setLobbyID} findLobby={findLobby} />
 			</Container>
 			<ModalConnectToGame
-				isClosed={modalState.isClosed}
-				dimmer={modalState.dimmer}
+				{...modalState}
 				setModalState={setModalState}
-				formName={modalState.formName}
-				playerID={playerID}
-				setPlayerID={setplayerID}
+				lobbyID={lobbyID}
+				createLobby={createLobby}
+				connectToLobby={connectToLobby}
 			/>
-			<ModalError 
-				{...errorModalState}  
-				setErrorModalState={setErrorModalState} />
+			<ModalError {...errorModalState} setErrorModalState={setErrorModalState} />
 		</>
 	)
 }

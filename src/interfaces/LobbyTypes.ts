@@ -1,7 +1,11 @@
-export type Role = 'dealer' | 'player' | 'spectator'
+export enum Role {
+	dealer = 'dealer',
+	player = 'player',
+	spectator = 'spectator',
+}
 
 export interface IPlayer {
-	id: number
+	id: string
 	role: Role
 	firstName: string
 	lastName: string
