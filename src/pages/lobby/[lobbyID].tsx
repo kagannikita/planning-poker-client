@@ -26,12 +26,17 @@ interface LobbySSRProps {
 	player: IPlayer | null
 }
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ params, query }) => {
-	if (!params) return { props: { name: '', players: [], player: null } }
+	if(params && query.playerid !==undefined) {
+		const { name, players } = await new Apis().getLobbyById(params.lobbyID as string)
+		const player = players.find(player => player.id === query.playerid) as IPlayer
 
-	const player = await new Apis().getPlayerById(query.playerid as string)
-	const { name, players } = await new Apis().getLobbyById(params.lobbyID as string)
-
-	return { props: { name: name, players: players, player: player } }
+		return { props: { name: name, players: players, player: player } }
+	} else if (params) {
+		const { name, players } = await new Apis().getLobbyById(params?.lobbyID as string)
+		return { props: { name: name, players: players, player: null } }
+	} else {
+		return { props: { name: '', players: [], player: null } }
+	}
 }
 
 export default LobbyPage
