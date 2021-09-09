@@ -1,3 +1,5 @@
+@import '../../styles/colors.scss';
+
 .ui.modal > .header.modal-title {
 	display: flex;
 	justify-content: space-between;
@@ -21,9 +23,16 @@
 	margin-left: 10px;
 	background-image: url('https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg');
 	background-size: cover;
+	opacity: 0.8;
+	transition: opacity 0.3s;
+
+	&:hover {
+		opacity: 1;
+	}
 }
 
 #avatar {
+	cursor: pointer;
 	opacity: 0;
 }
 

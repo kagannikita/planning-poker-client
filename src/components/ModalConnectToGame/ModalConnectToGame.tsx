@@ -2,17 +2,16 @@ import React from 'react'
 import { Button, Form, Modal } from 'semantic-ui-react'
 import { TModalState } from '../../pages'
 import { Apis } from '../../api/api'
-import { ILobby } from '../../interfaces/LobbyTypes'
+import { ILobby, IPlayer, Role } from '../../interfaces/LobbyTypes'
 
 interface ModalProps {
 	isClosed: boolean
 	setModalState: React.Dispatch<React.SetStateAction<TModalState>>
 	dimmer: 'blurring' | undefined
 	formName: string
-	createLobby: () => Promise<ILobby>
-	connectToLobby: () => void
-	playerID: string
-	setPlayerID: React.Dispatch<React.SetStateAction<string>>
+	createLobby: (lobbyName: string) => Promise<ILobby>
+	connectToLobby: (lobbyID: string, playerID: string) => void
+	lobbyID: string
 }
 
 export const ModalConnectToGame = ({
@@ -22,24 +21,28 @@ export const ModalConnectToGame = ({
 	formName,
 	createLobby,
 	connectToLobby,
+	lobbyID,
 }: ModalProps): JSX.Element => {
-	const onClose = (): void => setModalState({ isClosed: !isClosed, dimmer: undefined, formName: '' })
+	const onClose = (): void =>
+		setModalState({
+			isClosed: !isClosed,
+			dimmer: undefined,
+			formName: '',
+		})
 
-	const writePlayer = async (player: FormData) => {
-		const api = new Apis()
-		console.log(Object.fromEntries(player.entries()))
-		api.createPlayer(player)
+	const writePlayer = async (player: FormData): Promise<IPlayer> => {
+		return new Apis().createPlayer(player)
 	}
 
 	const getRole = (formData: FormData) => {
 		if (formName === 'Create new game') {
-			formData.append('role', 'dealer')
+			formData.append('role', Role.dealer)
 		} else {
 			const role = formData.get('role')
 			if (role === null) {
-				formData.set('role', 'player')
+				formData.set('role', Role.player)
 			} else {
-				formData.set('role', 'spectator')
+				formData.set('role', Role.spectator)
 			}
 		}
 		return formData
@@ -47,17 +50,23 @@ export const ModalConnectToGame = ({
 
 	const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		const formData = new FormData(e.target as HTMLFormElement)
-		writePlayer(getRole(formData)).then(() => {
+
+		writePlayer(getRole(formData)).then((player) => {
 			if (formName === 'Create new game') {
-				createLobby()
-			} else {
-				connectToLobby()
+				createLobby(`Lobby by ${player.firstName}`).then((lobby) => {
+					connectToLobby(lobby.id, player.id)
+				})
+			} else if (lobbyID) {
+				connectToLobby(lobbyID, player.id)
 			}
 			onClose()
 		})
 	}
 
 	const symbol = ' ~ ! @ # $ % * () _ — + = | : ; " \' ` < > , . ? / ^'
+	const inputTitle = `can not be made of only numbers or consist of symbols ${symbol}. 
+							The name\`s lengths is up to 30 symbols`
+
 	return (
 		<Modal dimmer={dimmer} open={!isClosed} onClose={onClose}>
 			<Modal.Header className="modal-title">
@@ -81,10 +90,7 @@ export const ModalConnectToGame = ({
 							required
 							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
 							maxLength={30}
-							title={`
-							First Name can not be made of only numbers or consist of symbols ${symbol}. 
-							The name\`s lengths is up to 30 symbols
-							`}
+							title={`First Name ${inputTitle}`}
 						/>
 					</Form.Field>
 					<Form.Field>
@@ -96,10 +102,7 @@ export const ModalConnectToGame = ({
 							type="text"
 							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
 							maxLength={30}
-							title={`
-							Last Name can not be made of only numbers or consist of symbols ${symbol}. 
-							The name\`s lengths is up to 30 symbols
-							`}
+							title={`Last Name ${inputTitle}`}
 						/>
 					</Form.Field>
 					<Form.Field>
@@ -110,11 +113,8 @@ export const ModalConnectToGame = ({
 							name="position"
 							type="text"
 							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
-							maxLength={40}
-							title={`
-							Last Name can not be made of only numbers or consist of symbols ${symbol}. 
-							The name\`s lengths is up to 40 symbols
-							`}
+							maxLength={30}
+							title={`Position ${inputTitle}`}
 						/>
 					</Form.Field>
 					<Form.Field className="avatar-field">

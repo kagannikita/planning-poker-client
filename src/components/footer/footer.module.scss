@@ -9,6 +9,7 @@
 }
 
 .footer-link {
+	display: block;
 	color: white;
 	opacity: 0.7;
 	transition: all 0.5s;
@@ -20,6 +21,7 @@
 }
 
 .description {
+	display: block;
 	margin: 0;
 	color: white;
 }
@@ -27,6 +29,13 @@
 .contact-list {
 	display: flex;
 	list-style-type: none;
+}
+
+.footer-link,
+.description,
+.contact-list {
+	width: 100%;
+	text-align: center;
 }
 
 .contact-link {
@@ -45,7 +54,7 @@
 }
 
 .contact-ico {
-	margin-right: 5px;
+	padding: 0 5px;
 	width: 25px;
 	height: 25px;
 	background-image: url('https://edwinkirabo.me/UI/Images/GitHub%20Icon.png');
