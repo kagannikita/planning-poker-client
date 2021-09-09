@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
 			<a href="https://github.com/kagannikita/planning-poker-client" className={cls['footer-link']}>
 				Poker Planning on GitHub
 			</a>
-			<p className={cls['description']}>&copy;Team 2021</p>
+			<p className={cls['description']}>&copy;Team 8 - 2021</p>
 			<ul className={cls['contact-list']}>
 				<li className={cls['contact-item']}>
 					<a href="https://github.com/kagannikita" className={cls['contact-link']}>
