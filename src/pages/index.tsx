@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Container, Image } from 'semantic-ui-react'
 import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToGame } from '../components/ModalConnectToGame/ModalConnectToGame'
 import MainForm from '../components/mainForm/mainForm'
 import ModalError from '../components/ModalConnectToGame/ModalError'
 import { Apis } from '../api/api'
-import io from 'socket.io-client'
 // import { useRouter } from 'next/router'
 
 export type TModalState = {
@@ -47,6 +46,14 @@ const Home = (): JSX.Element => {
 			isError: !errorModalState.isError,
 		})
 
+	const createLobby = async () => {
+		const newLobby = await new Apis().createLobby('123')
+		console.log(newLobby)
+		return newLobby
+	}
+
+	const connectToLobby = async () => {}
+
 	const findLobby = async (lobbyID: string) => {
 		// const lobby = await new Apis().addPlayerToLobby(lobbyID, '')
 		const lobby = await new Apis().getLobbyById(lobbyID)
@@ -72,6 +79,8 @@ const Home = (): JSX.Element => {
 				formName={modalState.formName}
 				playerID={playerID}
 				setPlayerID={setplayerID}
+				createLobby={createLobby}
+				connectToLobby={connectToLobby}
 			/>
 			<ModalError {...errorModalState} setErrorModalState={setErrorModalState} />
 		</>
