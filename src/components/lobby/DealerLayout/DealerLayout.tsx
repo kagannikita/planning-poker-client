@@ -1,4 +1,3 @@
-import { useRouter } from 'next/dist/client/router'
 import { useState } from 'react'
 import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../../interfaces/LobbyTypes'
@@ -20,7 +19,6 @@ export interface KickPlayer {
 }
 
 const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
-	const router = useRouter()
 	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({modalIsOpen: false, playerName: ''});
 	
 	const kickMemberHandler = () => {}
@@ -40,7 +38,7 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 					<Grid.Column>
 						<HeaderTitle as="h3">Scram master</HeaderTitle>
 						{players.map((dealer) => {
-							if (dealer.role === 'dealer') {
+							if (dealer.role === Role.dealer) {
 								return <MemberItem key={dealer.id} {...(dealer as IPlayer)} />
 							}
 							return
@@ -49,7 +47,7 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 				</Grid.Row>
 				<Grid.Row>
 					<Grid.Column>
-						<CopyLink router={router} />
+						<CopyLink />
 					</Grid.Column>
 				</Grid.Row>
 				<Grid.Row columns="2">
@@ -68,12 +66,12 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
 				{players.map((member) => {
-					if (member.role === 'dealer') {
+					if (member.role === Role.dealer) {
 						return
 					}
 					return <MemberItem centered key={member.id} setKickPlayer={setKickPlayer} {...(member as IPlayer)} />
 				})}
-				<MemberItem centered setKickPlayer={setKickPlayer} firstName="asdad" lastName="asdad" id='asdasd' role={Role.player}  />
+				{/* <MemberItem centered setKickPlayer={setKickPlayer} firstName="asdad" lastName="asdad" id='asdasd' role={Role.player}  /> */}
 			</Container>
 			<IssueContainer issues={issues} />
 			<ModalKickPlayerByDealer 
