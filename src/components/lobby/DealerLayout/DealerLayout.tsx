@@ -1,7 +1,7 @@
 import { useRouter } from 'next/dist/client/router'
 import { useState } from 'react'
 import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
-import { IPlayer } from '../../../interfaces/LobbyTypes'
+import { IPlayer, Role } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
@@ -23,6 +23,8 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 	const router = useRouter()
 	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({modalIsOpen: false, playerName: ''});
 	
+	const kickMemberHandler = () => {}
+
 	const issues: IssueLobbyProps[] = [
 		{ title: 'Issue 1', priority: 'Low priority' },
 		{ title: 'Issue 2', priority: 'Mid priority' },
@@ -69,14 +71,15 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 					if (member.role === 'dealer') {
 						return
 					}
-					return <MemberItem centered key={member.id} {...(member as IPlayer)} />
+					return <MemberItem centered key={member.id} setKickPlayer={setKickPlayer} {...(member as IPlayer)} />
 				})}
+				<MemberItem centered setKickPlayer={setKickPlayer} firstName="asdad" lastName="asdad" id='asdasd' role={Role.player}  />
 			</Container>
 			<IssueContainer issues={issues} />
 			<ModalKickPlayerByDealer 
 				isOpen={kickPlayer.modalIsOpen}
 				setKickPlayer={setKickPlayer}
-				kickMemberHandler={()=> {}} 
+				kickMemberHandler={kickMemberHandler}
 				playerId="1" 
 				playerName="Max" />
 		</>
