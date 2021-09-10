@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, Form, Modal } from 'semantic-ui-react'
 import { TModalState } from '../../pages'
 import { Apis } from '../../api/api'
@@ -23,12 +23,17 @@ export const ModalConnectToGame = ({
 	connectToLobby,
 	lobbyID,
 }: ModalProps): JSX.Element => {
-	const onClose = (): void =>
+	const defaultAvatarUrl =
+		'https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg'
+	const [avatarPicUrl, setAvatarPicUrl] = useState<string>(defaultAvatarUrl)
+	const onClose = (): void => {
+		setAvatarPicUrl(defaultAvatarUrl)
 		setModalState({
 			isClosed: !isClosed,
 			dimmer: undefined,
 			formName: '',
 		})
+	}
 
 	const writePlayer = async (player: FormData): Promise<IPlayer> => {
 		return new Apis().createPlayer(player)
@@ -48,6 +53,14 @@ export const ModalConnectToGame = ({
 		return formData
 	}
 
+	const setAvatar = (input: EventTarget & HTMLInputElement) => {
+		const reader = new FileReader()
+		reader.readAsDataURL(input.files![0])
+		reader.onload = () => {
+			setAvatarPicUrl(reader.result as string)
+		}
+	}
+
 	const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		const formData = new FormData(e.target as HTMLFormElement)
 
@@ -64,7 +77,7 @@ export const ModalConnectToGame = ({
 	}
 
 	const symbol = ' ~ ! @ # $ % * () _ — + = | : ; " \' ` < > , . ? / ^'
-	const inputTitle = `can not be made of only numbers or consist of symbols ${symbol}. 
+	const inputTitle = `can not be made of only numbers or consist of symbols ${symbol}.
 							The name\`s lengths is up to 30 symbols`
 
 	return (
@@ -119,8 +132,8 @@ export const ModalConnectToGame = ({
 					</Form.Field>
 					<Form.Field className="avatar-field">
 						<label htmlFor="avatar">Photo:</label>
-						<div className="avatar">
-							<Form.Input id="avatar" name="image" type="file" accept="image/*" />
+						<div className="avatar" style={{ backgroundImage: `url(${avatarPicUrl})` }}>
+							<Form.Input id="avatar" name="image" type="file" accept="image/*" onChange={(e) => setAvatar(e.target)} />
 						</div>
 					</Form.Field>
 				</Modal.Content>
