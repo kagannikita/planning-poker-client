@@ -20,8 +20,8 @@ const Chat: FC = () => {
 			</Header>
 			<div className="chat">
 				<div className="chat__content">
-					{messages.map((mess) => (
-						<ChatMessage key={mess.date} {...mess} />
+					{messages.map((mess, i) => (
+						<ChatMessage key={i} {...mess} />
 					))}
 				</div>
 			</div>
