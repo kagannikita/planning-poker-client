@@ -58,7 +58,6 @@ export const ModalConnectToGame = ({
 		reader.readAsDataURL(input.files![0])
 		reader.onload = () => {
 			setAvatarPicUrl(reader.result as string)
-			input.value = ''
 		}
 	}
 
