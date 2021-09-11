@@ -38,6 +38,8 @@ const Home = (): JSX.Element => {
 		message: '',
 	})
 
+	const [isLoading, setIsLoading] = useState<boolean>(false)
+
 	const [lobbyID, setLobbyID] = useState('')
 
 	const modalHandler = (formName: string): void =>
@@ -94,6 +96,8 @@ const Home = (): JSX.Element => {
 				lobbyID={lobbyID}
 				createLobby={createLobby}
 				connectToLobby={connectToLobby}
+				isLoading={isLoading}
+				setIsLoading={setIsLoading}
 			/>
 			<ModalError {...errorModalState} setErrorModalState={setErrorModalState} />
 		</>

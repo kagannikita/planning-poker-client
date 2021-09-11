@@ -1,5 +1,6 @@
 import '../components/mainForm/mainForm.scss'
 import '../components/ModalConnectToGame/ModalConnectToGame.scss'
+import '../components/loader/loader.scss'
 import '../styles/style.scss'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'

@@ -1,6 +1,6 @@
-import { GetServerSideProps, InferGetServerSidePropsType, Redirect } from 'next'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React from 'react'
 import { Container } from 'semantic-ui-react'
 import { Apis } from '../../api/api'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
