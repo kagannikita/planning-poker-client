@@ -3,6 +3,7 @@ import { Button, Card } from 'semantic-ui-react'
 
 const IssueCreate = () => {
 	const [isModalOpen, setModalOpen] = useState(false)
+	setModalOpen(isModalOpen)
 	return (
 		<Card centered>
 			<Card.Content>

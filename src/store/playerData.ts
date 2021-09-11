@@ -1,22 +1,22 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export interface PlayerState {
-  playerID: string,
+export type PlayerState = {
+	playerID: string
 }
 
-const initState: PlayerState = {
-  playerID: ''
+export const initialState: PlayerState = {
+	playerID: '',
 }
 
-const playerSlice = createSlice({
-  name: 'player',
-  initialState: initState,
-  reducers: {
-    setPlayerID: (state, {payload}: PayloadAction<string>) => {
-      state.playerID = payload
-    }
-  }
+export const playerSlice = createSlice({
+	name: 'player',
+	initialState: initialState,
+	reducers: {
+		setPlayerID: (state, { payload }: PayloadAction<string>) => {
+			state.playerID = payload
+		},
+	},
 })
 
 export const { setPlayerID } = playerSlice.actions
-export default playerSlice
+export default playerSlice.reducer

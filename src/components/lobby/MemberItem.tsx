@@ -9,7 +9,15 @@ interface MemberItemProps extends IPlayer {
 	setKickPlayer?: Dispatch<SetStateAction<KickPlayer>>
 }
 
-const MemberItem: FC<MemberItemProps> = ({ firstName, lastName, image, position, centered, role, setKickPlayer }): JSX.Element => {
+const MemberItem: FC<MemberItemProps> = ({
+	firstName,
+	lastName,
+	image,
+	position,
+	centered,
+	role,
+	setKickPlayer,
+}): JSX.Element => {
 	return (
 		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
 			<Card.Content>
@@ -20,7 +28,13 @@ const MemberItem: FC<MemberItemProps> = ({ firstName, lastName, image, position,
 				/>
 				<Card.Header>{`${firstName} ${lastName}`}</Card.Header>
 				<Card.Meta>{position}</Card.Meta>
-				{setKickPlayer && <Button icon='delete' size='tiny' onClick={() => setKickPlayer({modalIsOpen: true, playerName: firstName + lastName})}/>}
+				{setKickPlayer && (
+					<Button
+						icon="delete"
+						size="tiny"
+						onClick={() => setKickPlayer({ modalIsOpen: true, playerName: firstName + lastName })}
+					/>
+				)}
 			</Card.Content>
 		</Card>
 	)
