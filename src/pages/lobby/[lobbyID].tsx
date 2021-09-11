@@ -7,11 +7,8 @@ import MemberLayout from '../../components/Lobby/MemberLayout/MemberLayout'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import Chat from '../../components/Chat/Chat'
 import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
-// import { store } from 'src/store/store'
 
 const LobbyPage = ({ player, ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
-	// const reduxStore = initialiseStore({})
-	// console.log('lobby page', useStore(props).getState());
 	
 	return (
 		<>

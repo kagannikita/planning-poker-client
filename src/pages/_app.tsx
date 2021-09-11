@@ -6,7 +6,11 @@ import { useRouter } from 'next/router'
 import 'semantic-ui-css/semantic.min.css'
 import TransitionLayout from '../components/layout/Layout'
 import { Provider } from 'react-redux'
+<<<<<<< Updated upstream
 import { reduxWrapper } from 'src/store/store'
+=======
+// import { reduxWrapper} from 'src/store/store'
+>>>>>>> Stashed changes
 import { GetServerSideProps } from 'next'
 import withRedux from "next-redux-wrapper";	
 import { setPlayerID } from 'src/store/playerData'
@@ -27,7 +31,11 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 
 
 // interface AppSSRProps {
+<<<<<<< Updated upstream
 // 	initialReduxState: RootState
+=======
+// 	initialReduxState: AppState
+>>>>>>> Stashed changes
 // }
 
 // export const getServerSideProps: GetServerSideProps<AppSSRProps> = async () => {
@@ -38,9 +46,17 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 
 // 	return { props: { initialReduxState: reduxStore.getState() } }
 // }
+<<<<<<< Updated upstream
 // export const getServerSideProps = reduxWrapper.getServerSideProps(store =>{
 // return	{props: store.getState() }
 
+=======
+
+
+// export const getServerSideProps = reduxWrapper.getServerSideProps(store =>{
+// return	{props: store.getState() }
+
+>>>>>>> Stashed changes
 // }
 	// ({ req, res, ...etc }) => {
 	// 	console.log('2. Page.getServerSideProps uses the store to dispatch things');
@@ -48,8 +64,13 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 	// }
 // );
 
+<<<<<<< Updated upstream
 // const makeStore = () => store;
 
 // export default withRedux(makeStore)(MyApp);
+=======
+
+// export default reduxWrapper.withRedux(MyApp);
+>>>>>>> Stashed changes
 export default MyApp;
 

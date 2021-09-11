@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { Container, Image } from 'semantic-ui-react'
 import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToGame } from '../components/ModalConnectToGame/ModalConnectToGame'
@@ -6,9 +6,9 @@ import MainForm from '../components/mainForm/mainForm'
 import ModalError from '../components/ModalConnectToGame/ModalError'
 import { API, Apis } from '../api/api'
 import { useRouter } from 'next/router'
-// import { store } from 'src/store/store'
-import { setPlayerID } from 'src/store/playerData'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+
+import { AppProps } from 'next/app';
+
 
 export type TModalState = {
 	dimmer: 'blurring' | undefined
@@ -20,10 +20,9 @@ export type ErrorModalState = {
 	isError: boolean
 	message: string
 }
-// { initialReduxState }: InferGetServerSidePropsType<typeof getServerSideProps>
-const Home = (): JSX.Element => {
+
+const Home: FC<AppProps> = ({pageProps}): JSX.Element => {
 	const router = useRouter()
-	// console.log(initialReduxState);
 
 	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
@@ -56,9 +55,6 @@ const Home = (): JSX.Element => {
 
 	const connectToLobby = async (lobbyID: string, playerID: string) => {
 		await new Apis().addPlayerToLobby(lobbyID, playerID)
-		// store.dispatch(setPlayerID(playerID));
-		// console.log("home page ",store.getState());
-		
 		await router.push({ pathname: API.LOBBY + lobbyID, query: {playerid: playerID} })
 	}
 
@@ -99,16 +95,4 @@ const Home = (): JSX.Element => {
 	)
 }
 
-// interface HomeSSRProps {
-// 	initialReduxState: RootState
-// }
-
-// export const getServerSideProps: GetServerSideProps<HomeSSRProps> = async () => {
-// 	const reduxStore = initialiseStore({})
-// 	// reduxStore.dispatch(setPlayerID(''))
-
-
-// 	return { props: { initialReduxState: reduxStore.getState() } }
-// }
-
-export default Home
+export default Home;
