@@ -1,5 +1,4 @@
-import { useRouter } from 'next/dist/client/router'
-import React from 'react'
+import React, { useState } from 'react'
 import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
 import { IPlayer } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
@@ -13,8 +12,15 @@ interface MemberLayoutProps {
 }
 
 const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
-	const router = useRouter()
 
+	const [voteKickPlayer, setvoteKickPlayer] = useState({
+		modalIsOpen: false,
+		playerName: ''
+	});
+
+	const voteKickPlayerHandler = (playerName: string, ) => {
+
+	}
 	return (
 		<>
 			<HeaderTitle as="h1" className={s.title}>
@@ -34,7 +40,7 @@ const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
 				</Grid.Row>
 				<Grid.Row>
 					<Grid.Column>
-						<CopyLink router={router} />
+						<CopyLink />
 					</Grid.Column>
 				</Grid.Row>
 				<Grid.Row columns="2">
@@ -50,9 +56,7 @@ const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
 				{players.map((member) => {
-					if (member.role === 'dealer') {
-						return
-					}
+					if (member.role === 'dealer') return
 					return <MemberItem centered={true} key={member.id} {...(member as IPlayer)} />
 				})}
 			</Container>

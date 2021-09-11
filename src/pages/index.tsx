@@ -8,7 +8,6 @@ import { API, Apis } from '../api/api'
 import { useRouter } from 'next/router'
 // import { store } from 'src/store/store'
 import { setPlayerID } from 'src/store/playerData'
-import { initialiseStore, RootState, useStore } from 'src/store/store'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 export type TModalState = {
@@ -21,11 +20,10 @@ export type ErrorModalState = {
 	isError: boolean
 	message: string
 }
-
-const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
+// { initialReduxState }: InferGetServerSidePropsType<typeof getServerSideProps>
+const Home = (): JSX.Element => {
 	const router = useRouter()
-	console.log(initialReduxState);
-	const store = useStore(initialReduxState)
+	// console.log(initialReduxState);
 
 	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
@@ -58,8 +56,8 @@ const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServe
 
 	const connectToLobby = async (lobbyID: string, playerID: string) => {
 		await new Apis().addPlayerToLobby(lobbyID, playerID)
-		store.dispatch(setPlayerID(playerID));
-		console.log("home page ",store.getState());
+		// store.dispatch(setPlayerID(playerID));
+		// console.log("home page ",store.getState());
 		
 		await router.push({ pathname: API.LOBBY + lobbyID, query: {playerid: playerID} })
 	}
@@ -100,16 +98,17 @@ const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServe
 		</>
 	)
 }
-interface HomeSSRProps {
-	initialReduxState: RootState
-}
 
-export const getServerSideProps: GetServerSideProps<HomeSSRProps> = async () => {
-	const reduxStore = initialiseStore({})
-	// reduxStore.dispatch(setPlayerID(''))
+// interface HomeSSRProps {
+// 	initialReduxState: RootState
+// }
+
+// export const getServerSideProps: GetServerSideProps<HomeSSRProps> = async () => {
+// 	const reduxStore = initialiseStore({})
+// 	// reduxStore.dispatch(setPlayerID(''))
 
 
-	return { props: { initialReduxState: reduxStore.getState() } }
-}
+// 	return { props: { initialReduxState: reduxStore.getState() } }
+// }
 
 export default Home

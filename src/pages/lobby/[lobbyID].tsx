@@ -7,7 +7,6 @@ import MemberLayout from '../../components/Lobby/MemberLayout/MemberLayout'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import Chat from '../../components/Chat/Chat'
 import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
-import { initialiseStore, useStore } from 'src/store/store'
 // import { store } from 'src/store/store'
 
 const LobbyPage = ({ player, ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
@@ -31,8 +30,6 @@ interface LobbySSRProps {
 	player: IPlayer | null
 }
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ params, query }) => {
-	const reduxStore = initialiseStore({})
-	console.log("lobby ssr ", reduxStore.getState());
 	
 	if (query.lobbyID && query.playerid === undefined) {
 		const lobby = await new Apis()

@@ -26,6 +26,7 @@ export const ModalConnectToGame = ({
 	const defaultAvatarUrl =
 		'https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg'
 	const [avatarPicUrl, setAvatarPicUrl] = useState<string>(defaultAvatarUrl)
+	
 	const onClose = (): void => {
 		setAvatarPicUrl(defaultAvatarUrl)
 		setModalState({

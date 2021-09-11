@@ -24,9 +24,9 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 	const kickMemberHandler = () => {}
 
 	const issues: IssueLobbyProps[] = [
-		{ title: 'Issue 1', priority: 'Low priority' },
-		{ title: 'Issue 2', priority: 'Mid priority' },
-		{ title: 'Issue 3', priority: 'High priority' },
+		{ title: 'Issue 1', priority: 'Low priority', type: 'lobby' },
+		{ title: 'Issue 2', priority: 'Mid priority', type: 'lobby' },
+		{ title: 'Issue 3', priority: 'High priority', type: 'lobby' },
 	]
 	return (
 		<>
