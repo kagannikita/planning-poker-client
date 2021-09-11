@@ -1,25 +1,40 @@
-import { GetServerSideProps, InferGetServerSidePropsType, Redirect } from 'next'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container } from 'semantic-ui-react'
 import { Apis } from '../../api/api'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import Chat from '../../components/Chat/Chat'
-import DealerLayout from '../../components/lobby/DealerLayout/DealerLayout'
-import MemberLayout from '../../components/lobby/MemberLayout/MemberLayout'
-import { useSelector } from 'react-redux'
-import { setPlayerID } from '../../store/playerData'
+import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
+import MemberLayout from '../../components/Lobby/MemberLayout/MemberLayout'
+import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
+import { useRouter } from 'next/router'
 
-const LobbyPage = ({ player, ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
-	const id = useSelector(setPlayerID)
-	console.log('lobby page', id)
+const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
+	const router = useRouter();
+	const [player, setPlayer] = useState<IPlayer | Partial<IPlayer>>({});
+	
+	useEffect(() => {
+		const id = localStorage.getItem(LocalStorageEnum.playerid)
+		const player =  props.players.find((player) => player.id === id) as IPlayer
+		
+		if(!player) router.push('/404');
+		setPlayer(player);
+	}, [router, props.players])
+
 	return (
 		<>
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
 			<Chat />
-			<Container>{player?.role === Role.dealer ? <DealerLayout {...props} /> : <MemberLayout {...props} />}</Container>
+			<Container>
+				{
+				 (player?.role === Role.dealer) ?
+					<DealerLayout {...props} /> :
+						<MemberLayout {...props} />
+				}
+			</Container>
 		</>
 	)
 }
@@ -27,25 +42,18 @@ const LobbyPage = ({ player, ...props }: InferGetServerSidePropsType<typeof getS
 interface LobbySSRProps {
 	name: string
 	players: IPlayer[]
-	player: IPlayer | null
 }
-export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ params, query }) => {
-	if (query.lobbyID && query.playerID === undefined) {
-		const lobby = await new Apis()
-			.getLobbyById(query.lobbyID as string)
-			.then((data) => data)
-			.catch((err) => {
-				return err
-			})
-		if (!lobby) return { notFound: true }
-		return { props: { name: lobby.name, players: lobby.players, player: null } }
-	}
 
-	const { name, players } = await new Apis().getLobbyById(params?.lobbyID as string)
-	const player = players.find((player) => player.id === query.playerid) as IPlayer
-	if (!player) return { notFound: true }
+export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({  query }) => {
+	
+	const lobby = await new Apis()
+		.getLobbyById(query.lobbyID as string)
+		.then((data) => data)
+		.catch((err) => err)
 
-	return { props: { name: name, players: players, player: player } }
+	if (!lobby) return { notFound: true }
+
+	return { props: { name: lobby.name, players: lobby.players } }
 }
 
 export default LobbyPage

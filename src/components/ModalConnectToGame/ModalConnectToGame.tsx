@@ -4,7 +4,7 @@ import { TModalState } from '../../pages'
 import { Apis } from '../../api/api'
 import { ILobby, IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { setPlayerID } from '../../store/playerData'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 interface ModalProps {
 	isClosed: boolean
@@ -29,7 +29,7 @@ export const ModalConnectToGame = ({
 		'https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg'
 	const [avatarPicUrl, setAvatarPicUrl] = useState<string>(defaultAvatarUrl)
 	const dispatch = useDispatch()
-	const id = useSelector(setPlayerID)
+
 	const onClose = (): void => {
 		setAvatarPicUrl(defaultAvatarUrl)
 		setModalState({
@@ -73,12 +73,11 @@ export const ModalConnectToGame = ({
 				createLobby(`Lobby by ${player.firstName}`).then((lobby) => {
 					connectToLobby(lobby.id, player.id)
 					dispatch(setPlayerID(player.id))
-					console.log('Id in form', id)
+
 				})
 			} else if (lobbyID) {
 				connectToLobby(lobbyID, player.id)
 				dispatch(setPlayerID(player.id))
-				console.log('Id in form', id)
 			}
 			onClose()
 		})

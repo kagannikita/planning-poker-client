@@ -1,4 +1,3 @@
-import { useRouter } from 'next/dist/client/router'
 import React from 'react'
 import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
 import { IPlayer } from '../../../interfaces/LobbyTypes'
@@ -13,7 +12,6 @@ interface MemberLayoutProps {
 }
 
 const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
-	const router = useRouter()
 
 	return (
 		<>
@@ -34,7 +32,7 @@ const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
 				</Grid.Row>
 				<Grid.Row>
 					<Grid.Column>
-						<CopyLink router={router} />
+						<CopyLink/>
 					</Grid.Column>
 				</Grid.Row>
 				<Grid.Row columns="2">
