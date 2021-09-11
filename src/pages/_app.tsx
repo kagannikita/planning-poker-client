@@ -1,5 +1,6 @@
 import '../components/mainForm/mainForm.scss'
 import '../components/ModalConnectToGame/ModalConnectToGame.scss'
+import '../components/loader/loader.scss'
 import '../styles/style.scss'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
@@ -8,7 +9,7 @@ import TransitionLayout from '../components/layout/Layout'
 import { Provider } from 'react-redux'
 import { reduxWrapper, RootState, store } from 'src/store/store'
 import { GetServerSideProps } from 'next'
-import withRedux from "next-redux-wrapper";	
+import withRedux from "next-redux-wrapper";
 import { setPlayerID } from 'src/store/playerData'
 
 const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {

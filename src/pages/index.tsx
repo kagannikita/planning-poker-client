@@ -37,6 +37,8 @@ const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServe
 		message: '',
 	})
 
+	const [isLoading, setIsLoading] = useState<boolean>(false)
+
 	const [lobbyID, setLobbyID] = useState('')
 
 	const modalHandler = (formName: string): void =>
@@ -60,7 +62,7 @@ const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServe
 		await new Apis().addPlayerToLobby(lobbyID, playerID)
 		store.dispatch(setPlayerID(playerID));
 		console.log("home page ",store.getState());
-		
+
 		await router.push({ pathname: API.LOBBY + lobbyID, query: {playerid: playerID} })
 	}
 
@@ -69,9 +71,9 @@ const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServe
 		const lobbyIdRegex = /(?:lobby\/)(.{36})/
 		const result = lobbyID.match(httpRegex) as RegExpMatchArray;
 		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray;
-		
+
 		if (!lobby[1]) return modalErrorHander('Incorrect lobby link')
-		
+
 		const lobbyisFound = await new Apis()
 			.getLobbyById(lobby[1])
 			.then(() => true)
@@ -95,6 +97,8 @@ const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServe
 				lobbyID={lobbyID}
 				createLobby={createLobby}
 				connectToLobby={connectToLobby}
+				isLoading={isLoading}
+				setIsLoading={setIsLoading}
 			/>
 			<ModalError {...errorModalState} setErrorModalState={setErrorModalState} />
 		</>
