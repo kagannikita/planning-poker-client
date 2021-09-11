@@ -29,17 +29,19 @@
 .contact-list {
 	display: flex;
 	list-style-type: none;
+
+	& > li {
+		margin-right: 10px;
+	}
 }
 
 .footer-link,
 .description,
 .contact-list {
-	width: 100%;
 	text-align: center;
 }
 
 .contact-link {
-	margin-right: 10px;
 	width: fit-content;
 	display: flex;
 	align-items: center;
@@ -59,4 +61,15 @@
 	height: 25px;
 	background-image: url('https://edwinkirabo.me/UI/Images/GitHub%20Icon.png');
 	background-size: cover;
+}
+
+@media screen and(max-width: 640px) {
+	.contact-list {
+		flex-direction: column;
+	}
+
+	.contact-ico {
+		width: 20px;
+		height: 20px;
+	}
 }

@@ -21,7 +21,7 @@ export type ErrorModalState = {
 
 const Home = (): JSX.Element => {
 	const router = useRouter()
-	
+
 	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
 		isClosed: true,
@@ -31,6 +31,8 @@ const Home = (): JSX.Element => {
 		isError: false,
 		message: '',
 	})
+
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	const [lobbyID, setLobbyID] = useState('')
 
@@ -53,7 +55,7 @@ const Home = (): JSX.Element => {
 
 	const connectToLobby = async (lobbyID: string, playerID: string) => {
 		await new Apis().addPlayerToLobby(lobbyID, playerID)
-		localStorage.setItem(LocalStorageEnum.playerid, playerID);
+		localStorage.setItem(LocalStorageEnum.playerid, playerID)
 		await router.push({ pathname: API.LOBBY + lobbyID })
 	}
 
@@ -88,11 +90,12 @@ const Home = (): JSX.Element => {
 				lobbyID={lobbyID}
 				createLobby={createLobby}
 				connectToLobby={connectToLobby}
+				isLoading={isLoading}
+				setIsLoading={setIsLoading}
 			/>
 			<ModalError {...errorModalState} setErrorModalState={setErrorModalState} />
 		</>
 	)
 }
-
 
 export default Home
