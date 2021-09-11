@@ -6,9 +6,7 @@ import MainForm from '../components/mainForm/mainForm'
 import ModalError from '../components/ModalConnectToGame/ModalError'
 import { API, Apis } from '../api/api'
 import { useRouter } from 'next/router'
-
-import { AppProps } from 'next/app';
-
+import { AppProps } from 'next/app'
 
 export type TModalState = {
 	dimmer: 'blurring' | undefined
@@ -21,7 +19,7 @@ export type ErrorModalState = {
 	message: string
 }
 
-const Home: FC<AppProps> = ({pageProps}): JSX.Element => {
+const Home: FC<AppProps> = ({ pageProps }): JSX.Element => {
 	const router = useRouter()
 
 	const [modalState, setModalState] = useState<TModalState>({
@@ -55,17 +53,17 @@ const Home: FC<AppProps> = ({pageProps}): JSX.Element => {
 
 	const connectToLobby = async (lobbyID: string, playerID: string) => {
 		await new Apis().addPlayerToLobby(lobbyID, playerID)
-		await router.push({ pathname: API.LOBBY + lobbyID, query: {playerid: playerID} })
+		await router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: playerID } })
 	}
 
 	const findLobby = async (lobbyID: string) => {
 		const httpRegex = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
 		const lobbyIdRegex = /(?:lobby\/)(.{36})/
-		const result = lobbyID.match(httpRegex) as RegExpMatchArray;
-		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray;
-		
+		const result = lobbyID.match(httpRegex) as RegExpMatchArray
+		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray
+
 		if (!lobby[1]) return modalErrorHander('Incorrect lobby link')
-		
+
 		const lobbyisFound = await new Apis()
 			.getLobbyById(lobby[1])
 			.then(() => true)
@@ -95,4 +93,4 @@ const Home: FC<AppProps> = ({pageProps}): JSX.Element => {
 	)
 }
 
-export default Home;
+export default Home
