@@ -9,18 +9,18 @@ import { IssueLobbyProps } from '../Issue'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 
 interface DealerLayoutProps {
-	name: string,
+	name: string
 	players: IPlayer[]
 }
 
 export interface KickPlayer {
-	modalIsOpen: boolean,
+	modalIsOpen: boolean
 	playerName: string
 }
 
-const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
-	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({modalIsOpen: false, playerName: ''});
-	
+const DealerLayout = ({ name, players }: DealerLayoutProps): JSX.Element => {
+	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({ modalIsOpen: false, playerName: '' })
+
 	const kickMemberHandler = () => {}
 
 	const issues: IssueLobbyProps[] = [
@@ -71,15 +71,17 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 					}
 					return <MemberItem centered key={member.id} setKickPlayer={setKickPlayer} {...(member as IPlayer)} />
 				})}
-				{/* <MemberItem centered setKickPlayer={setKickPlayer} firstName="asdad" lastName="asdad" id='asdasd' role={Role.player}  /> */}
+				{/* <MemberItem centered setKickPlayer={setKickPlayer} firstName="asdad"
+				 lastName="asdad" id='asdasd' role={Role.player}  /> */}
 			</Container>
 			<IssueContainer issues={issues} />
-			<ModalKickPlayerByDealer 
+			<ModalKickPlayerByDealer
 				isOpen={kickPlayer.modalIsOpen}
 				setKickPlayer={setKickPlayer}
 				kickMemberHandler={kickMemberHandler}
-				playerId="1" 
-				playerName="Max" />
+				playerId="1"
+				playerName="Max"
+			/>
 		</>
 	)
 }

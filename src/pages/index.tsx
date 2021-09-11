@@ -6,10 +6,13 @@ import MainForm from '../components/mainForm/mainForm'
 import ModalError from '../components/ModalConnectToGame/ModalError'
 import { API, Apis } from '../api/api'
 import { useRouter } from 'next/router'
-// import { store } from 'src/store/store'
-import { setPlayerID } from 'src/store/playerData'
-import { initialiseStore, RootState, useStore } from 'src/store/store'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+// import { setPlayerID } from 'src/store/playerData'
+// import { initialiseStore, RootState, useStore } from 'src/store/store'
+import { GetServerSideProps, InferGetServerSidePropsType, NextPageContext } from 'next'
+import playerData, { PlayerState, setPlayerID } from '../store/playerData'
+import { useDispatch, useSelector } from 'react-redux'
+import withRedux from 'next-redux-wrapper'
+import { initializeStore } from '../store/store'
 
 export type TModalState = {
 	dimmer: 'blurring' | undefined
@@ -22,11 +25,9 @@ export type ErrorModalState = {
 	message: string
 }
 
-const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
+const Home = (): JSX.Element => {
 	const router = useRouter()
-	console.log(initialReduxState);
-	const store = useStore(initialReduxState)
-
+	const id = useSelector(setPlayerID)
 	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
 		isClosed: true,
@@ -60,17 +61,15 @@ const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServe
 
 	const connectToLobby = async (lobbyID: string, playerID: string) => {
 		await new Apis().addPlayerToLobby(lobbyID, playerID)
-		store.dispatch(setPlayerID(playerID));
-		console.log("home page ",store.getState());
-
-		await router.push({ pathname: API.LOBBY + lobbyID, query: {playerid: playerID} })
+		await router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: playerID } })
+		console.log('Id in add member: ', id)
 	}
 
 	const findLobby = async (lobbyID: string) => {
 		const httpRegex = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
 		const lobbyIdRegex = /(?:lobby\/)(.{36})/
-		const result = lobbyID.match(httpRegex) as RegExpMatchArray;
-		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray;
+		const result = lobbyID.match(httpRegex) as RegExpMatchArray
+		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray
 
 		if (!lobby[1]) return modalErrorHander('Incorrect lobby link')
 
@@ -104,16 +103,15 @@ const Home = ({ initialReduxState }: InferGetServerSidePropsType<typeof getServe
 		</>
 	)
 }
-interface HomeSSRProps {
-	initialReduxState: RootState
-}
-
-export const getServerSideProps: GetServerSideProps<HomeSSRProps> = async () => {
-	const reduxStore = initialiseStore({})
-	// reduxStore.dispatch(setPlayerID(''))
-
-
-	return { props: { initialReduxState: reduxStore.getState() } }
-}
+// interface HomeSSRProps {
+// 	initialReduxState: RootState
+// }
+// export const getServerSideProps: GetServerSideProps<HomeSSRProps> = async () => {
+// 	// const reduxStore = initialiseStore({})
+// 	// reduxStore.dispatch(setPlayerID(''))
+//
+// 	//
+// 	// return { props: { initialReduxState: reduxStore.getState() } }
+// }
 
 export default Home

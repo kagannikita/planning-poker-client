@@ -1,19 +1,18 @@
-import { GetServerSideProps, InferGetServerSidePropsType, Redirect } from 'next'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React from 'react'
 import { Container } from 'semantic-ui-react'
 import { Apis } from '../../api/api'
-import MemberLayout from '../../components/Lobby/MemberLayout/MemberLayout'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import Chat from '../../components/Chat/Chat'
-import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
-import { initialiseStore, useStore } from 'src/store/store'
-// import { store } from 'src/store/store'
+import DealerLayout from '../../components/lobby/DealerLayout/DealerLayout'
+import MemberLayout from '../../components/lobby/MemberLayout/MemberLayout'
+import { useSelector } from 'react-redux'
+import { setPlayerID } from '../../store/playerData'
 
 const LobbyPage = ({ player, ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
-	// const reduxStore = initialiseStore({})
-	// console.log('lobby page', useStore(props).getState());
-	
+	const id = useSelector(setPlayerID)
+	console.log('lobby page', id)
 	return (
 		<>
 			<Head>
@@ -31,10 +30,7 @@ interface LobbySSRProps {
 	player: IPlayer | null
 }
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ params, query }) => {
-	const reduxStore = initialiseStore({})
-	console.log("lobby ssr ", reduxStore.getState());
-	
-	if (query.lobbyID && query.playerid === undefined) {
+	if (query.lobbyID && query.playerID === undefined) {
 		const lobby = await new Apis()
 			.getLobbyById(query.lobbyID as string)
 			.then((data) => data)
