@@ -9,11 +9,9 @@ export const HeaderBlock = () => {
 		<header className={s.header}>
 			<div className={s['header__first_row']} />
 			<div className={s['header__second_row']} />
-			<Link href="/">
-				<a className={s['header__logo-link']}>
-					<Image src={headerLogo} alt="Header logo" />
-				</a>
-			</Link>
+			<div className={s['header__logo-link']}>
+				<Image src={headerLogo} alt="Header logo" />
+			</div>
 		</header>
 	)
 }

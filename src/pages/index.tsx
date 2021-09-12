@@ -69,15 +69,17 @@ const Home = (): JSX.Element => {
 		const result = lobbyID.match(httpRegex) as RegExpMatchArray
 		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray
 
-		if (!lobby[1]) return modalErrorHander('Incorrect lobby link')
+		if (!lobby) return modalErrorHander('Incorrect lobby link')
 
 		const lobbyisFound = await new Apis()
 			.getLobbyById(lobby[1])
 			.then(() => true)
 			.catch(() => false)
 
+		const showLobbyId = lobbyID.slice(0, -1).substring(lobbyID.slice(0, -1).lastIndexOf('/') + 1)
+
 		if (lobbyisFound) {
-			modalHandler('Connect to lobby by id:' + lobbyID)
+			modalHandler('Connect to lobby by id: ' + showLobbyId)
 		} else {
 			modalErrorHander('Lobby not found or Incorrect lobby link')
 		}
