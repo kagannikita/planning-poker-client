@@ -4,9 +4,11 @@ import mainImage from '../../public/images/main_logo.png'
 import { ModalConnectToGame } from '../components/ModalConnectToGame/ModalConnectToGame'
 import MainForm from '../components/mainForm/mainForm'
 import ModalError from '../components/ModalConnectToGame/ModalError'
-import { API, Apis } from '../api/api'
+import { API } from '../interfaces/ApiEnum'
 import { useRouter } from 'next/router'
-import { AppProps } from 'next/app'
+import { LocalStorageEnum } from '../interfaces/localStorageEnum'
+import PlayerAPI from 'src/api/PlayerApi'
+import LobbyAPI from 'src/api/LobbyApi'
 
 export type TModalState = {
 	dimmer: 'blurring' | undefined
@@ -19,7 +21,7 @@ export type ErrorModalState = {
 	message: string
 }
 
-const Home: FC<AppProps> = ({ pageProps }): JSX.Element => {
+const Home = (): JSX.Element => {
 	const router = useRouter()
 
 	const [modalState, setModalState] = useState<TModalState>({
@@ -31,6 +33,8 @@ const Home: FC<AppProps> = ({ pageProps }): JSX.Element => {
 		isError: false,
 		message: '',
 	})
+
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	const [lobbyID, setLobbyID] = useState('')
 
@@ -48,12 +52,13 @@ const Home: FC<AppProps> = ({ pageProps }): JSX.Element => {
 		})
 
 	const createLobby = async (lobbyName: string) => {
-		return await new Apis().createLobby(lobbyName)
+		return await new LobbyAPI().createLobby(lobbyName)
 	}
 
 	const connectToLobby = async (lobbyID: string, playerID: string) => {
-		await new Apis().addPlayerToLobby(lobbyID, playerID)
-		await router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: playerID } })
+		await new PlayerAPI().addPlayerToLobby(lobbyID, playerID)
+		localStorage.setItem(LocalStorageEnum.playerid, playerID)
+		await router.push({ pathname: API.LOBBY + lobbyID })
 	}
 
 	const findLobby = async (lobbyID: string) => {
@@ -61,10 +66,10 @@ const Home: FC<AppProps> = ({ pageProps }): JSX.Element => {
 		const lobbyIdRegex = /(?:lobby\/)(.{36})/
 		const result = lobbyID.match(httpRegex) as RegExpMatchArray
 		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray
+		if (!lobby) return modalErrorHander('Incorrect lobby link')
+		if (lobby[1] === null) return modalErrorHander('Incorrect lobby link')
 
-		if (!lobby[1]) return modalErrorHander('Incorrect lobby link')
-
-		const lobbyisFound = await new Apis()
+		const lobbyisFound = await new LobbyAPI()
 			.getLobbyById(lobby[1])
 			.then(() => true)
 			.catch(() => false)
@@ -87,6 +92,8 @@ const Home: FC<AppProps> = ({ pageProps }): JSX.Element => {
 				lobbyID={lobbyID}
 				createLobby={createLobby}
 				connectToLobby={connectToLobby}
+				isLoading={isLoading}
+				setIsLoading={setIsLoading}
 			/>
 			<ModalError {...errorModalState} setErrorModalState={setErrorModalState} />
 		</>

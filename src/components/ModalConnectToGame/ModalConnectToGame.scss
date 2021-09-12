@@ -1,5 +1,9 @@
 @import '../../styles/colors.scss';
 
+.wrapper-content {
+	position: relative;
+}
+
 .ui.modal > .header.modal-title {
 	display: flex;
 	justify-content: space-between;
@@ -17,14 +21,19 @@
 	height: 70px;
 	border-radius: 50%;
 	box-shadow: inset 0 0 5px 2px rgba(50, 50, 50, 0.5);
+
+	&:hover {
+		cursor: pointer;
+	}
 }
 
 .avatar {
+	position: relative;
 	margin-left: 10px;
-	//background-image: url('https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg');
 	background-size: cover;
 	opacity: 0.8;
 	transition: opacity 0.3s;
+	overflow: hidden;
 
 	&:hover {
 		opacity: 1;
@@ -32,9 +41,12 @@
 }
 
 #avatar {
+	top: -12px;
+	position: absolute;
 	cursor: pointer;
 	font-size: 0;
 	opacity: 0;
+	font-size: 0;
 }
 
 .actions {

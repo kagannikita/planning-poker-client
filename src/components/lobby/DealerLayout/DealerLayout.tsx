@@ -7,21 +7,40 @@ import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
 import { IssueLobbyProps } from '../Issue'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
+import PlayerAPI from 'src/api/PlayerApi'
 
 interface DealerLayoutProps {
-	name: string,
+	name: string
 	players: IPlayer[]
+	dealerPlayer: IPlayer
 }
 
 export interface KickPlayer {
-	modalIsOpen: boolean,
+	modalIsOpen: boolean
 	playerName: string
+	id: string
 }
 
-const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
-	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({modalIsOpen: false, playerName: ''});
-	
-	const kickMemberHandler = () => {}
+const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.Element => {
+	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({ 
+		modalIsOpen: false, 
+		playerName: '',
+		id: ''
+ })
+	// let fakePlayers: IPlayer[] = [
+	// 	{ firstName: 'Max', lastName: 'masd', id: '1', role: Role.player },
+	// 	{ firstName: 'John', lastName: 'masd', id: '2', role: Role.player },
+	// 	{ firstName: 'Snow', lastName: 'masd', id: '3', role: Role.player },
+	// 	{ firstName: 'Smith', lastName: 'masd', id: '4', role: Role.player },
+	// ]
+	const [playersStore, setplayersStore] = useState<IPlayer[]>(players);
+
+	const kickMemberHandler = async (playerId: string) => {
+		await new PlayerAPI().deletePlayer(playerId)
+		const newPlayers = playersStore.filter(player => player.id !== playerId)
+		setplayersStore(newPlayers)
+	}
+
 
 	const issues: IssueLobbyProps[] = [
 		{ title: 'Issue 1', priority: 'Low priority', type: 'lobby' },
@@ -37,12 +56,7 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 				<Grid.Row color="blue">
 					<Grid.Column>
 						<HeaderTitle as="h3">Scram master</HeaderTitle>
-						{players.map((dealer) => {
-							if (dealer.role === Role.dealer) {
-								return <MemberItem key={dealer.id} {...(dealer as IPlayer)} />
-							}
-							return
-						})}
+						 <MemberItem {...(dealerPlayer as IPlayer)} />
 					</Grid.Column>
 				</Grid.Row>
 				<Grid.Row>
@@ -65,21 +79,24 @@ const DealerLayout = ({name, players}: DealerLayoutProps):JSX.Element => {
 				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
-				{players.map((member) => {
+				{playersStore.map((member) => {
 					if (member.role === Role.dealer) {
 						return
 					}
-					return <MemberItem centered key={member.id} setKickPlayer={setKickPlayer} {...(member as IPlayer)} />
+					return <MemberItem centered 
+						key={member.id} 
+						setKickPlayer={setKickPlayer} 
+						{...(member as IPlayer)} />
 				})}
-				{/* <MemberItem centered setKickPlayer={setKickPlayer} firstName="asdad" lastName="asdad" id='asdasd' role={Role.player}  /> */}
 			</Container>
 			<IssueContainer issues={issues} />
-			<ModalKickPlayerByDealer 
+			<ModalKickPlayerByDealer
 				isOpen={kickPlayer.modalIsOpen}
 				setKickPlayer={setKickPlayer}
 				kickMemberHandler={kickMemberHandler}
-				playerId="1" 
-				playerName="Max" />
+				playerId={kickPlayer.id}
+				playerName={kickPlayer.playerName}
+			/>
 		</>
 	)
 }

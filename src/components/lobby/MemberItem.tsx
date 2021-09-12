@@ -4,13 +4,24 @@ import { Button, Card, Image } from 'semantic-ui-react'
 import { IPlayer } from '../../interfaces/LobbyTypes'
 import { KickPlayer } from './DealerLayout/DealerLayout'
 import s from './lobby.module.scss'
+
 interface MemberItemProps extends IPlayer {
 	centered?: boolean
 	setKickPlayer?: Dispatch<SetStateAction<KickPlayer>>
 	setVoteKickPlayer?: Dispatch<SetStateAction<KickPlayer>>
 }
 
-const MemberItem: FC<MemberItemProps> = ({ firstName, lastName, image, position, centered, role, setKickPlayer }): JSX.Element => {
+const MemberItem: FC<MemberItemProps> = ({
+	firstName,
+	lastName,
+	id,
+	image,
+	position,
+	centered,
+	role,
+	setKickPlayer,
+}): JSX.Element => {
+
 	return (
 		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
 			<Card.Content>
@@ -21,8 +32,15 @@ const MemberItem: FC<MemberItemProps> = ({ firstName, lastName, image, position,
 				/>
 				<Card.Header>{`${firstName} ${lastName}`}</Card.Header>
 				<Card.Meta>{position}</Card.Meta>
-				{setKickPlayer && <Button icon='delete' size='tiny' onClick={() => setKickPlayer({modalIsOpen: true, playerName: firstName + lastName})}/>}
-				{setKickPlayer && <Button icon='delete' size='tiny' onClick={() => setKickPlayer({ modalIsOpen: true, playerName: firstName + lastName })} />}
+				{setKickPlayer && (
+					<Button
+						icon="delete"
+						size="tiny"
+						circular
+						role="delete player"
+						onClick={() => setKickPlayer({ modalIsOpen: true, playerName: `${firstName} ${lastName}`, id })}
+					/>
+				)}
 			</Card.Content>
 		</Card>
 	)

@@ -40,7 +40,7 @@ const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
 				</Grid.Row>
 				<Grid.Row>
 					<Grid.Column>
-						<CopyLink />
+						<CopyLink/>
 					</Grid.Column>
 				</Grid.Row>
 				<Grid.Row columns="2">

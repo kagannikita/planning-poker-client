@@ -16,15 +16,13 @@ const ModalKickPlayerByDealer: FC<ModalKickPlayerByDealerProps>
   	const closeHandler = () => {
   		setKickPlayer({
   			modalIsOpen: false,
-  			playerName: ''
+  			playerName: '',
+				id: ''
   		})
   	}
   	const handlerKick = () => {
   		kickMemberHandler(playerId)
-  		setKickPlayer({
-  			playerName: '',
-  			modalIsOpen: false
-  		})
+			closeHandler()
   	}
 
   	return (
