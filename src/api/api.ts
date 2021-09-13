@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { ILobby, IPlayer } from '../interfaces/LobbyTypes'
+import * as React from 'react'
+import io from 'socket.io-client'
+import { useMemo } from 'react'
 
 export enum API {
 	MAIN_API = 'http://localhost:8080/',
@@ -60,7 +63,16 @@ export class Apis {
 				.put(`${API.MAIN_API}${API.LOBBY}${lobbyID}`, {
 					player_id: playerID,
 				})
-				.then((res) => resolve(res.data))
+				.then((res) => {
+					resolve(res.data)
+					const socket = io(API.MAIN_API)
+					socket.on('connect', () => {
+						socket.emit('join', {
+							player_id: playerID,
+							lobby_id: lobbyID,
+						})
+					})
+				})
 				.catch((err) => reject(err))
 		})
 	}

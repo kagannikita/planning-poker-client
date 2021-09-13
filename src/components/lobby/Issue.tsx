@@ -8,10 +8,8 @@ export interface IssueLobbyProps {
 }
 
 const IssueLobby = ({ title, priority }: IssueLobbyProps) => {
-	const [titleState, setTitle] = useState('')
-	const [priorityState, setPriority] = useState('')
-	setTitle(title)
-	setPriority(priority)
+	const [titleState, setTitle] = useState(title)
+	const [priorityState, setPriority] = useState(priority)
 	return (
 		<Card centered className={s.item}>
 			<Card.Content>

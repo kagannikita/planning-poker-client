@@ -3,14 +3,15 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { applyMiddleware, createStore, Store } from 'redux'
 import { useMemo } from 'react'
 
-let store: Store
+let store: Store | undefined
 
 function initStore(preloadedState = initialState) {
 	return createStore(playerSlice.reducer, preloadedState, composeWithDevTools(applyMiddleware()))
 }
 
-export const initializeStore = (preloadedState: PlayerState) => {
+export const initializeStore = (preloadedState?: PlayerState) => {
 	const _store = store ?? initStore(preloadedState)
+
 	if (preloadedState && store) {
 		const state = store.getState()
 		const initialStore = {
@@ -20,14 +21,14 @@ export const initializeStore = (preloadedState: PlayerState) => {
 		state.player.playerID = preloadedState.playerID
 		return initialStore
 	}
+	store = undefined
 
 	if (typeof window === 'undefined') return _store
-
-	if (!store) store = _store
+	store = _store
 
 	return _store
 }
 
-export function useStore(initialState: PlayerState) {
+export function useStore(initialState?: PlayerState) {
 	return useMemo(() => initializeStore(initialState), [initialState])
 }

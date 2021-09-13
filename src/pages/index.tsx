@@ -6,13 +6,7 @@ import MainForm from '../components/mainForm/mainForm'
 import ModalError from '../components/ModalConnectToGame/ModalError'
 import { API, Apis } from '../api/api'
 import { useRouter } from 'next/router'
-// import { setPlayerID } from 'src/store/playerData'
-// import { initialiseStore, RootState, useStore } from 'src/store/store'
-import { GetServerSideProps, InferGetServerSidePropsType, NextPageContext } from 'next'
-import playerData, { PlayerState, setPlayerID } from '../store/playerData'
-import { useDispatch, useSelector } from 'react-redux'
-import withRedux from 'next-redux-wrapper'
-import { initializeStore } from '../store/store'
+import { LocalStorageEnum } from '../interfaces/localStorageEnum'
 
 export type TModalState = {
 	dimmer: 'blurring' | undefined
@@ -27,7 +21,7 @@ export type ErrorModalState = {
 
 const Home = (): JSX.Element => {
 	const router = useRouter()
-	const id = useSelector(setPlayerID)
+
 	const [modalState, setModalState] = useState<TModalState>({
 		dimmer: undefined,
 		isClosed: true,
@@ -37,6 +31,8 @@ const Home = (): JSX.Element => {
 		isError: false,
 		message: '',
 	})
+
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	const [lobbyID, setLobbyID] = useState('')
 
@@ -59,8 +55,8 @@ const Home = (): JSX.Element => {
 
 	const connectToLobby = async (lobbyID: string, playerID: string) => {
 		await new Apis().addPlayerToLobby(lobbyID, playerID)
-		await router.push({ pathname: API.LOBBY + lobbyID, query: { playerid: playerID } })
-		console.log('Id in add member: ', id)
+		localStorage.setItem(LocalStorageEnum.playerid, playerID)
+		await router.push({ pathname: API.LOBBY + lobbyID })
 	}
 
 	const findLobby = async (lobbyID: string) => {
@@ -68,8 +64,8 @@ const Home = (): JSX.Element => {
 		const lobbyIdRegex = /(?:lobby\/)(.{36})/
 		const result = lobbyID.match(httpRegex) as RegExpMatchArray
 		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray
-
 		if (!lobby) return modalErrorHander('Incorrect lobby link')
+		if (lobby[1] === null) return modalErrorHander('Incorrect lobby link')
 
 		const lobbyisFound = await new Apis()
 			.getLobbyById(lobby[1])
@@ -96,20 +92,12 @@ const Home = (): JSX.Element => {
 				lobbyID={lobbyID}
 				createLobby={createLobby}
 				connectToLobby={connectToLobby}
+				isLoading={isLoading}
+				setIsLoading={setIsLoading}
 			/>
 			<ModalError {...errorModalState} setErrorModalState={setErrorModalState} />
 		</>
 	)
 }
-// interface HomeSSRProps {
-// 	initialReduxState: RootState
-// }
-// export const getServerSideProps: GetServerSideProps<HomeSSRProps> = async () => {
-// 	// const reduxStore = initialiseStore({})
-// 	// reduxStore.dispatch(setPlayerID(''))
-//
-// 	//
-// 	// return { props: { initialReduxState: reduxStore.getState() } }
-// }
 
 export default Home

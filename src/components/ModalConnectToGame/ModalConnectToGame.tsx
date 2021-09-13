@@ -3,8 +3,9 @@ import { Button, Form, Modal } from 'semantic-ui-react'
 import { TModalState } from '../../pages'
 import { Apis } from '../../api/api'
 import { ILobby, IPlayer, Role } from '../../interfaces/LobbyTypes'
+import Loader from '../loader/loader'
 import { setPlayerID } from '../../store/playerData'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 interface ModalProps {
 	isClosed: boolean
@@ -14,6 +15,8 @@ interface ModalProps {
 	createLobby: (lobbyName: string) => Promise<ILobby>
 	connectToLobby: (lobbyID: string, playerID: string) => void
 	lobbyID: string
+	isLoading: boolean
+	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const ModalConnectToGame = ({
@@ -24,12 +27,14 @@ export const ModalConnectToGame = ({
 	createLobby,
 	connectToLobby,
 	lobbyID,
+	isLoading,
+	setIsLoading,
 }: ModalProps): JSX.Element => {
 	const defaultAvatarUrl =
 		'https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg'
 	const [avatarPicUrl, setAvatarPicUrl] = useState<string>(defaultAvatarUrl)
 	const dispatch = useDispatch()
-	const id = useSelector(setPlayerID)
+
 	const onClose = (): void => {
 		setAvatarPicUrl(defaultAvatarUrl)
 		setModalState({
@@ -68,18 +73,19 @@ export const ModalConnectToGame = ({
 	const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		const formData = new FormData(e.target as HTMLFormElement)
 
+		setIsLoading(true)
+
 		writePlayer(getRole(formData)).then((player) => {
 			if (formName === 'Create new game') {
 				createLobby(`Lobby by ${player.firstName}`).then((lobby) => {
 					connectToLobby(lobby.id, player.id)
 					dispatch(setPlayerID(player.id))
-					console.log('Id in form', id)
 				})
 			} else if (lobbyID) {
 				connectToLobby(lobbyID, player.id)
 				dispatch(setPlayerID(player.id))
-				console.log('Id in form', id)
 			}
+			setIsLoading(false)
 			onClose()
 		})
 	}
@@ -97,7 +103,7 @@ export const ModalConnectToGame = ({
 				)}
 			</Modal.Header>
 			<Form id="regForm" style={{ padding: '2rem' }} onSubmit={(e) => formSubmit(e)}>
-				<Modal.Content>
+				<Modal.Content className="wrapper-content">
 					<Form.Field>
 						<label htmlFor="firstName">
 							First Name
@@ -114,6 +120,7 @@ export const ModalConnectToGame = ({
 							title={`First Name ${inputTitle}`}
 						/>
 					</Form.Field>
+					{isLoading ? <Loader loaderText="Loading" /> : null}
 					<Form.Field>
 						<label htmlFor="lastName">Last Name</label>
 						<input
