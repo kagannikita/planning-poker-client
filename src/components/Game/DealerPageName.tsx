@@ -31,9 +31,9 @@ const DealerLayoutGame: FC = () => {
 				<Grid columns="1">
 					<Grid.Column width="14">
 						<HeaderTitle as="h2">Issues:</HeaderTitle>
-						<IssueLobby title={'issue 1'} priority={'low'} type="game" />
-						<IssueLobby title={'issue 1'} priority={'low'} type="game" />
-						<IssueLobby title={'issue 1'} priority={'low'} type="game" />
+						{/*<IssueLobby title={'issue 1'} priority={'low'} type="game" />*/}
+						{/*<IssueLobby title={'issue 1'} priority={'low'} type="game" />*/}
+						{/*<IssueLobby title={'issue 1'} priority={'low'} type="game" />*/}
 					</Grid.Column>
 					<Grid.Column>
 						<GridRow>
