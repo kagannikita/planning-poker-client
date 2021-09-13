@@ -2,13 +2,12 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
 import { Container } from 'semantic-ui-react'
-import { Apis } from '../../api/api'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
-import Chat from '../../components/Chat/Chat'
+import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
+import MemberLayout from '../../components/Lobby/MemberLayout/MemberLayout'
 import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
-import DealerLayout from '../../components/lobby/DealerLayout/DealerLayout'
-import MemberLayout from '../../components/lobby/MemberLayout/MemberLayout'
+import LobbyAPI from '../../api/LobbyApi'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
@@ -27,8 +26,14 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
-			<Chat />
-			<Container>{player?.role === Role.dealer ? <DealerLayout {...props} /> : <MemberLayout {...props} />}</Container>
+			{/* <Chat /> */}
+			<Container>
+				{player?.role === Role.dealer ? (
+					<DealerLayout dealerPlayer={player as IPlayer} {...props} />
+				) : (
+					<MemberLayout {...props} />
+				)}
+			</Container>
 		</>
 	)
 }
@@ -39,7 +44,7 @@ interface LobbySSRProps {
 }
 
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ query }) => {
-	const lobby = await new Apis()
+	const lobby = await new LobbyAPI()
 		.getLobbyById(query.lobbyID as string)
 		.then((data) => data)
 		.catch((err) => err)

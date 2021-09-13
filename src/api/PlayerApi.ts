@@ -1,16 +1,9 @@
 import axios from 'axios'
-import { ILobby, IPlayer } from '../interfaces/LobbyTypes'
-import * as React from 'react'
+import { API } from '../interfaces/ApiEnum'
 import io from 'socket.io-client'
-import { useMemo } from 'react'
+import { IPlayer } from '../interfaces/LobbyTypes'
 
-export enum API {
-	MAIN_API = 'http://localhost:8080/',
-	LOBBY = 'lobby/',
-	PLAYER = 'player/',
-}
-
-export class Apis {
+export default class PlayerAPI {
 	getAllPlayers(): Promise<IPlayer[]> {
 		return new Promise((resolve, reject) => {
 			axios
@@ -29,7 +22,8 @@ export class Apis {
 		})
 	}
 
-	async createPlayer(data: FormData) {
+	async createPlayer(data: FormData): Promise<IPlayer> {
+		// return new Promise((resolve, reject) => {
 		return await axios({
 			method: 'post',
 			url: `${API.MAIN_API}${API.PLAYER}`,
@@ -38,20 +32,15 @@ export class Apis {
 		})
 			.then((res) => res.data)
 			.catch((err) => err)
+		// .then((res) => resolve(res.data))
+		// .catch((err) => reject(err))
+		// })
 	}
 
-	getLobbyById(id: string): Promise<ILobby> {
+	deletePlayer(id: string): Promise<IPlayer> {
 		return new Promise((resolve, reject) => {
 			axios
-				.get(`${API.MAIN_API}${API.LOBBY}${id}`)
-				.then((res) => resolve(res.data))
-				.catch((err) => reject(err))
-		})
-	}
-	createLobby(name: string): Promise<ILobby> {
-		return new Promise((resolve, reject) => {
-			axios
-				.post(`${API.MAIN_API}${API.LOBBY}`, { name })
+				.delete(`${API.MAIN_API}${API.PLAYER}${id}`)
 				.then((res) => resolve(res.data))
 				.catch((err) => reject(err))
 		})

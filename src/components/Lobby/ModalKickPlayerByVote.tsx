@@ -20,6 +20,19 @@ const ModalKickPlayerByDealer: FC<ModalKickPlayerByDealerProps> = ({
 		kickMemberHandler(playerId)
 		setIsOpen(!isOpen)
 	}
+
+	// const closeHandler = () => {
+	// 	setKickPlayer({
+	// 		modalIsOpen: false,
+	// 		playerName: '',
+	// 		id: ''
+	// 	})
+	// }
+	// const handlerKick = () => {
+	// 	kickMemberHandler(playerId)
+	// 	closeHandler()
+	// }
+
 	return (
 		<Modal size="tiny" open={isOpen} onClose={() => setIsOpen(!isOpen)}>
 			<Modal.Header>Kick player?</Modal.Header>

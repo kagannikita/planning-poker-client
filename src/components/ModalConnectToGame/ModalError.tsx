@@ -11,7 +11,7 @@ const ModalError: FC<ModalErrorProps> = ({ message, isError, setErrorModalState 
 		<Confirm
 			content={message}
 			open={isError}
-			onConfirm={() => setErrorModalState({message, isError: !isError})}
+			onConfirm={() => setErrorModalState({ message, isError: !isError })}
 			onCancel={() => setErrorModalState({ message, isError: !isError })}
 		/>
 	)

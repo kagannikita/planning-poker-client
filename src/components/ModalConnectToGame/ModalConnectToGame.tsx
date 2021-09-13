@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Button, Form, Modal } from 'semantic-ui-react'
-import { TModalState } from '../../pages'
-import { Apis } from '../../api/api'
 import { ILobby, IPlayer, Role } from '../../interfaces/LobbyTypes'
 import Loader from '../loader/loader'
 import { setPlayerID } from '../../store/playerData'
 import { useDispatch } from 'react-redux'
+import PlayerAPI from '../../api/PlayerApi'
+import { TModalState } from '../../pages'
 
 interface ModalProps {
 	isClosed: boolean
@@ -67,7 +67,7 @@ export const ModalConnectToGame = ({
 	}
 
 	const writePlayer = async (player: FormData): Promise<IPlayer> => {
-		return new Apis().createPlayer(player)
+		return new PlayerAPI().createPlayer(player)
 	}
 
 	const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {

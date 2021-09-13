@@ -6,9 +6,9 @@ const CopyLink = (): JSX.Element => {
 	const [locationState, setlocation] = useState('')
 
 	useEffect(() => {
-		setlocation(location.origin + location.pathname);
+		setlocation(location.origin + location.pathname)
 	}, [])
-	
+
 	const clickCopy = (): void => {
 		if (navigator.clipboard && input.current?.value) navigator.clipboard.writeText(input.current?.value)
 	}

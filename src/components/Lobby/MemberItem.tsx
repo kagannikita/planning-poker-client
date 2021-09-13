@@ -4,14 +4,17 @@ import { Button, Card, Image } from 'semantic-ui-react'
 import { IPlayer } from '../../interfaces/LobbyTypes'
 import { KickPlayer } from './DealerLayout/DealerLayout'
 import s from './lobby.module.scss'
+
 interface MemberItemProps extends IPlayer {
 	centered?: boolean
 	setKickPlayer?: Dispatch<SetStateAction<KickPlayer>>
+	setVoteKickPlayer?: Dispatch<SetStateAction<KickPlayer>>
 }
 
 const MemberItem: FC<MemberItemProps> = ({
 	firstName,
 	lastName,
+	id,
 	image,
 	position,
 	centered,
@@ -32,7 +35,9 @@ const MemberItem: FC<MemberItemProps> = ({
 					<Button
 						icon="delete"
 						size="tiny"
-						onClick={() => setKickPlayer({ modalIsOpen: true, playerName: firstName + lastName })}
+						circular
+						role="button"
+						onClick={() => setKickPlayer({ modalIsOpen: true, playerName: `${firstName} ${lastName}`, id })}
 					/>
 				)}
 			</Card.Content>
