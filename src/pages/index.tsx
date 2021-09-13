@@ -65,6 +65,7 @@ const Home = (): JSX.Element => {
 		const httpRegex = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
 		const lobbyIdRegex = /(?:lobby\/)(.{36})/
 		const result = lobbyID.match(httpRegex) as RegExpMatchArray
+		
 		const lobby = result[5].match(lobbyIdRegex) as RegExpMatchArray
 		if (!lobby) return modalErrorHander('Incorrect lobby link')
 		if (lobby[1] === null) return modalErrorHander('Incorrect lobby link')
@@ -75,7 +76,8 @@ const Home = (): JSX.Element => {
 			.catch(() => false)
 
 		if (lobbyisFound) {
-			modalHandler('Connect to lobby by id:' + lobbyID)
+			setLobbyID(lobby[1])
+			modalHandler('Connect to lobby by id:' + lobby[1])
 		} else {
 			modalErrorHander('Lobby not found or Incorrect lobby link')
 		}

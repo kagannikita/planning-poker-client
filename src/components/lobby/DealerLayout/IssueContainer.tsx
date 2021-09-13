@@ -1,26 +1,45 @@
-import { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { Container, Header as HeaderTitle } from 'semantic-ui-react'
-import IssueLobby, { IssueLobbyProps } from '../Issue'
+import IssueType from 'src/interfaces/IssueType'
+import { RootState, useStore } from 'src/store/store'
+import Issue, { IssueProps } from '../Issue'
 import IssueCreate from '../IssueCreate'
 
 import s from '../lobby.module.scss'
+import ModalDeleteIssue from '../ModalDeleteIssue'
+import { ModalState } from './DealerLayout'
 
 interface IssueContainerProps {
-	issues: IssueLobbyProps[]
+	type: "lobby" | "game"
 }
 
-const IssueContainer: FC<IssueContainerProps> = ({ issues }) => {
+const IssueContainer: FC<IssueContainerProps> = ({ type }) => {
+	const { issues } = useStore().getState() as RootState;
+	const [ModalDeleteIssueState, setModalDeleteIssueState] = useState<ModalState>({
+		modalIsOpen: false,
+		name: '',
+		id: '',
+	});
+	// const [issuesState, setIssuesState] = useState<Issue[]>(issues.issues);
 	return (
 		<>
 			<HeaderTitle textAlign="center" as="h1">
 				Issues:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
-				{issues.map((issue) => (
-					<IssueLobby key={issue.title} {...issue} />
+				{issues.issues.map((issue) => (
+					<Issue 
+					key={issue.title} 
+					type={type}
+						setModalDeleteIssueState={setModalDeleteIssueState}
+					{...issue} />
 				))}
 				<IssueCreate />
 			</Container>
+			<ModalDeleteIssue
+				state={ModalDeleteIssueState}
+				setModalDeleteIssueState={setModalDeleteIssueState}
+			/>
 		</>
 	)
 }

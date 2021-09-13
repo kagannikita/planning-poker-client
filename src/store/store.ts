@@ -1,7 +1,22 @@
-import { initialState, playerSlice, PlayerState } from './playerData'
+import { playerSlice, PlayerState } from './playerData'
 import { composeWithDevTools } from 'redux-devtools-extension'
-import { applyMiddleware, createStore, Store } from 'redux'
+import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
 import { useMemo } from 'react'
+import { issuesSlice, IssuesState } from './IssuesSlice'
+
+export interface RootState {
+	issues: IssuesState,
+	player: PlayerState
+}
+
+const initialState: RootState = {
+	issues: {
+		issues: []
+	},
+	player: {
+		playerID: ''
+	}
+}
 
 let store: Store | undefined
 
@@ -19,19 +34,29 @@ let store: Store | undefined
 // export const useAppDispatch = () => useDispatch<AppDispatch>();
 // export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
+
+
+
 function initStore(preloadedState = initialState) {
-	return createStore(playerSlice.reducer, preloadedState, composeWithDevTools(applyMiddleware()))
+	const rootReducer = combineReducers(
+		{
+			player: playerSlice.reducer,
+			issues: issuesSlice.reducer
+		})
+	return createStore(
+		rootReducer,
+		 preloadedState, 
+		 composeWithDevTools(applyMiddleware()))
 }
 
-export const initializeStore = (preloadedState?: PlayerState) => {
-	const _store = store ?? initStore(preloadedState)
+export const initializeStore = (preloadedState?: RootState) => {
+	let _store = store ?? initStore(preloadedState)
 	
 	if (preloadedState && store) {
-		const initialStore = {
-			...preloadedState,
+		_store = initStore({
 			...store.getState(),
-		}
-		initialStore.player.playerID = preloadedState.playerID
+			...preloadedState,
+		})
 	}
 	store = undefined
 	
@@ -41,7 +66,7 @@ export const initializeStore = (preloadedState?: PlayerState) => {
 	return _store
 }
 
-export function useStore(initialState?: PlayerState) {
+export function useStore(initialState?: RootState) {
 	return useMemo(() => initializeStore(initialState), [initialState])
 }
 

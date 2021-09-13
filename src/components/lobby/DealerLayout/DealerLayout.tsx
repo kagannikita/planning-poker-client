@@ -1,13 +1,16 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
-import { IssueLobbyProps } from '../Issue'
+import { IssueProps } from '../Issue'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
-import PlayerAPI from 'src/api/PlayerApi'
+import PlayerAPI from '../../../api/PlayerApi'
+import IssueType from 'src/interfaces/IssueType'
+import { RootState, useStore } from 'src/store/store'
+import ModalDeleteIssue from '../ModalDeleteIssue'
 
 interface DealerLayoutProps {
 	name: string
@@ -15,16 +18,17 @@ interface DealerLayoutProps {
 	dealerPlayer: IPlayer
 }
 
-export interface KickPlayer {
+export interface ModalState {
 	modalIsOpen: boolean
-	playerName: string
+	name: string
 	id: string
 }
 
 const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.Element => {
-	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({ 
+
+	const [kickPlayer, setKickPlayer] = useState<ModalState>({
 		modalIsOpen: false, 
-		playerName: '',
+		name: '',
 		id: ''
  })
 	// let fakePlayers: IPlayer[] = [
@@ -42,11 +46,12 @@ const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.E
 	}
 
 
-	const issues: IssueLobbyProps[] = [
-		{ title: 'Issue 1', priority: 'Low priority', type: 'lobby' },
-		{ title: 'Issue 2', priority: 'Mid priority', type: 'lobby' },
-		{ title: 'Issue 3', priority: 'High priority', type: 'lobby' },
-	]
+	// const issues: Issue[] = [
+	// 	{ title: 'Issue 1', priority: 'low', id:'1' },
+	// 	{ title: 'Issue 2', priority: 'average',  id:'2' },
+	// 	{ title: 'Issue 3', priority: 'high',  id:'3' },
+	// 	{ title: 'Issue 4', priority: 'low', id:'4' },
+	// ]
 	return (
 		<>
 			<HeaderTitle as="h1" className={s.title}>
@@ -89,14 +94,15 @@ const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.E
 						{...(member as IPlayer)} />
 				})}
 			</Container>
-			<IssueContainer issues={issues} />
+			<IssueContainer type="lobby" />
 			<ModalKickPlayerByDealer
 				isOpen={kickPlayer.modalIsOpen}
 				setKickPlayer={setKickPlayer}
 				kickMemberHandler={kickMemberHandler}
 				playerId={kickPlayer.id}
-				playerName={kickPlayer.playerName}
+				playerName={kickPlayer.name}
 			/>
+
 		</>
 	)
 }
