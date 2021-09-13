@@ -1,3 +1,3 @@
 export enum LocalStorageEnum {
-  playerid = 'playerid'
+	playerid = 'playerid',
 }

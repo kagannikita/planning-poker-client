@@ -7,8 +7,8 @@ import ModalError from '../components/ModalConnectToGame/ModalError'
 import { API } from '../interfaces/ApiEnum'
 import { useRouter } from 'next/router'
 import { LocalStorageEnum } from '../interfaces/localStorageEnum'
-import PlayerAPI from 'src/api/PlayerApi'
-import LobbyAPI from 'src/api/LobbyApi'
+import LobbyAPI from '../api/LobbyApi'
+import PlayerAPI from '../api/PlayerApi'
 
 export type TModalState = {
 	dimmer: 'blurring' | undefined
@@ -74,8 +74,10 @@ const Home = (): JSX.Element => {
 			.then(() => true)
 			.catch(() => false)
 
+		const showLobbyId = lobbyID.slice(0, -1).substring(lobbyID.slice(0, -1).lastIndexOf('/') + 1)
+
 		if (lobbyisFound) {
-			modalHandler('Connect to lobby by id:' + lobbyID)
+			modalHandler('Connect to lobby by id: ' + showLobbyId)
 		} else {
 			modalErrorHander('Lobby not found or Incorrect lobby link')
 		}

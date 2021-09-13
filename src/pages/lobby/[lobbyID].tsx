@@ -3,23 +3,22 @@ import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
 import { Container } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
-import Chat from '../../components/Chat/Chat'
 import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
 import MemberLayout from '../../components/Lobby/MemberLayout/MemberLayout'
 import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
-import LobbyAPI from 'src/api/LobbyApi'
+import LobbyAPI from '../../api/LobbyApi'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
-	const router = useRouter();
-	const [player, setPlayer] = useState<IPlayer | Partial<IPlayer>>({});
-	
+	const router = useRouter()
+	const [player, setPlayer] = useState<IPlayer | Partial<IPlayer>>({})
+
 	useEffect(() => {
 		const id = localStorage.getItem(LocalStorageEnum.playerid)
-		const player =  props.players.find((player) => player.id === id) as IPlayer
-		
-		if(!player) router.push('/404');
-		setPlayer(player);
+		const player = props.players.find((player) => player.id === id) as IPlayer
+
+		if (!player) router.push('/404')
+		setPlayer(player)
 	}, [router, props.players])
 
 	return (
@@ -29,11 +28,11 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			</Head>
 			{/* <Chat /> */}
 			<Container>
-				{
-				 (player?.role === Role.dealer) ?
-						<DealerLayout dealerPlayer={player as IPlayer} {...props} /> :
-						<MemberLayout {...props} />
-				}
+				{player?.role === Role.dealer ? (
+					<DealerLayout dealerPlayer={player as IPlayer} {...props} />
+				) : (
+					<MemberLayout {...props} />
+				)}
 			</Container>
 		</>
 	)
@@ -44,8 +43,7 @@ interface LobbySSRProps {
 	players: IPlayer[]
 }
 
-export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({  query }) => {
-	
+export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ query }) => {
 	const lobby = await new LobbyAPI()
 		.getLobbyById(query.lobbyID as string)
 		.then((data) => data)

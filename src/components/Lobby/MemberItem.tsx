@@ -21,7 +21,6 @@ const MemberItem: FC<MemberItemProps> = ({
 	role,
 	setKickPlayer,
 }): JSX.Element => {
-
 	return (
 		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
 			<Card.Content>
@@ -37,7 +36,7 @@ const MemberItem: FC<MemberItemProps> = ({
 						icon="delete"
 						size="tiny"
 						circular
-						role="delete player"
+						role="button"
 						onClick={() => setKickPlayer({ modalIsOpen: true, playerName: `${firstName} ${lastName}`, id })}
 					/>
 				)}

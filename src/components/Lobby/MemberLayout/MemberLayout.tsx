@@ -1,26 +1,22 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
 import { IPlayer } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 
-
 interface MemberLayoutProps {
-  name: string,
-  players: IPlayer[]
+	name: string
+	players: IPlayer[]
 }
 
-const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
-
+const MemberLayout = ({ name, players }: MemberLayoutProps): JSX.Element => {
 	const [voteKickPlayer, setvoteKickPlayer] = useState({
 		modalIsOpen: false,
-		playerName: ''
-	});
+		playerName: '',
+	})
 
-	const voteKickPlayerHandler = (playerName: string, ) => {
-
-	}
+	const voteKickPlayerHandler = (playerName: string) => {}
 	return (
 		<>
 			<HeaderTitle as="h1" className={s.title}>
@@ -40,19 +36,19 @@ const MemberLayout = ({name, players}: MemberLayoutProps): JSX.Element => {
 				</Grid.Row>
 				<Grid.Row>
 					<Grid.Column>
-						<CopyLink/>
+						<CopyLink />
 					</Grid.Column>
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="right">
 						<Button negative floated="right">
-              Exit Game
+							Exit Game
 						</Button>
 					</Grid.Column>
 				</Grid.Row>
 			</Grid>
 			<HeaderTitle as="h1" textAlign="center">
-        Members:
+				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
 				{players.map((member) => {

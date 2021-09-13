@@ -5,7 +5,7 @@ import { ILobby, IPlayer, Role } from '../../interfaces/LobbyTypes'
 import Loader from '../loader/loader'
 import { setPlayerID } from '../../store/playerData'
 import { useDispatch } from 'react-redux'
-import PlayerAPI from 'src/api/PlayerApi'
+import PlayerAPI from '../../api/PlayerApi'
 
 interface ModalProps {
 	isClosed: boolean

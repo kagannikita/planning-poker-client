@@ -7,7 +7,7 @@ import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
 import { IssueLobbyProps } from '../Issue'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
-import PlayerAPI from 'src/api/PlayerApi'
+import PlayerAPI from '../../../api/PlayerApi'
 
 interface DealerLayoutProps {
 	name: string
@@ -22,25 +22,24 @@ export interface KickPlayer {
 }
 
 const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.Element => {
-	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({ 
-		modalIsOpen: false, 
+	const [kickPlayer, setKickPlayer] = useState<KickPlayer>({
+		modalIsOpen: false,
 		playerName: '',
-		id: ''
- })
+		id: '',
+	})
 	// let fakePlayers: IPlayer[] = [
 	// 	{ firstName: 'Max', lastName: 'masd', id: '1', role: Role.player },
 	// 	{ firstName: 'John', lastName: 'masd', id: '2', role: Role.player },
 	// 	{ firstName: 'Snow', lastName: 'masd', id: '3', role: Role.player },
 	// 	{ firstName: 'Smith', lastName: 'masd', id: '4', role: Role.player },
 	// ]
-	const [playersStore, setplayersStore] = useState<IPlayer[]>(players);
+	const [playersStore, setplayersStore] = useState<IPlayer[]>(players)
 
 	const kickMemberHandler = async (playerId: string) => {
 		await new PlayerAPI().deletePlayer(playerId)
-		const newPlayers = playersStore.filter(player => player.id !== playerId)
+		const newPlayers = playersStore.filter((player) => player.id !== playerId)
 		setplayersStore(newPlayers)
 	}
-
 
 	const issues: IssueLobbyProps[] = [
 		{ title: 'Issue 1', priority: 'Low priority', type: 'lobby' },
@@ -56,7 +55,7 @@ const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.E
 				<Grid.Row color="blue">
 					<Grid.Column>
 						<HeaderTitle as="h3">Scram master</HeaderTitle>
-						 <MemberItem {...(dealerPlayer as IPlayer)} />
+						<MemberItem {...(dealerPlayer as IPlayer)} />
 					</Grid.Column>
 				</Grid.Row>
 				<Grid.Row>
@@ -83,10 +82,7 @@ const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.E
 					if (member.role === Role.dealer) {
 						return
 					}
-					return <MemberItem centered 
-						key={member.id} 
-						setKickPlayer={setKickPlayer} 
-						{...(member as IPlayer)} />
+					return <MemberItem centered key={member.id} setKickPlayer={setKickPlayer} {...(member as IPlayer)} />
 				})}
 			</Container>
 			<IssueContainer issues={issues} />

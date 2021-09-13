@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export type PlayerState = {
-		playerID: string
+	playerID: string
 }
 
 export const initialState: PlayerState = {

@@ -5,39 +5,27 @@ import { useMemo } from 'react'
 
 let store: Store | undefined
 
-// export const store = configureStore({
-// 	reducer: {
-// 		player: playerSlice.reducer
-// 	},
-// 	middleware: (getDefaultMiddleware) =>
-// 		getDefaultMiddleware({
-// 			thunk: true,
-// 		}),
-// 	devTools: process.env.NODE_ENV !== 'production',
-// })
-
-// export const useAppDispatch = () => useDispatch<AppDispatch>();
-// export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
 function initStore(preloadedState = initialState) {
 	return createStore(playerSlice.reducer, preloadedState, composeWithDevTools(applyMiddleware()))
 }
 
 export const initializeStore = (preloadedState?: PlayerState) => {
 	const _store = store ?? initStore(preloadedState)
-	
+
 	if (preloadedState && store) {
+		const state = store.getState()
 		const initialStore = {
 			...preloadedState,
-			...store.getState(),
+			...state,
 		}
-		initialStore.player.playerID = preloadedState.playerID
+		state.player.playerID = preloadedState.playerID
+		return initialStore
 	}
 	store = undefined
-	
+
 	if (typeof window === 'undefined') return _store
-	if (!store) store = _store
-	
+	store = _store
+
 	return _store
 }
 
