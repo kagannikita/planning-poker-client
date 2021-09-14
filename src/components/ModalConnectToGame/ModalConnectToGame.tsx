@@ -13,7 +13,7 @@ interface ModalProps {
 	dimmer: 'blurring' | undefined
 	formName: string
 	createLobby: (lobbyName: string) => Promise<ILobby>
-	connectToLobby: (lobbyID: string, playerID: string) => void
+	connectToLobby: (lobbyID: string, playerID: string) => Promise<void>
 	lobbyID: string
 	isLoading: boolean
 	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
@@ -78,15 +78,19 @@ export const ModalConnectToGame = ({
 		writePlayer(getRole(formData)).then((player) => {
 			if (formName === 'Create new game') {
 				createLobby(`Lobby by ${player.firstName}`).then((lobby) => {
-					connectToLobby(lobby.id, player.id)
+					connectToLobby(lobby.id, player.id).then(() => {
+						setIsLoading(false)
+						onClose()
+					})
 					dispatch(setPlayerID(player.id))
 				})
 			} else if (lobbyID) {
-				connectToLobby(lobbyID, player.id)
+				connectToLobby(lobbyID, player.id).then(() => {
+					setIsLoading(false)
+					onClose()
+				})
 				dispatch(setPlayerID(player.id))
 			}
-			setIsLoading(false)
-			onClose()
 		})
 	}
 
