@@ -1,20 +1,20 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Button, Card } from 'semantic-ui-react'
-import IssueType from '../../interfaces/IssueType'
+import { IssueType } from 'src/interfaces/IssueType'
 import { ModalState } from './DealerLayout/DealerLayout'
+import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 import s from './lobby.module.scss'
 
 export interface IssueProps extends IssueType {
 	type: 'lobby' | 'game'
-	setModalDeleteIssueState: React.Dispatch<React.SetStateAction<ModalState>>
-	// issuesArr: Issue[]
+	setModalChange: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
+	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
 }
 
-const Issue = ({ title, priority, id, type, setModalDeleteIssueState }: IssueProps) => {
-	const [titleState, setTitle] = useState(title)
+const Issue = ({ name, priority, id, type, setModalChange, setModalDelete, lobby }: IssueProps) => {
+	const [titleState, setTitle] = useState(name)
 	const [priorityState, setPriority] = useState(priority)
 
-	const changeHandler = () => {}
 
 	return (
 		<Card centered className={type === 'lobby' ? s.item : ''}>
@@ -22,16 +22,24 @@ const Issue = ({ title, priority, id, type, setModalDeleteIssueState }: IssuePro
 				<Card.Header>{titleState}</Card.Header>
 				<Card.Meta>{priorityState}</Card.Meta>
 				<Card.Description textAlign="right">
-					{type === 'lobby' ? <Button basic color="teal" size="mini">Change</Button> : ''}
+					{type === 'lobby' ? <Button basic color="teal" size="mini" onClick={
+						() => setModalChange({
+							name,
+							priority,
+							id,
+							lobby,
+							modalIsOpen: true
+						})
+					}>Change</Button> : ''}
 					<Button
 						basic
 						color="red"
 						circular={type === 'game'}
 						icon={type === 'game' ? 'delete' : 'remove'}
 						onClick={() =>
-							setModalDeleteIssueState({
+							setModalDelete({
 								id,
-								name: title,
+								name,
 								modalIsOpen: true,
 							})
 						}

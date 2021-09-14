@@ -1,48 +1,92 @@
 import React, { FC, useState } from 'react'
 import { Container, Header as HeaderTitle } from 'semantic-ui-react'
-import IssueType from 'src/interfaces/IssueType'
+import { IssueType } from 'src/interfaces/IssueType'
 import { RootState, useStore } from '../../../store/store'
 import Issue, { IssueProps } from '../Issue'
-import IssueCreate from '../IssueCreate'
+import IssueCreate from '../IssueCardCreate'
 import s from '../lobby.module.scss'
+import ModalChangeIssue from '../ModalChangeIssue'
+import ModalCreateIssue from '../ModalCreateIssue'
 import ModalDeleteIssue from '../ModalDeleteIssue'
 import { ModalState } from './DealerLayout'
 
 interface IssueContainerProps {
 	type: 'lobby' | 'game'
 	issues: IssueType[]
-	createIssue: ({ title, priority }: IssueType) => void
+	lobbyID: string
+	createIssue: ({ name, priority }: IssueType) => void
 	removeIssue: (id: string) => void
-	updateIssue: ({ id, title, priority }: IssueType) => void
+	updateIssue: ({ id, name, priority }: IssueType) => void
 }
 
-const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssue, createIssue }) => {
-	const { issues } = useStore().getState() as RootState
-	const [ModalDeleteIssueState, setModalDeleteIssueState] = useState<ModalState>({
+export interface IModalCreateIssue extends ModalState {
+	priority: "low" | "average" | "high",
+	lobby: string
+}
+
+const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssue, createIssue, issues, lobbyID }) => {
+	// const { issues } = useStore().getState() as RootState
+	const [ModalDelete, setModalDelete] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
 		id: '',
 	})
-	// const [issuesState, setIssuesState] = useState<Issue[]>(issues.issues);
+	const [ModalChange, setModalChange] = useState<IModalCreateIssue>({
+		modalIsOpen: false,
+		name: '',
+		priority: 'low',
+		id: '',
+		lobby: lobbyID,
+	})
+	const [ModalCreate, setModalCreate] = useState<IModalCreateIssue>({
+		modalIsOpen: false,
+		name: '',
+		priority: 'low',
+		id: '',
+		lobby: lobbyID,
+	})
+	const [issuesState, setIssuesState] = useState<IssueType[]>(issues);
+	
 	return (
 		<>
 			<HeaderTitle textAlign="center" as="h1">
 				Issues:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
-				{issues.issues.map((issue) => (
+				{issuesState.map((issue, i) => (
 					<Issue 
-					key={issue.title} 
-					type={type} 
-					setModalDeleteIssueState={setModalDeleteIssueState} {...issue} />
-				))}
-				<Issue
-					key={'asd'}
+					key={issue.name + i} 
 					type={type}
-					setModalDeleteIssueState={setModalDeleteIssueState} id="ad" priority="average" title='issue' />
-				<IssueCreate />
+						setModalChange={setModalChange}
+						setModalDelete={setModalDelete}
+					{...issue} />
+				))}
+
+				<IssueCreate lobbyId={lobbyID}  setModalCreate={setModalCreate}  />
 			</Container>
-			<ModalDeleteIssue state={ModalDeleteIssueState} setModalDeleteIssueState={setModalDeleteIssueState} removeIssue={removeIssue} />
+
+			<ModalDeleteIssue 
+				issuesArr={issuesState}
+				state={ModalDelete}
+				setIssuesState={setIssuesState}
+				setModalDelete={setModalDelete}
+			removeIssue={removeIssue} />
+
+			<ModalCreateIssue 
+				lobbyID={lobbyID}
+				ModalCreate={ModalCreate}
+				setModalCreate={setModalCreate}
+				issues={issuesState}
+				setIssuesState={setIssuesState}
+			/>
+
+			<ModalChangeIssue
+				lobbyID={lobbyID}
+				ModalChange={ModalChange}
+				setModalChange={setModalChange}
+				issues={issuesState}
+				setIssuesState={setIssuesState}
+			 />
 		</>
 	)
 }
