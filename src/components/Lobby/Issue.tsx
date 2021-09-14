@@ -22,12 +22,12 @@ const Issue = ({ title, priority, id, type, setModalDeleteIssueState }: IssuePro
 				<Card.Header>{titleState}</Card.Header>
 				<Card.Meta>{priorityState}</Card.Meta>
 				<Card.Description textAlign="right">
-					{type === 'lobby' ? <Button size="mini">Change</Button> : ''}
+					{type === 'lobby' ? <Button basic color="teal" size="mini">Change</Button> : ''}
 					<Button
-						basic={type === 'game'}
+						basic
+						color="red"
 						circular={type === 'game'}
-						icon={type === 'game' ? 'delete' : ''}
-						role="button"
+						icon={type === 'game' ? 'delete' : 'remove'}
 						onClick={() =>
 							setModalDeleteIssueState({
 								id,

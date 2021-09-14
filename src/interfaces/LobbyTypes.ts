@@ -13,6 +13,13 @@ export interface IPlayer {
 	image?: string
 }
 
+export interface IMessage {
+	text: string
+	date: Date
+	name: string
+	id?: string
+}
+
 export interface ILobby {
 	id: string
 	name: string

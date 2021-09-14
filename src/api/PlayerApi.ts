@@ -40,7 +40,7 @@ export default class PlayerAPI {
 	deletePlayer(id: string): Promise<IPlayer> {
 		return new Promise((resolve, reject) => {
 			axios
-				.delete(`${API.MAIN_API}${API.PLAYER}${id}`)
+				.delete(`${API.MAIN_API}${API.PLAYER}delete/${id}`)
 				.then((res) => resolve(res.data))
 				.catch((err) => reject(err))
 		})
@@ -49,7 +49,7 @@ export default class PlayerAPI {
 	addPlayerToLobby(lobbyID: string, playerID: string) {
 		return new Promise((resolve, reject) => {
 			axios
-				.put(`${API.MAIN_API}${API.LOBBY}${lobbyID}`, {
+				.put(`${API.MAIN_API}${API.LOBBY}add/${lobbyID}`, {
 					player_id: playerID,
 				})
 				.then((res) => {

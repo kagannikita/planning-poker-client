@@ -1,11 +1,13 @@
 import { FC } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
-import { deleteIssue } from '../../store/IssuesSlice'
+import IssueType from '../../interfaces/IssueType'
+// import { deleteIssue } from '../../store/IssuesSlice'
 import { ModalState } from './DealerLayout/DealerLayout'
 
 interface ModalDeleteIssueProps {
 	state: ModalState
 	setModalDeleteIssueState: React.Dispatch<React.SetStateAction<ModalState>>
+	removeIssue: (id: string) => void
 }
 
 const ModalDeleteIssue: FC<ModalDeleteIssueProps> = (props) => {
@@ -17,7 +19,8 @@ const ModalDeleteIssue: FC<ModalDeleteIssueProps> = (props) => {
 	}
 
 	const deleteHandler = () => {
-		deleteIssue(props.state.id)
+		// deleteIssue(props.state.id)
+		props.removeIssue(props.state.id)
 		closeHandler()
 	}
 
