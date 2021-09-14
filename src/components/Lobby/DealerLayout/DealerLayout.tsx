@@ -7,11 +7,13 @@ import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 import PlayerAPI from '../../../api/PlayerApi'
+import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
 
 interface DealerLayoutProps {
 	name: string
 	players: IPlayer[]
 	dealerPlayer: IPlayer
+	socketData: IUseLobbyDataSocket
 }
 
 export interface ModalState {
@@ -20,8 +22,10 @@ export interface ModalState {
 	id: string
 }
 
-const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.Element => {
-	const [kickPlayer, setKickPlayer] = useState<ModalState>({
+const DealerLayout = ({ name, players, dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
+	const  {	issues, createIssue, removeIssue, updateIssue } = socketData;
+
+	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
 		id: '',
@@ -82,16 +86,21 @@ const DealerLayout = ({ name, players, dealerPlayer }: DealerLayoutProps): JSX.E
 					if (member.role === Role.dealer) {
 						return
 					}
-					return <MemberItem centered key={member.id} setKickPlayer={setKickPlayer} {...(member as IPlayer)} />
+					return <MemberItem centered key={member.id} setKickPlayer={setModalKickPlayer} {...(member as IPlayer)} />
 				})}
 			</Container>
-			<IssueContainer type="lobby" />
+			<IssueContainer 
+				type="lobby" 
+				issues={issues} 
+				createIssue={createIssue} 
+				removeIssue={removeIssue} 
+				updateIssue={updateIssue} />
 			<ModalKickPlayerByDealer
-				isOpen={kickPlayer.modalIsOpen}
-				setKickPlayer={setKickPlayer}
+				isOpen={modalkickPlayer.modalIsOpen}
+				setKickPlayer={setModalKickPlayer}
 				kickMemberHandler={kickMemberHandler}
-				playerId={kickPlayer.id}
-				playerName={kickPlayer.name}
+				playerId={modalkickPlayer.id}
+				playerName={modalkickPlayer.name}
 			/>
 		</>
 	)

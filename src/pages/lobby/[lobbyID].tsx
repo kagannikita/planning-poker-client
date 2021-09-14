@@ -8,11 +8,11 @@ import MemberLayout from '../../components/Lobby/MemberLayout/MemberLayout'
 import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
 import LobbyAPI from '../../api/LobbyApi'
+import { useLobbyDataSocket } from '../../hooks'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
 	const [player, setPlayer] = useState<IPlayer | Partial<IPlayer>>({})
-
 	useEffect(() => {
 		const id = localStorage.getItem(LocalStorageEnum.playerid)
 		const player = props.players.find((player) => player.id === id) as IPlayer
@@ -21,6 +21,9 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 		setPlayer(player)
 	}, [router, props.players])
 
+	const dataSocket = useLobbyDataSocket(props.lobbyId, player.id as string)
+	console.log(dataSocket);
+	
 	return (
 		<>
 			<Head>
@@ -29,7 +32,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			{/* <Chat /> */}
 			<Container>
 				{player?.role === Role.dealer ? (
-					<DealerLayout dealerPlayer={player as IPlayer} {...props} />
+					<DealerLayout dealerPlayer={player as IPlayer} socketData={dataSocket} {...props} />
 				) : (
 					<MemberLayout {...props} />
 				)}
@@ -40,6 +43,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 
 interface LobbySSRProps {
 	name: string
+	lobbyId: string
 	players: IPlayer[]
 }
 
@@ -51,7 +55,7 @@ export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ qu
 
 	if (!lobby) return { notFound: true }
 
-	return { props: { name: lobby.name, players: lobby.players } }
+	return { props: { name: lobby.name, lobbyId: query.lobbyID as string, players: lobby.players } }
 }
 
 export default LobbyPage
