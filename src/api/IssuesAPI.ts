@@ -1,41 +1,54 @@
-import Issue from '../interfaces/IssueType'
-import io from 'socket.io-client'
+import axios from 'axios'
+import { API } from 'src/interfaces/ApiEnum'
+import { IssueType, IssueTypeAPI } from 'src/interfaces/IssueType'
 
 interface IIssuesAPI {
-	// socket: Socke
-	issues: Issue[]
-	create(): Promise<Issue>
-	delete(id: string): Promise<void>
-	change(id: string, dataIssue: Issue): Promise<Issue>
-	getAll(): Promise<Issue[]>
-	connectSocket(url: string): void
-	disconnectSocket(url: string): void
+	create(issue: IssueType): Promise<IssueType>
+	delete(issueId: string): Promise<IssueType>
+	update(dataIssue: IssueType): Promise<IssueType>
+	getAllByLobbyId(id: string): Promise<IssueType[]>
 }
 
 export class IssuesAPI implements IIssuesAPI {
-	socket: SocketIOClient.Socket
-	issues: Issue[] = []
 
-	constructor(url: string) {
-		this.socket = io(url)
+	create(issue: IssueTypeAPI): Promise<IssueType> {
+		return new Promise((resolve, reject) => {
+			axios.post(`${API.MAIN_API}${API.ISSUES}`, {
+				name: issue.name,
+				priority: issue.priority,
+				lobby: issue.lobby
+			} )
+			.then(res => resolve(res.data))
+			.catch(err => reject(err))
+		})
 	}
 
-	// socket : SocketIOClient.Socket | undefined
+	delete(issueId: string): Promise<IssueType> {
+		return new Promise((resolve, reject) => {
+			axios.delete(`${API.MAIN_API}${API.ISSUES}${issueId}`)
+				.then(res => resolve(res.data))
+				.catch(err => reject(err))
+		})
+	}
 
-	connectSocket(url: string): void {}
-	disconnectSocket(url: string): void {
-		throw new Error('Method not implemented.')
+	update(dataIssue: IssueType): Promise<IssueType> {
+		return new Promise((resolve, reject) => {
+			axios.put(`${API.MAIN_API}${API.ISSUES}${dataIssue.id}`, {
+			id: dataIssue.id,
+			name: dataIssue.name,
+			priority: dataIssue.priority
+		})
+				.then(res => resolve(res.data))
+				.catch(err => reject(err))
+		})
 	}
-	create(): Promise<Issue> {
-		throw new Error('Method not implemented.')
+
+	getAllByLobbyId(id: string): Promise<IssueType[]> {
+		return new Promise((resolve, reject) => {
+			axios.get(`${API.MAIN_API}${API.ISSUES}${id}`)
+				.then(res => resolve(res.data))
+				.catch(err => reject(err))
+		})
 	}
-	delete(id: string): Promise<void> {
-		throw new Error('Method not implemented.')
-	}
-	change(id: string, dataIssue: Issue): Promise<Issue> {
-		throw new Error('Method not implemented.')
-	}
-	getAll(): Promise<Issue[]> {
-		throw new Error('Method not implemented.')
-	}
+
 }

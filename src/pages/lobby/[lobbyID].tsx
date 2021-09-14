@@ -9,10 +9,13 @@ import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
 import LobbyAPI from '../../api/LobbyApi'
 import { useLobbyDataSocket } from '../../hooks'
+import { IssuesAPI } from 'src/api/IssuesAPI'
+import { IssueType } from 'src/interfaces/IssueType'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
 	const [player, setPlayer] = useState<IPlayer | Partial<IPlayer>>({})
+
 	useEffect(() => {
 		const id = localStorage.getItem(LocalStorageEnum.playerid)
 		const player = props.players.find((player) => player.id === id) as IPlayer
@@ -45,6 +48,7 @@ interface LobbySSRProps {
 	name: string
 	lobbyId: string
 	players: IPlayer[]
+	issues: IssueType[]
 }
 
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ query }) => {
@@ -52,10 +56,15 @@ export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ qu
 		.getLobbyById(query.lobbyID as string)
 		.then((data) => data)
 		.catch((err) => err)
+		if (!lobby) return { notFound: true }
+	const issues = await new IssuesAPI().getAllByLobbyId(query.lobbyID as string);
 
-	if (!lobby) return { notFound: true }
-
-	return { props: { name: lobby.name, lobbyId: query.lobbyID as string, players: lobby.players } }
+	return { props: {
+		name: lobby.name, 
+		lobbyId: query.lobbyID as string, 
+		players: lobby.players,
+		issues
+	 } }
 }
 
 export default LobbyPage

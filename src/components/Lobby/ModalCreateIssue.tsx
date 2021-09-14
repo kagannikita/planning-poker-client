@@ -1,12 +1,15 @@
 import { FC, useState } from 'react'
 import { Button, Input, Modal, Select } from 'semantic-ui-react'
-import IssueType from '../../interfaces/IssueType'
-// import { deleteIssue } from '../../store/IssuesSlice'
-import { ModalState } from './DealerLayout/DealerLayout'
+import { IssuesAPI } from 'src/api/IssuesAPI'
+import { IssueType } from 'src/interfaces/IssueType'
+import { IModalCreateIssue } from '../Lobby/DealerLayout/IssueContainer'
 
 interface ModalCreateIssueProps {
-	state: ModalState
-	setModalCreateIssueState: React.Dispatch<React.SetStateAction<ModalState>>
+	ModalCreate: IModalCreateIssue
+	lobbyID: string
+	setModalCreate: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
+	issues: IssueType[]
+	setIssuesState: React.Dispatch<React.SetStateAction<IssueType[]>>
 }
 
 const selectValues = [
@@ -15,47 +18,65 @@ const selectValues = [
 	{key: 'high', value: 'high', text: 'high'}
 ]
 
-const ModalCreateIssue: FC<ModalCreateIssueProps> = (props) => {
+export const ModalCreateIssue: FC<ModalCreateIssueProps> = (props) => {
+
 	const [newIssue, setNewIssue] = useState<IssueType>({
 		id: '',
-		title: '',
-		priority: 'low'
+		name: '',
+		priority: 'low',
+		lobby: props.lobbyID
 	});
+
 	const closeHandler = () => {
-		props.setModalCreateIssueState({
-			...props.state,
+		setNewIssue({
+			id: '',
+			name: '',
+			priority: 'low',
+			lobby: props.lobbyID
+		})
+		props.setModalCreate({
+			id: '',
+			name: '',
+			priority: 'low',
+			lobby: props.lobbyID,
 			modalIsOpen: false,
 		})
 	}
 
-	const createHandler = () => {
-		// deleteIssue(props.state.id)
+	const createHandler = async () => {
+		const {id} = await new IssuesAPI().create(newIssue)
+		newIssue.id = id;
+		props.setIssuesState([...props.issues, newIssue])
 		closeHandler()
 	}
 
 
 	return (
-		<Modal size="tiny" open={props.state.modalIsOpen} onClose={closeHandler}>
-			<Modal.Header>Delete issue?</Modal.Header>
+		<Modal size="tiny" dimmer="blurring" open={props.ModalCreate.modalIsOpen} onClose={closeHandler}>
+		 <Modal.Header>Create issue</Modal.Header>
 			<Modal.Content>
-				<Input label="title"  placeholder="Issue 1" onChange={(e) => setNewIssue({...newIssue, title: e.target.value})} />
+				<Input label="title"  
+				placeholder="Issue 1" 
+					value={newIssue.name}
+				onChange={(e) => {
+					setNewIssue({ ...newIssue, name: e.target.value })
+				}} />
 				<Select 
 				placeholder='Select priority' 
-				value={newIssue.priority} 
+					value={newIssue.priority}
 				options={selectValues}
 				onChange={(e, data) => {
-					console.log(data.value);
-					
-					setNewIssue({ ...newIssue })
+					setNewIssue({ ...newIssue, 
+						priority: data.value as "low" | "average" | "high"})
 				}} />
 			</Modal.Content>
 			<Modal.Actions>
 				<Button negative onClick={closeHandler}>
 					Cancel
 				</Button>
-				<Button positive onClick={createHandler}>
+				<Button positive onClick={() => createHandler()}>
 					Create
-				</Button>
+				</Button> 
 			</Modal.Actions>
 		</Modal>
 	)

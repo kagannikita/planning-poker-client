@@ -1,26 +1,30 @@
 import { FC } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
-import IssueType from '../../interfaces/IssueType'
-// import { deleteIssue } from '../../store/IssuesSlice'
+import { IssuesAPI } from 'src/api/IssuesAPI'
+import { IssueType } from 'src/interfaces/IssueType'
 import { ModalState } from './DealerLayout/DealerLayout'
 
 interface ModalDeleteIssueProps {
 	state: ModalState
-	setModalDeleteIssueState: React.Dispatch<React.SetStateAction<ModalState>>
+	issuesArr: IssueType[]
+	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
 	removeIssue: (id: string) => void
+	setIssuesState: React.Dispatch<React.SetStateAction<IssueType[]>>
 }
 
 const ModalDeleteIssue: FC<ModalDeleteIssueProps> = (props) => {
 	const closeHandler = () => {
-		props.setModalDeleteIssueState({
+		props.setModalDelete({
 			...props.state,
 			modalIsOpen: false,
 		})
 	}
 
-	const deleteHandler = () => {
-		// deleteIssue(props.state.id)
-		props.removeIssue(props.state.id)
+	const deleteHandler = async () => {
+		await new IssuesAPI().delete(props.state.id)
+		const newArr = props.issuesArr.filter(iss => iss.id !== props.state.id)
+		props.setIssuesState(newArr)
+		// props.removeIssue(props.state.id)
 		closeHandler()
 	}
 

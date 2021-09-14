@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import io from 'socket.io-client'
 import { nanoid } from 'nanoid'
 import { useBeforeUnload, useLocalStorage } from '.'
-import { API } from 'src/interfaces/ApiEnum'
-import { IMessage, IPlayer } from 'src/interfaces/LobbyTypes'
-import IssueType from 'src/interfaces/IssueType'
+import { API } from '../interfaces/ApiEnum'
+import { IMessage, IPlayer } from '../interfaces/LobbyTypes'
+import IssueType from '../interfaces/IssueType'
 
 export interface IUseLobbyDataSocket {
   players: IPlayer[];
@@ -15,9 +15,9 @@ export interface IUseLobbyDataSocket {
     senderName: string;
   }) => void;
   removeMessage: (id: string) => void;
-  createIssue: ({ title, priority }: IssueType) => void;
+  createIssue: ({ name, priority }: IssueType) => void;
   removeIssue: (id: string) => void;
-  updateIssue: ({ id, title, priority }: IssueType) => void;
+  updateIssue: ({ id, name, priority }: IssueType) => void;
 }
 
 const SERVER_URL = API.MAIN_API;
@@ -83,19 +83,19 @@ export const useLobbyDataSocket = (lobbyId: string, userId: string): IUseLobbyDa
     socketRef.current.emit('message:remove', id)
   }
 
-  const createIssue = ({ title, priority }: IssueType) => {
+  const createIssue = ({ name, priority }: IssueType) => {
     if (socketRef.current === null) return
     socketRef.current.emit('issue:add', {
-      title,
+      name,
       priority
     })
   }
 
-  const updateIssue = ({ id, title, priority }: IssueType) => {
+  const updateIssue = ({ id, name, priority }: IssueType) => {
     if (socketRef.current === null) return
     socketRef.current.emit('issue:update', {
       id,
-      title,
+      name,
       priority
     })
   }

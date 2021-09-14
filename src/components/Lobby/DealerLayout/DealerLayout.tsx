@@ -8,12 +8,15 @@ import IssueContainer from './IssueContainer'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 import PlayerAPI from '../../../api/PlayerApi'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
+import { IssueType } from 'src/interfaces/IssueType'
 
 interface DealerLayoutProps {
 	name: string
 	players: IPlayer[]
 	dealerPlayer: IPlayer
 	socketData: IUseLobbyDataSocket
+	issues: IssueType[]
+	lobbyId: string
 }
 
 export interface ModalState {
@@ -22,20 +25,15 @@ export interface ModalState {
 	id: string
 }
 
-const DealerLayout = ({ name, players, dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
-	const  {	issues, createIssue, removeIssue, updateIssue } = socketData;
+const DealerLayout = ({ name, players, dealerPlayer, socketData, issues, lobbyId }: DealerLayoutProps): JSX.Element => {
+	const  { createIssue, removeIssue, updateIssue } = socketData;
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
 		id: '',
 	})
-	// let fakePlayers: IPlayer[] = [
-	// 	{ firstName: 'Max', lastName: 'masd', id: '1', role: Role.player },
-	// 	{ firstName: 'John', lastName: 'masd', id: '2', role: Role.player },
-	// 	{ firstName: 'Snow', lastName: 'masd', id: '3', role: Role.player },
-	// 	{ firstName: 'Smith', lastName: 'masd', id: '4', role: Role.player },
-	// ]
+
 	const [playersStore, setplayersStore] = useState<IPlayer[]>(players)
 
 	const kickMemberHandler = async (playerId: string) => {
@@ -43,6 +41,12 @@ const DealerLayout = ({ name, players, dealerPlayer, socketData }: DealerLayoutP
 		const newPlayers = playersStore.filter((player) => player.id !== playerId)
 		setplayersStore(newPlayers)
 	}
+	// let fakePlayers: IPlayer[] = [
+	// 	{ firstName: 'Max', lastName: 'masd', id: '1', role: Role.player },
+	// 	{ firstName: 'John', lastName: 'masd', id: '2', role: Role.player },
+	// 	{ firstName: 'Snow', lastName: 'masd', id: '3', role: Role.player },
+	// 	{ firstName: 'Smith', lastName: 'masd', id: '4', role: Role.player },
+	// ]
 
 	// const issues: Issue[] = [
 	// 	{ title: 'Issue 1', priority: 'low', id:'1' },
@@ -91,10 +95,12 @@ const DealerLayout = ({ name, players, dealerPlayer, socketData }: DealerLayoutP
 			</Container>
 			<IssueContainer 
 				type="lobby" 
+				lobbyID={lobbyId}
 				issues={issues} 
 				createIssue={createIssue} 
 				removeIssue={removeIssue} 
 				updateIssue={updateIssue} />
+
 			<ModalKickPlayerByDealer
 				isOpen={modalkickPlayer.modalIsOpen}
 				setKickPlayer={setModalKickPlayer}
