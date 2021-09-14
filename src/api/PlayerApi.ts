@@ -57,8 +57,8 @@ export default class PlayerAPI {
 					const socket = io(API.MAIN_API)
 					socket.on('connect', () => {
 						socket.emit('join', {
-							player_id: playerID,
-							lobby_id: lobbyID,
+							name: playerID,
+							room_id: lobbyID,
 						})
 					})
 				})

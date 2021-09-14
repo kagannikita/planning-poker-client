@@ -11,9 +11,13 @@ import LobbyAPI from '../../api/LobbyApi'
 import { useLobbyDataSocket } from '../../hooks'
 import { IssuesAPI } from 'src/api/IssuesAPI'
 import { IssueType } from 'src/interfaces/IssueType'
+import io from 'socket.io-client'
+import PlayerAPI from '../../api/PlayerApi'
+
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
+	const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8080'), [])
 	const [player, setPlayer] = useState<IPlayer | Partial<IPlayer>>({})
 
 	useEffect(() => {
@@ -22,11 +26,21 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 
 		if (!player) router.push('/404')
 		setPlayer(player)
-	}, [router, props.players])
+		socket.on('connect', () => {
+			socket.emit('join', {
+				name: player.id,
+				player_id: player.id,
+				room_id: props.lobbyId,
+			})
+		})
+		socket.on('joined', async (content: { player_id: string; name: string }) => {
+			console.log('Content: ', content)
+			// тут напиши логику добавление в клиент
+		})
+	}, [router, props.players, socket])
 
 	const dataSocket = useLobbyDataSocket(props.lobbyId, player.id as string)
-	console.log(dataSocket);
-	
+
 	return (
 		<>
 			<Head>

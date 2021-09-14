@@ -31,7 +31,7 @@
     "redux-thunk": "^2.3.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3",
-    "socket.io-client": "^2.3.1",
+    "socket.io-client": "^2.4.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "@types/react-transition-group": "^4.4.2",
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",
-    "@types/socket.io-client": "^1.4.34",
+    "@types/socket.io-client": "^1.4.36",
     "@types/styled-components": "^5.1.13",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.15.0",
