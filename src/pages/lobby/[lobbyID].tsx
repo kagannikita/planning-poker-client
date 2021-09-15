@@ -9,15 +9,13 @@ import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
 import LobbyAPI from '../../api/LobbyApi'
 import { useLobbyDataSocket } from '../../hooks'
-import { IssuesAPI } from 'src/api/IssuesAPI'
-import { IssueType } from 'src/interfaces/IssueType'
 import io from 'socket.io-client'
-import PlayerAPI from '../../api/PlayerApi'
-
+import { IssueType } from '../../interfaces/IssueType'
+import { IssuesAPI } from '../../api/IssuesAPI'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
-	const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8080'), [])
+	const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8082'), [])
 	const [player, setPlayer] = useState<IPlayer | Partial<IPlayer>>({})
 
 	useEffect(() => {
@@ -29,13 +27,12 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 		socket.on('connect', () => {
 			socket.emit('join', {
 				name: player.id,
-				player_id: player.id,
-				room_id: props.lobbyId,
+				lobby_id: props.lobbyId,
 			})
 		})
-		socket.on('joined', async (content: { player_id: string; name: string }) => {
-			console.log('Content: ', content)
-			// тут напиши логику добавление в клиент
+		socket.on('joined', async (content: { players: IPlayer[] }) => {
+			console.log('Content: ', content.players)
+			// туда обновляй мемберов
 		})
 	}, [router, props.players, socket])
 
@@ -70,15 +67,17 @@ export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ qu
 		.getLobbyById(query.lobbyID as string)
 		.then((data) => data)
 		.catch((err) => err)
-		if (!lobby) return { notFound: true }
-	const issues = await new IssuesAPI().getAllByLobbyId(query.lobbyID as string);
+	if (!lobby) return { notFound: true }
+	const issues = await new IssuesAPI().getAllByLobbyId(query.lobbyID as string)
 
-	return { props: {
-		name: lobby.name, 
-		lobbyId: query.lobbyID as string, 
-		players: lobby.players,
-		issues
-	 } }
+	return {
+		props: {
+			name: lobby.name,
+			lobbyId: query.lobbyID as string,
+			players: lobby.players,
+			issues,
+		},
+	}
 }
 
 export default LobbyPage

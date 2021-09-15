@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import { Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
 import MemberItem from '../Lobby/MemberItem'
 import { Role } from '../../interfaces/LobbyTypes'
-import IssueLobby from '../Lobby/Issue'
 
 const DealerLayoutGame: FC = () => {
 	return (
