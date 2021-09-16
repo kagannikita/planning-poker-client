@@ -8,8 +8,9 @@ interface ModalChangeIssueProps {
   ModalChange: IModalCreateIssue
   lobbyID: string
   setModalChange: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
-  issues: IssueType[]
-  setIssuesState: React.Dispatch<React.SetStateAction<IssueType[]>>
+  // issues: IssueType[]
+  // setIssuesState: React.Dispatch<React.SetStateAction<IssueType[]>>
+  updateIssue: ({ id, name, priority }: IssueType) => void
 }
 
 const selectValues = [
@@ -40,10 +41,10 @@ export const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
 
   const updateHandler = async () => {
     console.log("update ", props.ModalChange);
-
-    await new IssuesAPI().update(props.ModalChange)
-    const newIssueArr = props.issues.map(iss => iss.id === props.ModalChange.id ? props.ModalChange : iss)
-    props.setIssuesState(newIssueArr)
+    props.updateIssue(props.ModalChange)
+    // await new IssuesAPI().update(props.ModalChange)
+    // const newIssueArr = props.issues.map(iss => iss.id === props.ModalChange.id ? props.ModalChange : iss)
+    // props.setIssuesState(newIssueArr)
     closeHandler()
   }
 
@@ -56,7 +57,6 @@ export const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
           placeholder="Issue 1"
           value={props.ModalChange.name}
           onChange={(e) => {
-            // setUpdateIssue({ ...updateIssue, name: e.target.value })
             props.setModalChange({ ...props.ModalChange, name: e.target.value })
           }} />
         <Select

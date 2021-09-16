@@ -35,7 +35,7 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
     socketRef.current = io(SERVER_URL, {
       query: { lobbyId }
     })
-    console.log( playerId, 'id: ', lobbyId);
+    // console.log( playerId, 'id: ', lobbyId);
     
     socketRef.current.emit('join', {name: playerId, lobby_id: lobbyId});
     
@@ -96,24 +96,30 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
   }
 
   const createIssue = ({ name, priority }: IssueType) => {
+    console.log("create issue ", name, priority, lobbyId);
+    
     if (socketRef.current === null) return
     socketRef.current.emit('issue:add', {
       name,
-      priority
+      priority,
+      lobby_id: lobbyId
     })
   }
 
-  const updateIssue = ({ id, name, priority }: IssueType) => {
+  const updateIssue = ({ name, priority }: IssueType) => {
     if (socketRef.current === null) return
     socketRef.current.emit('issue:update', {
-      id,
       name,
-      priority
+      priority,
+      lobby_id: lobbyId
     })
   }
   const removeIssue = ( id: string) => {
     if (socketRef.current === null) return
-    socketRef.current.emit('issue:delete', id)
+    socketRef.current.emit('issue:delete', {
+      id,
+      lobby_id: lobbyId 
+    })
   }
   
   const renameLobbyNameHandler = (name: string) => {

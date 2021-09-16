@@ -8,8 +8,8 @@ interface ModalDeleteIssueProps {
 	state: ModalState
 	issuesArr: IssueType[]
 	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
+	// setIssuesState: React.Dispatch<React.SetStateAction<IssueType[]>>
 	removeIssue: (id: string) => void
-	setIssuesState: React.Dispatch<React.SetStateAction<IssueType[]>>
 }
 
 const ModalDeleteIssue: FC<ModalDeleteIssueProps> = (props) => {
@@ -21,10 +21,10 @@ const ModalDeleteIssue: FC<ModalDeleteIssueProps> = (props) => {
 	}
 
 	const deleteHandler = async () => {
-		await new IssuesAPI().delete(props.state.id)
-		const newArr = props.issuesArr.filter(iss => iss.id !== props.state.id)
-		props.setIssuesState(newArr)
-		// props.removeIssue(props.state.id)
+		// await new IssuesAPI().delete(props.state.id)
+		// const newArr = props.issuesArr.filter(iss => iss.id !== props.state.id)
+		// props.setIssuesState(newArr)
+		props.removeIssue(props.state.id)
 		closeHandler()
 	}
 

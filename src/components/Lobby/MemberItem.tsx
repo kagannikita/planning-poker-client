@@ -2,13 +2,13 @@ import React, { Dispatch, FC, SetStateAction } from 'react'
 import { Button, Card, Image } from 'semantic-ui-react'
 
 import { IPlayer } from '../../interfaces/LobbyTypes'
-import { KickPlayer } from './DealerLayout/DealerLayout'
+import { ModalState } from './DealerLayout/DealerLayout'
 import s from './lobby.module.scss'
 
 interface MemberItemProps extends IPlayer {
 	centered?: boolean
-	setKickPlayer?: Dispatch<SetStateAction<KickPlayer>>
-	setVoteKickPlayer?: Dispatch<SetStateAction<KickPlayer>>
+	setKickPlayer?: Dispatch<SetStateAction<ModalState>>
+	setVoteKickPlayer?: Dispatch<SetStateAction<ModalState>>
 }
 
 const MemberItem: FC<MemberItemProps> = ({
@@ -27,7 +27,7 @@ const MemberItem: FC<MemberItemProps> = ({
 				<Image
 					floated="right"
 					size="mini"
-					src={image || 'https://react.semantic-ui.com/images/avatar/large/steve.jpg'}
+					src={image}
 				/>
 				<Card.Header>{`${firstName} ${lastName}`}</Card.Header>
 				<Card.Meta>{position}</Card.Meta>
@@ -37,7 +37,7 @@ const MemberItem: FC<MemberItemProps> = ({
 						size="tiny"
 						circular
 						role="button"
-						onClick={() => setKickPlayer({ modalIsOpen: true, playerName: `${firstName} ${lastName}`, id })}
+						onClick={() => setKickPlayer({ modalIsOpen: true, name: `${firstName} ${lastName}`, id })}
 					/>
 				)}
 			</Card.Content>
