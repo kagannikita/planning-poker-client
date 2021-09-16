@@ -56,10 +56,9 @@ const Home = (): JSX.Element => {
 	}
 
 	const connectToLobby = async (lobbyID: string, playerID: string) => {
-		console.log(lobbyID, playerID);
-		
 		await new PlayerAPI().addPlayerToLobby(lobbyID, playerID)
-		localStorage.setItem(LocalStorageEnum.playerid, playerID)
+		sessionStorage.setItem(LocalStorageEnum.playerid, playerID)
+		// localStorage.setItem(LocalStorageEnum.playerid, playerID)
 		await router.push({ pathname: API.LOBBY + lobbyID })
 	}
 

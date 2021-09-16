@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import Issue from '../interfaces/IssueType'
+import {IssueType} from '../interfaces/IssueType'
 
 export type IssuesState = {
-	issues: Issue[]
+	issues: IssueType[]
 }
 
 export const initialState: IssuesState = {
@@ -13,13 +13,13 @@ export const issuesSlice = createSlice({
 	name: 'issues',
 	initialState: initialState,
 	reducers: {
-		setNewIssues: (state, { payload }: PayloadAction<Issue>) => {
+		setNewIssues: (state, { payload }: PayloadAction<IssueType>) => {
 			state.issues = [...state.issues, payload]
 		},
 		deleteIssue: (state, { payload }: PayloadAction<string>) => {
 			state.issues = state.issues.filter((issue) => issue.id !== payload)
 		},
-		changeIssue: (state, { payload }: PayloadAction<Issue>) => {
+		changeIssue: (state, { payload }: PayloadAction<IssueType>) => {
 			state.issues = state.issues.map((issue) => (issue.id === payload.id ? payload : issue))
 		},
 	},

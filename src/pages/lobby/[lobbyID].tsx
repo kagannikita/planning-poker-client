@@ -13,71 +13,88 @@ import { IssuesAPI } from 'src/api/IssuesAPI'
 import { IssueType } from 'src/interfaces/IssueType'
 import io from 'socket.io-client'
 import PlayerAPI from '../../api/PlayerApi'
+import Loader from 'src/components/loader/loader'
 
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
-	const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8080'), [])
-	const [player, setPlayer] = useState<IPlayer | Partial<IPlayer>>({})
-
+	// const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8080'), [])
+	const [playerId, setPlayerId] = useState('')
+	// const [player, setPlayer] = useState<IPlayer>();
+	const [Loading, setLoading] = useState(true);
 	useEffect(() => {
-		const id = localStorage.getItem(LocalStorageEnum.playerid)
-		const player = props.players.find((player) => player.id === id) as IPlayer
+		// const id = localStorage.getItem(LocalStorageEnum.playerid)
+		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
+		if (!id) router.push('/404')
 
-		if (!player) router.push('/404')
-		setPlayer(player)
-		socket.on('connect', () => {
-			socket.emit('join', {
-				name: player.id,
-				player_id: player.id,
-				room_id: props.lobbyId,
-			})
-		})
-		socket.on('joined', async (content: { player_id: string; name: string }) => {
-			console.log('Content: ', content)
-			// тут напиши логику добавление в клиент
-		})
-	}, [router, props.players, socket])
+		setPlayerId(id as string)
+		// setPlayer(player)
 
-	const dataSocket = useLobbyDataSocket(props.lobbyId, player.id as string)
+		// socket.on('connect', () => {
+		// 	socket.emit('join', {
+		// 		name: player.id,
+		// 		player_id: player.id,
+		// 		room_id: props.lobbyId,
+		// 	})
+		// })
+		// socket.on('joined', async (content: { player_id: string; name: string }) => {
+		// 	console.log('Content: ', content)
+		// 	// тут напиши логику добавление в клиент
+		// })
 
+		// socket.emit('players:get', async (content: any) => {
+		// 	console.log('Content: ', content)
+		// 	// тут напиши логику добавление в клиент
+		// })
+	}, [router])
+
+	const dataSocket = useLobbyDataSocket(props.lobbyId, playerId as string)
+	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer;
+	
+	useEffect(() => {
+		console.log('socket daata ',dataSocket.lobbyData);
+		
+		setLoading(false);
+	})
 	return (
 		<>
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
-			{/* <Chat /> */}
+			 {/* <Chat /> */}
+			{Loading ? <Loader loaderText='loading' />  :	
 			<Container>
-				{player?.role === Role.dealer ? (
-					<DealerLayout dealerPlayer={player as IPlayer} socketData={dataSocket} {...props} />
+				{
+					 player?.role === Role.dealer ? (
+					<DealerLayout dealerPlayer={player} socketData={dataSocket} {...props} />
 				) : (
-					<MemberLayout {...props} />
+					<MemberLayout socketData={dataSocket} />
 				)}
-			</Container>
+			</Container>}
 		</>
 	)
 }
 
 interface LobbySSRProps {
-	name: string
+	// name: string
 	lobbyId: string
-	players: IPlayer[]
-	issues: IssueType[]
+	// players: IPlayer[]
+	// issues: IssueType[]
 }
 
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ query }) => {
-	const lobby = await new LobbyAPI()
-		.getLobbyById(query.lobbyID as string)
-		.then((data) => data)
-		.catch((err) => err)
-		if (!lobby) return { notFound: true }
-	const issues = await new IssuesAPI().getAllByLobbyId(query.lobbyID as string);
+	// const lobby = await new LobbyAPI()
+	// 	.getLobbyById(query.lobbyID as string)
+	// 	.then((data) => data)
+	// 	.catch((err) => err)
+	// 	if (!lobby) return { notFound: true }
+	// const issues = await new IssuesAPI().getAllByLobbyId(query.lobbyID as string);
 
 	return { props: {
-		name: lobby.name, 
+		// name: lobby.name, 
 		lobbyId: query.lobbyID as string, 
-		players: lobby.players,
-		issues
+		// players: lobby.players,
+		// issues
 	 } }
 }
 

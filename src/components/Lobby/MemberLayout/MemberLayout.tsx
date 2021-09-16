@@ -4,13 +4,13 @@ import { IPlayer } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
+import { IUseLobbyDataSocket } from 'src/hooks/useLobbyDataSocket'
 
 interface MemberLayoutProps {
-	name: string
-	players: IPlayer[]
+	socketData: IUseLobbyDataSocket
 }
 
-const MemberLayout = ({ name, players }: MemberLayoutProps): JSX.Element => {
+const MemberLayout = ({ socketData }: MemberLayoutProps): JSX.Element => {
 	const [voteKickPlayer, setvoteKickPlayer] = useState({
 		modalIsOpen: false,
 		playerName: '',
@@ -20,13 +20,13 @@ const MemberLayout = ({ name, players }: MemberLayoutProps): JSX.Element => {
 	return (
 		<>
 			<HeaderTitle as="h1" className={s.title}>
-				{name}
+				{socketData.lobbyData?.name}
 			</HeaderTitle>
 			<Grid columns="1">
 				<Grid.Row color="blue">
 					<Grid.Column>
 						<HeaderTitle as="h3">Scram master</HeaderTitle>
-						{players.map((dealer) => {
+						{socketData.lobbyData?.players.map((dealer) => {
 							if (dealer.role === 'dealer') {
 								return <MemberItem key={dealer.id} {...(dealer as IPlayer)} />
 							}
@@ -51,7 +51,7 @@ const MemberLayout = ({ name, players }: MemberLayoutProps): JSX.Element => {
 				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
-				{players.map((member) => {
+				{socketData.lobbyData?.players.map((member) => {
 					if (member.role === 'dealer') return
 					return <MemberItem centered={true} key={member.id} {...(member as IPlayer)} />
 				})}
