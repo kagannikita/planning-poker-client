@@ -54,13 +54,6 @@ export default class PlayerAPI {
 				})
 				.then((res) => {
 					resolve(res.data)
-					const socket = io(API.MAIN_API)
-					socket.on('connect', () => {
-						socket.emit('join', {
-							name: playerID,
-							room_id: lobbyID,
-						})
-					})
 				})
 				.catch((err) => reject(err))
 		})

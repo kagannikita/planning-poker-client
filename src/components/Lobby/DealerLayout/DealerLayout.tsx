@@ -8,7 +8,7 @@ import IssueContainer from './IssueContainer'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 import PlayerAPI from '../../../api/PlayerApi'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
-import { IssueType } from 'src/interfaces/IssueType'
+import { IssueType } from '../../../interfaces/IssueType'
 
 interface DealerLayoutProps {
 	name: string
@@ -26,7 +26,7 @@ export interface ModalState {
 }
 
 const DealerLayout = ({ name, players, dealerPlayer, socketData, issues, lobbyId }: DealerLayoutProps): JSX.Element => {
-	const  { createIssue, removeIssue, updateIssue } = socketData;
+	const { createIssue, removeIssue, updateIssue } = socketData
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
@@ -93,13 +93,14 @@ const DealerLayout = ({ name, players, dealerPlayer, socketData, issues, lobbyId
 					return <MemberItem centered key={member.id} setKickPlayer={setModalKickPlayer} {...(member as IPlayer)} />
 				})}
 			</Container>
-			<IssueContainer 
-				type="lobby" 
+			<IssueContainer
+				type="lobby"
 				lobbyID={lobbyId}
-				issues={issues} 
-				createIssue={createIssue} 
-				removeIssue={removeIssue} 
-				updateIssue={updateIssue} />
+				issues={issues}
+				createIssue={createIssue}
+				removeIssue={removeIssue}
+				updateIssue={updateIssue}
+			/>
 
 			<ModalKickPlayerByDealer
 				isOpen={modalkickPlayer.modalIsOpen}
