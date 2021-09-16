@@ -6,9 +6,7 @@ import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
-import PlayerAPI from '../../../api/PlayerApi'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
-import { IssueType } from 'src/interfaces/IssueType'
 
 interface DealerLayoutProps {
 	// name: string
@@ -26,21 +24,13 @@ export interface ModalState {
 }
 
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
-	const  { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData;
-	console.log( 'dealer',lobbyData);
-	
+	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData
+
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
 		id: '',
 	})
-
-	const kickMemberHandler = async (playerId: string) => {
-		// await new PlayerAPI().deletePlayer(playerId)
-		kickPlayer(playerId);
-		// const newPlayers = socketData.lobbyData?.players.filter((player) => player.id !== playerId)
-		// setplayersStore(newPlayers)
-	}
 
 	return (
 		<>
@@ -81,18 +71,19 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 					return <MemberItem centered key={member.id} setKickPlayer={setModalKickPlayer} {...(member as IPlayer)} />
 				})}
 			</Container>
-			<IssueContainer 
-				type="lobby" 
+			<IssueContainer
+				type="lobby"
 				lobbyID={socketData.lobbyData?.id as string}
-				issues={socketData.issues} 
-				createIssue={createIssue} 
-				removeIssue={removeIssue} 
-				updateIssue={updateIssue} />
+				issues={socketData.issues}
+				createIssue={createIssue}
+				removeIssue={removeIssue}
+				updateIssue={updateIssue}
+			/>
 
 			<ModalKickPlayerByDealer
 				isOpen={modalkickPlayer.modalIsOpen}
 				setKickPlayer={setModalKickPlayer}
-				kickMemberHandler={kickMemberHandler}
+				kickMemberHandler={kickPlayer}
 				playerId={modalkickPlayer.id}
 				playerName={modalkickPlayer.name}
 			/>

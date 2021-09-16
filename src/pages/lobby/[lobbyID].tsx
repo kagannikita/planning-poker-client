@@ -7,70 +7,42 @@ import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
 import MemberLayout from '../../components/Lobby/MemberLayout/MemberLayout'
 import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
-import LobbyAPI from '../../api/LobbyApi'
 import { useLobbyDataSocket } from '../../hooks'
-import { IssuesAPI } from 'src/api/IssuesAPI'
-import { IssueType } from 'src/interfaces/IssueType'
-import io from 'socket.io-client'
-import PlayerAPI from '../../api/PlayerApi'
-import Loader from 'src/components/loader/loader'
-
+import Loader from '../../components/loader/loader'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
-	// const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8080'), [])
 	const [playerId, setPlayerId] = useState('')
-	// const [player, setPlayer] = useState<IPlayer>();
-	const [Loading, setLoading] = useState(true);
+	const [Loading, setLoading] = useState(true)
+
 	useEffect(() => {
-		// const id = localStorage.getItem(LocalStorageEnum.playerid)
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
 		if (!id) router.push('/404')
 
 		setPlayerId(id as string)
-		// setPlayer(player)
-
-		// socket.on('connect', () => {
-		// 	socket.emit('join', {
-		// 		name: player.id,
-		// 		player_id: player.id,
-		// 		room_id: props.lobbyId,
-		// 	})
-		// })
-		// socket.on('joined', async (content: { player_id: string; name: string }) => {
-		// 	console.log('Content: ', content)
-		// 	// тут напиши логику добавление в клиент
-		// })
-
-		// socket.emit('players:get', async (content: any) => {
-		// 	console.log('Content: ', content)
-		// 	// тут напиши логику добавление в клиент
-		// })
+		setLoading(false)
 	}, [router])
 
-	const dataSocket = useLobbyDataSocket(props.lobbyId, playerId as string)
-	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer;
-	
-	useEffect(() => {
-		console.log('socket daata ',dataSocket.lobbyData);
-		
-		setLoading(false);
-	})
+	const dataSocket = useLobbyDataSocket(props.lobbyId, playerId)
+	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
+
 	return (
 		<>
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
-			 {/* <Chat /> */}
-			{Loading ? <Loader loaderText='loading' />  :	
-			<Container>
-				{
-					 player?.role === Role.dealer ? (
-					<DealerLayout dealerPlayer={player} socketData={dataSocket} {...props} />
-				) : (
-					<MemberLayout socketData={dataSocket} />
-				)}
-			</Container>}
+			{/* <Chat /> */}
+			{Loading ? (
+				<Loader loaderText="loading" />
+			) : (
+				<Container>
+					{player?.role === Role.dealer ? (
+						<DealerLayout dealerPlayer={player} socketData={dataSocket} {...props} />
+					) : (
+						<MemberLayout socketData={dataSocket} />
+					)}
+				</Container>
+			)}
 		</>
 	)
 }
@@ -90,12 +62,14 @@ export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ qu
 	// 	if (!lobby) return { notFound: true }
 	// const issues = await new IssuesAPI().getAllByLobbyId(query.lobbyID as string);
 
-	return { props: {
-		// name: lobby.name, 
-		lobbyId: query.lobbyID as string, 
-		// players: lobby.players,
-		// issues
-	 } }
+	return {
+		props: {
+			// name: lobby.name,
+			lobbyId: query.lobbyID as string,
+			// players: lobby.players,
+			// issues
+		},
+	}
 }
 
 export default LobbyPage
