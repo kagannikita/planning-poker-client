@@ -9,6 +9,7 @@ import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 import PlayerAPI from '../../../api/PlayerApi'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
 import { IssueType } from '../../../interfaces/IssueType'
+import GameSettings from '../../GameSettings/GameSettings'
 
 interface DealerLayoutProps {
 	name: string
@@ -109,6 +110,9 @@ const DealerLayout = ({ name, players, dealerPlayer, socketData, issues, lobbyId
 				playerId={modalkickPlayer.id}
 				playerName={modalkickPlayer.name}
 			/>
+			<Container>
+				<GameSettings />
+			</Container>
 		</>
 	)
 }

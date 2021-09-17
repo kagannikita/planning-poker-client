@@ -1,0 +1,168 @@
+.cardContainer {
+	margin: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	perspective: 25rem;
+	cursor: pointer;
+
+	&.flipped:hover > .card {
+		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+	}
+
+	&.flipped > .card {
+		transform: rotateY(180deg) translateX(-100%);
+		transform-origin: left;
+	}
+
+	&.noPick {
+		cursor: default;
+	}
+}
+
+.card {
+	position: relative;
+	width: 8rem;
+	height: 10rem;
+	transform-style: preserve-3d;
+	transform-origin: right;
+	transition: all 0.5s;
+	box-shadow: 0 1px 5px black;
+	border-radius: 5px;
+
+	&__front,
+	&__back {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		backface-visibility: hidden;
+		border-radius: inherit;
+		background-position: center;
+		background-size: cover;
+	}
+
+	&__back {
+		background-color: gold;
+		transform: rotateY(180deg);
+	}
+}
+
+.cardSelected {
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 2;
+		border-radius: 5px;
+		background-color: rgba(0, 0, 0, 0.2);
+	}
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 30px;
+		height: 30px;
+		z-index: 3;
+		border-radius: 5px;
+		background-image: url('https://i.vimeocdn.com/portrait/24377911_640x640');
+		background-size: cover;
+	}
+}
+
+.card__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.8rem;
+	padding: 5px;
+	width: 100%;
+	height: 20%;
+}
+
+.cardTitleInput {
+	display: none;
+	position: absolute;
+	border-radius: 2px;
+	border: 1px solid;
+	top: 3px;
+	left: 5px;
+	width: 90%;
+	height: 15%;
+
+	&.visible {
+		display: inline-block;
+	}
+}
+
+.card__main {
+	overflow: hidden;
+	padding: 5px;
+	width: 100%;
+	height: 60%;
+}
+
+.card__footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	font-size: 0.8rem;
+	padding: 5px;
+	width: 100%;
+	height: 20%;
+}
+
+.cardDefaultPic {
+	width: 100%;
+	height: 100%;
+	background-image: url('https://cdn.icon-icons.com/icons2/2771/PNG/512/coffee_cup_icon_176764.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+	background-position: center;
+}
+
+.cardTypeShort {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: uppercase;
+	font-size: 3rem;
+	font-weight: bold;
+	width: 100%;
+	height: 100%;
+}
+
+.cardControl {
+}
+
+.cardBtn {
+	margin-right: 5px;
+	width: 15px;
+	height: 15px;
+	background-color: transparent;
+	border: none;
+	background-size: cover;
+	cursor: pointer;
+
+	&:first-child {
+		background-image: url('http://cdn.onlinewebfonts.com/svg/download_237015.png');
+	}
+
+	&:last-child {
+		margin-right: 0;
+		background-image: url('https://cdn.icon-icons.com/icons2/940/PNG/512/15_icon-icons.com_73786.png');
+	}
+}
+
+.cardTitle {
+	max-width: 57%;
+	max-height: 100%;
+	overflow: hidden;
+}
