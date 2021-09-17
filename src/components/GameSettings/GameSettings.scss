@@ -1,0 +1,12 @@
+@import 'src/components/Timer/Timer';
+@import 'src/components/GameSettings/SettingsForm/SettingsForm';
+
+.game-settings {
+	padding-top: 24px;
+	margin-bottom: 24px;
+	width: fit-content;
+
+	& > form {
+		margin-bottom: 24px;
+	}
+}
