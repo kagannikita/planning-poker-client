@@ -88,6 +88,8 @@ const GameSettings: React.FC = () => {
 		)
 	}
 
+	// TODO подготовить данные для отправки настроек
+
 	const gameTimeInMS = (): number => {
 		const minutesMS = Number(minutes) * 60 * 1000
 		const secondsMS = Number(seconds) * 1000
