@@ -8,17 +8,27 @@ type CardsFieldProps = {
 		name?: string
 		is_cover?: boolean
 		image: string
+		scoreTypeShort?: string
+		cardValue?: string
 	}[]
 	cardIsOpen?: boolean
 	pickCards?: boolean
+	deleteCard?: (index: number) => void
+	setCardValue?: (value: string, cardIndex: number) => void
 }
 
-const CardsField: React.FC<CardsFieldProps> = ({ cards, cardIsOpen = true, pickCards = false }: CardsFieldProps) => {
+const CardsField: React.FC<CardsFieldProps> = ({
+	cards,
+	cardIsOpen = true,
+	pickCards = false,
+	deleteCard,
+	setCardValue,
+}: CardsFieldProps) => {
 	const [indexOfSelectedCard, setIndexOfSelectedCard] = useState<number>(0)
 
 	return (
 		<div className={cls.cardsField}>
-			{cards.map(({ image }, index) => {
+			{cards.map(({ image, scoreTypeShort = 'default', cardValue = 'unknown' }, index) => {
 				let cardIsSelected = false
 				if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
 				return (
@@ -30,6 +40,10 @@ const CardsField: React.FC<CardsFieldProps> = ({ cards, cardIsOpen = true, pickC
 						cardIsSelected={cardIsSelected}
 						setIndexOfSelectedCard={setIndexOfSelectedCard}
 						pickCards={pickCards}
+						scoreTypeShort={scoreTypeShort}
+						cardValue={cardValue}
+						deleteCard={deleteCard}
+						setCardValue={setCardValue}
 					/>
 				)
 			})}
