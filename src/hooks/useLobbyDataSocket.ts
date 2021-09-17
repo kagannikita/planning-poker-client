@@ -39,12 +39,12 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
     
     socketRef.current.emit('join', {name: playerId, lobby_id: lobbyId});
     
-    socketRef.current.on('lobby:get', ({data, name} : {data: ILobby, name: string}) => {
-      console.log('lobby:get ', data, name);
+    socketRef.current.on('joined', ({data, name} : {data: ILobby, name: string}) => {
+      console.log('joined', data, name);
       setLobbyData(data)
     })
 
-    socketRef.current.on('player:deleted', () => {
+    socketRef.current.on('left', () => {
       router.push('/');
     })
 
@@ -74,7 +74,7 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
   }, [lobbyId, playerId])
 
   const kickPlayer = (player_id: string) => {
-    socketRef.current?.emit('player:delete', { player_id, lobby_id: lobbyId })
+    socketRef.current?.emit('leave', { player_id, lobby_id: lobbyId })
   }
 
 
@@ -106,10 +106,11 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
     })
   }
 
-  const updateIssue = ({ name, priority }: IssueType) => {
+  const updateIssue = ({ name, priority, id }: IssueType) => {
     if (socketRef.current === null) return
     socketRef.current.emit('issue:update', {
       name,
+      id,
       priority,
       lobby_id: lobbyId
     })
