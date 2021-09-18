@@ -7,16 +7,12 @@ import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
-import { IssueType } from '../../../interfaces/IssueType'
+import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
 import GameSettings from '../../GameSettings/GameSettings'
 
 interface DealerLayoutProps {
-	// name: string
-	// players: IPlayer[]
 	dealerPlayer: IPlayer
 	socketData: IUseLobbyDataSocket
-	// issues: IssueType[]
-	// lobbyId: string
 }
 
 export interface ModalState {
@@ -27,6 +23,7 @@ export interface ModalState {
 
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
 	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData
+	console.log(lobbyData?.issues)
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
@@ -76,7 +73,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 			<IssueContainer
 				type="lobby"
 				lobbyID={socketData.lobbyData?.id as string}
-				issues={socketData.issues}
+				issues={lobbyData?.issues}
 				createIssue={createIssue}
 				removeIssue={removeIssue}
 				updateIssue={updateIssue}
