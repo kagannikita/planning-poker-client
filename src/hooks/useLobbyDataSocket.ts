@@ -7,7 +7,7 @@ import { IssueType } from '../interfaces/IssueType'
 import router from 'next/router'
 
 export interface IUseLobbyDataSocket {
-	lobbyData: ILobby | undefined
+	lobbyData: ILobby 
 	messages: IMessage[]
 	kickPlayer: (player_id: string) => void
 	sendMessage: ({ msgText, senderName }: { msgText: string; senderName: string }) => void
@@ -21,7 +21,7 @@ export interface IUseLobbyDataSocket {
 const SERVER_URL = API.MAIN_API
 
 export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobbyDataSocket => {
-	const [lobbyData, setLobbyData] = useState<ILobby>()
+	const [lobbyData, setLobbyData] = useState<any>()
 	const [messages, setMessages] = useState<IMessage[]>([])
 
 	const socketRef = useRef<SocketIOClient.Socket | null>(null)
