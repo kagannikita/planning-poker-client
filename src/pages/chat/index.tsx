@@ -14,11 +14,11 @@ const Chat = (props: Props) => {
 	const location = useRouter()
 	const queryParams = React.useMemo(() => {
 		return {
-			room_id: location.query.room_id,
+			lobby_id: location.query.lobby_id,
 			name: location.query.name,
 		}
 	}, [location])
-	const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8080'), [])
+	const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8082'), [])
 	const inputRef = React.useRef() as React.MutableRefObject<any>
 
 	const [messages, setMessages] = React.useState<Message[]>([])
@@ -32,7 +32,7 @@ const Chat = (props: Props) => {
 		socket.on('connect', () => {
 			socket.emit('join', {
 				name: queryParams.name,
-				room_id: queryParams.room_id,
+				lobby_id: queryParams.lobby_id,
 			})
 		})
 	}, [socket, queryParams])

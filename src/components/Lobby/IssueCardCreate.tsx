@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button, Card } from 'semantic-ui-react'
 import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 
@@ -14,13 +14,19 @@ const IssueCardCreate = ({ setModalCreate, lobbyId }: IssueCardCreateProps) => {
 				<Card.Header>Create Issue:</Card.Header>
 				<Card.Meta />
 				<Card.Description>
-					<Button size="mini" floated="right" onClick={() => setModalCreate({
-						id: '',
-						modalIsOpen:true,
-						name: '',
-						priority: 'low',
-						lobby: lobbyId
-					})}>
+					<Button
+						size="mini"
+						floated="right"
+						onClick={() =>
+							setModalCreate({
+								id: '',
+								modalIsOpen: true,
+								name: '',
+								priority: 'low',
+								lobby: lobbyId,
+							})
+						}
+					>
 						Add
 					</Button>
 				</Card.Description>

@@ -1,0 +1,21 @@
+.form__item {
+	margin-bottom: 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.item-title {
+	margin-right: 20px;
+	font-weight: bold;
+}
+
+.item__inp {
+	padding: 5px;
+	border-radius: 3px;
+	border-color: rgba(0, 0, 0, 0.2);
+	border-width: 1px;
+	outline-color: #46b5ff;
+	outline-width: 1px;
+	box-shadow: inset 0 3px 5px -1px rgb(50, 50, 50, 0.6);
+}

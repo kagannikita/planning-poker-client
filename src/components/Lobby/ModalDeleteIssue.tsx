@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
-import { IssuesAPI } from 'src/api/IssuesAPI'
-import { IssueType } from 'src/interfaces/IssueType'
 import { ModalState } from './DealerLayout/DealerLayout'
+import { IssueType } from '../../interfaces/IssueType'
+import { IssuesAPI } from '../../api/IssuesAPI'
 
 interface ModalDeleteIssueProps {
 	state: ModalState

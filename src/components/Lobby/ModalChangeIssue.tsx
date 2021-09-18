@@ -14,30 +14,28 @@ interface ModalChangeIssueProps {
 }
 
 const selectValues = [
-  { key: 'low', value: 'low', text: 'low' },
-  { key: 'average', value: 'average', text: 'average' },
-  { key: 'high', value: 'high', text: 'high' }
+	{ key: 'low', value: 'low', text: 'low' },
+	{ key: 'average', value: 'average', text: 'average' },
+	{ key: 'high', value: 'high', text: 'high' },
 ]
 
-export const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
+const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
+	console.log('modalChange ', props.ModalChange)
 
-  console.log('modalChange ', props.ModalChange);
+	// const [updateIssue, setUpdateIssue] = useState<IssueType>(props.ModalChange);
 
-  // const [updateIssue, setUpdateIssue] = useState<IssueType>(props.ModalChange);
-
-  const closeHandler = () => {
-    // setUpdateIssue({
-    //   id: '',
-    //   lobby: props.lobbyID,
-    //   name: '',
-    //   priority: 'low'
-    // })
-    props.setModalChange({
-      ...props.ModalChange,
-    	modalIsOpen: false,
-    })
-
-  }
+	const closeHandler = () => {
+		// setUpdateIssue({
+		//   id: '',
+		//   lobby: props.lobbyID,
+		//   name: '',
+		//   priority: 'low'
+		// })
+		props.setModalChange({
+			...props.ModalChange,
+			modalIsOpen: false,
+		})
+	}
 
   const updateHandler = async () => {
     console.log("update ", props.ModalChange);
@@ -76,10 +74,10 @@ export const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
         </Button>
           <Button positive onClick={() => updateHandler()}>
 					Update
-				 </Button>
-      </Modal.Actions>
-    </Modal>
-  )
+				</Button>
+			</Modal.Actions>
+		</Modal>
+	)
 }
 
 export default ModalChangeIssue

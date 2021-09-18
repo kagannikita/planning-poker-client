@@ -7,6 +7,8 @@ import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
+import { IssueType } from '../../../interfaces/IssueType'
+import GameSettings from '../../GameSettings/GameSettings'
 
 interface DealerLayoutProps {
 	// name: string
@@ -87,6 +89,9 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				playerId={modalkickPlayer.id}
 				playerName={modalkickPlayer.name}
 			/>
+			<Container>
+				<GameSettings />
+			</Container>
 		</>
 	)
 }

@@ -1,6 +1,6 @@
 export enum API {
-	MAIN_API = 'http://localhost:8080/',
+	MAIN_API = 'http://localhost:8082/',
 	LOBBY = 'lobby/',
 	PLAYER = 'player/',
-	ISSUES = 'issue/'
+	ISSUES = 'issue/',
 }

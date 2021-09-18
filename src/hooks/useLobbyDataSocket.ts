@@ -22,7 +22,7 @@ export interface IUseLobbyDataSocket {
   renameLobbyNameHandler: (name: string) => void;
 }
 
-const SERVER_URL = API.MAIN_API;
+const SERVER_URL = API.MAIN_API
 
 export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobbyDataSocket => {
   const [lobbyData, setLobbyData] = useState<ILobby>()
