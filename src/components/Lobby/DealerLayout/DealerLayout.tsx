@@ -24,7 +24,7 @@ export interface ModalState {
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
 	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData
 	console.log(lobbyData?.issues)
-
+	
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
@@ -87,7 +87,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				playerName={modalkickPlayer.name}
 			/>
 			<Container>
-				<GameSettings />
+				<GameSettings settings={lobbyData?.settings} />
 			</Container>
 		</>
 	)

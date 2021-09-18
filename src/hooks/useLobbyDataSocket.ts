@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import io from 'socket.io-client'
-import { useBeforeUnload, useLocalStorage } from '.'
+import { useBeforeUnload } from '.'
 import { API } from '../interfaces/ApiEnum'
 import { ILobby, IMessage } from '../interfaces/LobbyTypes'
 import { IssueType } from '../interfaces/IssueType'
@@ -9,7 +9,6 @@ import router from 'next/router'
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby | undefined
 	messages: IMessage[]
-	issues: IssueType[]
 	kickPlayer: (player_id: string) => void
 	sendMessage: ({ msgText, senderName }: { msgText: string; senderName: string }) => void
 	removeMessage: (id: string) => void
@@ -24,7 +23,6 @@ const SERVER_URL = API.MAIN_API
 export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobbyDataSocket => {
 	const [lobbyData, setLobbyData] = useState<ILobby>()
 	const [messages, setMessages] = useState<IMessage[]>([])
-	const [issues, setIssues] = useState<IssueType[]>([])
 
 	const socketRef = useRef<SocketIOClient.Socket | null>(null)
 
@@ -32,7 +30,6 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		socketRef.current = io(SERVER_URL, {
 			query: { lobbyId },
 		})
-		// console.log( playerId, 'id: ', lobbyId);
 
 		socketRef.current.emit('join', { name: playerId, lobby_id: lobbyId })
 
@@ -52,15 +49,6 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		//     msg.id === userId ? { ...msg, currentUser: true } : msg
 		//   )
 		//   setMessages(newMessages)
-		// })
-
-		// socketRef.current.emit('issues:get', lobbyId)
-
-		// socketRef.current.on('issues:recieve', (issues: IssueType[]) => {
-		//   console.log(issues);
-
-		//   const newIssues = issues.map((iss) => iss)
-		//   setIssues(newIssues)
 		// })
 
 		return () => {
@@ -99,7 +87,6 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 
 	const updateIssue = ({ name }: IssueType) => {
 		if (socketRef.current === null) return
-		// setLobbyData({})
 		socketRef.current.emit('issue:update', {
 			name,
 			lobby_id: lobbyId,
@@ -129,7 +116,6 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 	return {
 		lobbyData,
 		messages,
-		issues,
 		kickPlayer,
 		sendMessage,
 		removeMessage,

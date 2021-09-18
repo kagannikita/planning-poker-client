@@ -3,4 +3,6 @@ export enum API {
 	LOBBY = 'lobby/',
 	PLAYER = 'player/',
 	ISSUES = 'issue/',
+	SETTINGS = 'settings/',
+	CARDS = 'cards/'
 }

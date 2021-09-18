@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import SettingsForm from './SettingsForm/SettingsForm'
 import CardsField from '../CardsField/CardsField'
+import { IGameSettings } from 'src/interfaces/LobbyTypes'
 
-const GameSettings: React.FC = () => {
+
+interface GameSettingsProps {
+	settings: IGameSettings | undefined
+}
+
+const GameSettings = ({ settings }:GameSettingsProps): JSX.Element => {
 	const [masterAsPlayer, setMasterAsPlayer] = useState(true)
 	const [changingCards, setChangingCards] = useState(false)
 	const [timerIsOn, setTimerIsOn] = useState(true)
