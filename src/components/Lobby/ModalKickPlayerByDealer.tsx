@@ -1,13 +1,13 @@
 import { FC } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
-import { KickPlayer } from './DealerLayout/DealerLayout'
+import { ModalState } from './DealerLayout/DealerLayout'
 
 interface ModalKickPlayerByDealerProps {
 	playerId: string
 	playerName: string
 	kickMemberHandler: (playerId: string) => void
 	isOpen: boolean
-	setKickPlayer: React.Dispatch<React.SetStateAction<KickPlayer>>
+	setKickPlayer: React.Dispatch<React.SetStateAction<ModalState>>
 }
 
 const ModalKickPlayerByDealer: FC<ModalKickPlayerByDealerProps> = ({
@@ -20,7 +20,7 @@ const ModalKickPlayerByDealer: FC<ModalKickPlayerByDealerProps> = ({
 	const closeHandler = () => {
 		setKickPlayer({
 			modalIsOpen: false,
-			playerName: '',
+			name: '',
 			id: '',
 		})
 	}

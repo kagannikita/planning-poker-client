@@ -1,3 +1,5 @@
+import { IssueType } from './IssueType'
+
 export enum Role {
 	dealer = 'dealer',
 	player = 'player',
@@ -24,4 +26,5 @@ export interface ILobby {
 	id: string
 	name: string
 	players: IPlayer[]
+	issues: IssueType[]
 }

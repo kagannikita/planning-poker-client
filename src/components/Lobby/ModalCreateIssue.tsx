@@ -8,8 +8,9 @@ interface ModalCreateIssueProps {
 	ModalCreate: IModalCreateIssue
 	lobbyID: string
 	setModalCreate: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
-	issues: IssueType[]
-	setIssuesState: React.Dispatch<React.SetStateAction<IssueType[]>>
+	// issues: IssueType[]
+	// setIssuesState: React.Dispatch<React.SetStateAction<IssueType[]>>
+	createIssue: ({ name, priority }: IssueType) => void
 }
 
 const selectValues = [
@@ -43,9 +44,10 @@ const ModalCreateIssue: FC<ModalCreateIssueProps> = (props) => {
 	}
 
 	const createHandler = async () => {
-		const { id } = await new IssuesAPI().create(newIssue)
-		newIssue.id = id
-		props.setIssuesState([...props.issues, newIssue])
+		// const {id} = await new IssuesAPI().create(newIssue)
+		// newIssue.id = id;
+		props.createIssue(newIssue);
+		// props.setIssuesState([...props.issues, newIssue])
 		closeHandler()
 	}
 

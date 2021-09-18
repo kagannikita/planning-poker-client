@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { Container, Header as HeaderTitle } from 'semantic-ui-react'
-import Issue from '../Issue'
+import Issue, { IssueProps } from '../Issue'
 import IssueCreate from '../IssueCardCreate'
 import s from '../lobby.module.scss'
 import ModalChangeIssue from '../ModalChangeIssue'
@@ -23,7 +23,7 @@ export interface IModalCreateIssue extends ModalState {
 	lobby: string
 }
 
-const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, issues, lobbyID }) => {
+const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssue, createIssue, issues, lobbyID }) => {
 	const [ModalDelete, setModalDelete] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
@@ -43,18 +43,18 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, issues, lo
 		id: '',
 		lobby: lobbyID,
 	})
-	const [issuesState, setIssuesState] = useState<IssueType[]>(issues)
-
+	// const [issuesState, setIssuesState] = useState<IssueType[]>(issues);
+	
 	return (
 		<>
 			<HeaderTitle textAlign="center" as="h1">
 				Issues:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
-				{issuesState.map((issue, i) => (
-					<Issue
-						key={issue.name + i}
-						type={type}
+				{issues.map((issue, i) => (
+					<Issue 
+					key={issue.name + i} 
+					type={type}
 						setModalChange={setModalChange}
 						setModalDelete={setModalDelete}
 						{...issue}
@@ -64,29 +64,30 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, issues, lo
 				<IssueCreate lobbyId={lobbyID} setModalCreate={setModalCreate} />
 			</Container>
 
-			<ModalDeleteIssue
-				issuesArr={issuesState}
+			<ModalDeleteIssue 
+				issuesArr={issues}
 				state={ModalDelete}
-				setIssuesState={setIssuesState}
 				setModalDelete={setModalDelete}
-				removeIssue={removeIssue}
-			/>
+				// setIssuesState={setIssuesState}
+				removeIssue={removeIssue} />
 
 			<ModalCreateIssue
 				lobbyID={lobbyID}
 				ModalCreate={ModalCreate}
 				setModalCreate={setModalCreate}
-				issues={issuesState}
-				setIssuesState={setIssuesState}
+				createIssue={createIssue}
+				// issues={issues}
+				// setIssuesState={setIssuesState}
 			/>
 
 			<ModalChangeIssue
 				lobbyID={lobbyID}
 				ModalChange={ModalChange}
 				setModalChange={setModalChange}
-				issues={issuesState}
-				setIssuesState={setIssuesState}
-			/>
+				// issues={issues}
+				updateIssue={updateIssue}
+				// setIssuesState={setIssuesState}
+			 />
 		</>
 	)
 }
