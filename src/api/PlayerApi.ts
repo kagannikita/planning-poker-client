@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { API } from '../interfaces/ApiEnum'
-import io from 'socket.io-client'
 import { IPlayer } from '../interfaces/LobbyTypes'
 
 export default class PlayerAPI {

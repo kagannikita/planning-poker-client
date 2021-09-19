@@ -2,17 +2,14 @@ import cls from './CardsField.module.scss'
 
 import React, { useState } from 'react'
 import Card from '../Card/Card'
+import { ICardSettings } from 'src/interfaces/LobbyTypes'
 
 type CardsFieldProps = {
-	cards: {
-		name?: string
-		is_cover?: boolean
-		image: string
-		scoreTypeShort?: string
-		cardValue?: string
-	}[]
+	cards: ICardSettings[]
 	cardIsOpen?: boolean
 	pickCards?: boolean
+	scoreType: string
+	scoreTypeShort: string
 	deleteCard?: (index: number) => void
 	setCardValue?: (value: string, cardIndex: number) => void
 }
@@ -21,6 +18,8 @@ const CardsField: React.FC<CardsFieldProps> = ({
 	cards,
 	cardIsOpen = true,
 	pickCards = false,
+	scoreType,
+	scoreTypeShort,
 	deleteCard,
 	setCardValue,
 }: CardsFieldProps) => {
@@ -28,20 +27,21 @@ const CardsField: React.FC<CardsFieldProps> = ({
 
 	return (
 		<div className={cls.cardsField}>
-			{cards.map(({ image, scoreTypeShort = 'default', cardValue = 'unknown' }, index) => {
+			{ cards.map((card, index) => {
+				
 				let cardIsSelected = false
 				if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
 				return (
 					<Card
 						index={index}
-						key={Math.random() * 1000}
-						image={image}
+						key={card.id}
+						image={card.image}
 						cardIsOpen={cardIsOpen}
 						cardIsSelected={cardIsSelected}
 						setIndexOfSelectedCard={setIndexOfSelectedCard}
 						pickCards={pickCards}
 						scoreTypeShort={scoreTypeShort}
-						cardValue={cardValue}
+						cardValue={card.name}
 						deleteCard={deleteCard}
 						setCardValue={setCardValue}
 					/>

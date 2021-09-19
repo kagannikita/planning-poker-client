@@ -11,7 +11,7 @@ import { IssueType } from '../../../interfaces/IssueType'
 
 interface IssueContainerProps {
 	type: 'lobby' | 'game'
-	issues: IssueType[]
+	issues: IssueType[] | undefined
 	lobbyID: string
 	createIssue: ({ name, priority }: IssueType) => void
 	removeIssue: (id: string) => void
@@ -43,51 +43,47 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 		id: '',
 		lobby: lobbyID,
 	})
-	// const [issuesState, setIssuesState] = useState<IssueType[]>(issues);
-	
+
 	return (
 		<>
 			<HeaderTitle textAlign="center" as="h1">
 				Issues:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
-				{issues.map((issue, i) => (
-					<Issue 
-					key={issue.name + i} 
-					type={type}
-						setModalChange={setModalChange}
-						setModalDelete={setModalDelete}
-						{...issue}
-					/>
-				))}
+				{issues &&
+					issues.map((issue, i) => (
+						<Issue
+							key={issue.name + i}
+							type={type}
+							setModalChange={setModalChange}
+							setModalDelete={setModalDelete}
+							{...issue}
+						/>
+					))}
 
 				<IssueCreate lobbyId={lobbyID} setModalCreate={setModalCreate} />
 			</Container>
 
-			<ModalDeleteIssue 
+			<ModalDeleteIssue
 				issuesArr={issues}
 				state={ModalDelete}
 				setModalDelete={setModalDelete}
-				// setIssuesState={setIssuesState}
-				removeIssue={removeIssue} />
+				removeIssue={removeIssue}
+			/>
 
 			<ModalCreateIssue
 				lobbyID={lobbyID}
 				ModalCreate={ModalCreate}
 				setModalCreate={setModalCreate}
 				createIssue={createIssue}
-				// issues={issues}
-				// setIssuesState={setIssuesState}
 			/>
 
 			<ModalChangeIssue
 				lobbyID={lobbyID}
 				ModalChange={ModalChange}
 				setModalChange={setModalChange}
-				// issues={issues}
 				updateIssue={updateIssue}
-				// setIssuesState={setIssuesState}
-			 />
+			/>
 		</>
 	)
 }
