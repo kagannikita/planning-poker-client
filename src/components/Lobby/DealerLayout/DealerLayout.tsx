@@ -10,6 +10,7 @@ import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
 import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
 import GameSettings from '../../GameSettings/GameSettings'
 import SettingsAPI from 'src/api/SettingsApi'
+import router from 'next/router'
 
 interface DealerLayoutProps {
 	dealerPlayer: IPlayer
@@ -34,6 +35,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 	}
 
 	const exitGameHandler = async () => {
+		// router.push('/')
 	}
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({

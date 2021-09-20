@@ -36,7 +36,7 @@ const Issue = ({ name, priority, id, type, link, setModalChange, setModalDelete,
 			<Card.Content>
 				<Card.Header>{name}</Card.Header>
 				<Card.Meta>{priority}</Card.Meta>
-				<Card.Meta>{link}</Card.Meta>
+				<Card.Meta><a href={link} about="issue link">Issue doc link</a></Card.Meta>
 				<Card.Description textAlign="right">
 					{type === 'lobby' && 
 						<Button
