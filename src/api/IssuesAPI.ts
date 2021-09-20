@@ -15,6 +15,7 @@ export class IssuesAPI implements IIssuesAPI {
 			axios
 				.post(`${API.MAIN_API}${API.ISSUES}`, {
 					name: issue.name,
+					link: issue.link,
 					priority: issue.priority,
 					lobby: issue.lobby,
 				})
@@ -38,6 +39,7 @@ export class IssuesAPI implements IIssuesAPI {
 				.put(`${API.MAIN_API}${API.ISSUES}${dataIssue.id}`, {
 					id: dataIssue.id,
 					name: dataIssue.name,
+					link: dataIssue.link,
 					priority: dataIssue.priority,
 				})
 				.then((res) => resolve(res.data))
