@@ -1,52 +1,47 @@
 import React, { FC, useState } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
+import { VoteType } from 'src/interfaces/VoteType'
 import { IVoteKickState } from './MemberLayout/MemberLayout'
 
 interface ModalKickPlayerByVoteProps {
-	modalIsOpen: boolean
-	playerId: string
-	// kickerName: string
-	kickedName: string
-	votes: number
+
 	allMembers: number
-	kickMemberStateHandler: React.Dispatch<React.SetStateAction<IVoteKickState>>
-	kickByVoteHandler: (voteToKickPlayerId: string) => void
+	kickMemberStateHandler: React.Dispatch<React.SetStateAction<VoteType>>
+	kickByVoteHandler: (voteToKickPlayerId: string, playerName: string) => void
+	// setVoteState: React.Dispatch<React.SetStateAction<VoteType>>
+	voteData: VoteType
 }
 
 const ModalKickPlayerByVote: FC<ModalKickPlayerByVoteProps> = ({
 	kickMemberStateHandler,
 	kickByVoteHandler,
-	modalIsOpen,
-	playerId,
-	// kickerName,
-	kickedName,
-	votes,
+	voteData,
 	allMembers
 }) => {
 
 	const handlerVote = () => {
-		kickByVoteHandler(playerId)
+		console.log('handlerVote');
+		
+		kickByVoteHandler(voteData.playerId, voteData.playerName)
 		closeHandler()
 	}
 
 	const closeHandler = () => {
 		kickMemberStateHandler({
-			modalIsOpen: false,
-			kickedName: '',
-			playerId: '',
-			kickerName: ''
+			...voteData,
+			modalIsOpen: false
 		})
 	}
 
 	return (
-		<Modal size="tiny" open={modalIsOpen} onClose={closeHandler}>
-			<Modal.Header>Kick player?</Modal.Header>
+		<Modal size="tiny" open={voteData.modalIsOpen} onClose={closeHandler}>
+			<Modal.Header>Vote kick player</Modal.Header>
 			<Modal.Content>
 				<p>
-					Do you want to vote to kick member {kickedName}.{' '}
+					Do you want to vote to kick member <b>{voteData.playerName}</b>.
 				</p>
 				<p>
-					Votes: {votes} / {allMembers}
+					Votes: {voteData?.votesQuanity} / {allMembers}
 				</p>
 			</Modal.Content>
 			<Modal.Actions>

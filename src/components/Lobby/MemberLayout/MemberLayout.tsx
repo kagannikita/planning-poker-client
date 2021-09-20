@@ -6,6 +6,7 @@ import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 import { IUseLobbyDataSocket } from 'src/hooks/useLobbyDataSocket'
 import ModalKickPlayerByVote from '../ModalKickPlayerByVote'
+import { VoteType } from 'src/interfaces/VoteType'
 
 interface MemberLayoutProps {
 	socketData: IUseLobbyDataSocket
@@ -19,13 +20,11 @@ export interface IVoteKickState {
 }
 
 const MemberLayout = ({ socketData }: MemberLayoutProps): JSX.Element => {
-	const [voteKickPlayer, setvoteKickPlayer] = useState<IVoteKickState>({
-		modalIsOpen: false,
-		playerId: '',
-		kickerName: '',
-		kickedName: ''
-	})
+	console.log(socketData.VotesQuanity);
 
+	const [ModalKick, setModalKick] = useState(socketData.VotesQuanity.modalIsOpen);
+	// const [voteKickPlayer, setvoteKickPlayer] = useState<VoteType>({...socketData.VotesQuanity})
+	
 	return (
 		<>
 			<HeaderTitle as="h1" className={s.title}>
@@ -69,16 +68,16 @@ const MemberLayout = ({ socketData }: MemberLayoutProps): JSX.Element => {
 						centered={true} 
 						key={member.id} 
 						{...(member as IPlayer)}
-						setVoteKickPlayer={setvoteKickPlayer}
+						setVoteKickPlayer={socketData.setVotesQuanity}
 					 />
 				})}
 			</Container>
 			<ModalKickPlayerByVote 
-			{...voteKickPlayer}
+			
 				allMembers={socketData.lobbyData?.players.length}
-			kickMemberStateHandler={setvoteKickPlayer} 
-			kickByVoteHandler={socketData.kickPlayerByVote}
-			votes={socketData.VotesQuanity}	 />
+				kickMemberStateHandler={socketData.setVotesQuanity} 
+				kickByVoteHandler={socketData.kickPlayerByVote}
+				voteData={socketData.VotesQuanity}	 />
 		</>
 	)
 }

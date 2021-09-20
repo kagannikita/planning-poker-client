@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import io from 'socket.io-client'
 import { useBeforeUnload } from '.'
 import { API } from '../interfaces/ApiEnum'
@@ -11,8 +11,9 @@ export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
 	messages: IMessage[]
 	VotesQuanity: VoteType
+	setVotesQuanity: Dispatch<SetStateAction<VoteType>>
 	kickPlayer: (player_id: string) => void
-	kickPlayerByVote: (voteToKickPlayerId: string) => void
+	kickPlayerByVote: (voteToKickPlayerId: string, playerName: string) => void
 	sendMessage: ({ msgText, senderName }: { msgText: string; senderName: string }) => void
 	removeMessage: (id: string) => void
 	createIssue: ({ name, priority }: IssueType) => void
@@ -52,6 +53,8 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		})
 
 		socketRef.current.on('kick:voted', (voteData: VoteType) => {
+			console.log('kick voted', voteData);
+			
 			setVotesQuanity(voteData)
 		})
 
@@ -74,8 +77,10 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		socketRef.current?.emit('player:delete', { player_id, lobby_id: lobbyId })
 	}
 
-	const kickPlayerByVote = (voteToKickPlayerId: string) => {
-		socketRef.current?.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId })
+	const kickPlayerByVote = (voteToKickPlayerId: string, playerName: string) => {
+		console.log('kickVote', voteToKickPlayerId);
+		
+		socketRef.current?.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName })
 	}
 
 	const sendMessage = ({ msgText, senderName }: { msgText: string; senderName: string }) => {
@@ -135,6 +140,7 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		lobbyData,
 		messages,
 		VotesQuanity,
+		setVotesQuanity,
 		kickPlayer,
 		kickPlayerByVote,
 		sendMessage,

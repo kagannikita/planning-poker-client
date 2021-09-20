@@ -1,5 +1,6 @@
 import React, { Dispatch, FC, SetStateAction } from 'react'
 import { Button, Card, Image } from 'semantic-ui-react'
+import { VoteType } from 'src/interfaces/VoteType'
 
 import { IPlayer } from '../../interfaces/LobbyTypes'
 import { ModalState } from './DealerLayout/DealerLayout'
@@ -12,7 +13,7 @@ interface MemberItemProps extends IPlayer {
 	playersQuanity?: number
 	centered?: boolean
 	setKickPlayer?: Dispatch<SetStateAction<ModalState>>
-	setVoteKickPlayer?: Dispatch<React.SetStateAction<IVoteKickState>>
+	setVoteKickPlayer?: React.Dispatch<React.SetStateAction<VoteType>>
 }
 
 const MemberItem: FC<MemberItemProps> = ({
@@ -58,7 +59,12 @@ const MemberItem: FC<MemberItemProps> = ({
 								floated="right"
 								negative
 								compact
-								onClick={() => setVoteKickPlayer({ modalIsOpen: true, kickedName: `${firstName} ${lastName}`, playerId: id })}
+								onClick={() => setVoteKickPlayer({ 
+									modalIsOpen: true, 
+									playerName: `${firstName} ${lastName}`, 
+									votesQuanity: 0,
+									playerId: id
+								})}
 							/>
 					)}
 				</Card.Description>
