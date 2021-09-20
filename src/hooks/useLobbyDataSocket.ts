@@ -7,7 +7,7 @@ import { IssueType } from '../interfaces/IssueType'
 import router from 'next/router'
 
 export interface IUseLobbyDataSocket {
-	lobbyData: ILobby 
+	lobbyData: ILobby
 	messages: IMessage[]
 	kickPlayer: (player_id: string) => void
 	sendMessage: ({ msgText, senderName }: { msgText: string; senderName: string }) => void

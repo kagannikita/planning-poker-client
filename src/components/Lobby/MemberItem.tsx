@@ -27,7 +27,8 @@ const MemberItem: FC<MemberItemProps> = ({
 				<Image
 					floated="right"
 					size="mini"
-					src={image || `https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg`}
+					circular
+					src={image || `https://ui-avatars.com/api/?name=${firstName}+${lastName}`}
 				/>
 				<Card.Header>{`${firstName} ${lastName}`}</Card.Header>
 				<Card.Meta>{position}</Card.Meta>
