@@ -34,12 +34,12 @@ const GameSettings = ({ settings }:GameSettingsProps): JSX.Element => {
 		},
 		{
 			image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
-			scoreTypeShort,
+			scoreTypeShort: '',
 			cardValue: '1',
 		},
 		{
 			image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
-			scoreTypeShort,
+			scoreTypeShort: '',
 			cardValue: '2',
 		},
 	])
@@ -58,14 +58,14 @@ const GameSettings = ({ settings }:GameSettingsProps): JSX.Element => {
 	}
 
 	const addCard = () => {
-		// setCards([
-		// 	...cards,
-		// 	{
-		// 		image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
-		// 		scoreTypeShort,
-		// 		cardValue: 'unknown',
-		// 	},
-		// ])
+		setCards([
+			...cards,
+			{
+				image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
+				scoreTypeShort,
+				cardValue: 'unknown',
+			},
+		])
 	}
 
 	const addCover = (input: EventTarget & HTMLInputElement) => {
@@ -134,7 +134,7 @@ const GameSettings = ({ settings }:GameSettingsProps): JSX.Element => {
 				<div className="cards-cover">
 					<h3 className="cards-settings__title">Select cover:</h3>
 					<div className="cards-settings__wrapper">
-						{/* <CardsField cards={cardCovers} cardIsOpen={false} pickCards={true} /> */}
+						<CardsField cards={settings.cards} cardIsOpen={false} scoreType='' scoreTypeShort=''/>
 						<div className="cards-settings__btn">
 							<input className="cards-settings__inp" type="file" onChange={(e) => addCover(e.target)} />
 						</div>
@@ -143,12 +143,12 @@ const GameSettings = ({ settings }:GameSettingsProps): JSX.Element => {
 				<div className="cards-front">
 					<h3 className="cards-settings__title">Add card values:</h3>
 					<div className="cards-settings__wrapper">
-						<CardsField 
-						cards={settings.cards} 
+						{/* <CardsField 
+						cards={cards} 
 						deleteCard={deleteCard} 
 						setCardValue={setCardValue}
 						scoreType={scoreType}
-						scoreTypeShort={scoreTypeShort} />
+						scoreTypeShort={scoreTypeShort} /> */}
 						<button className="cards-settings__btn" onClick={addCard} />
 					</div>
 				</div>

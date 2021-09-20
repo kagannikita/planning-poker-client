@@ -11,48 +11,49 @@ export interface IssueProps extends IssueType {
 	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
 }
 
-const Issue = ({ name, priority, id, type, setModalChange, setModalDelete, lobby }: IssueProps) => {
-	const [titleState, setTitle] = useState(name)
-	const [priorityState, setPriority] = useState(priority)
+const Issue = ({ name, priority, id, type, link, setModalChange, setModalDelete, lobby }: IssueProps) => {
 
+	const deleteHandler = () => {
+		setModalDelete({
+			id,
+			name,
+			modalIsOpen: true,
+		})
+	}
+
+	const openModalHandler = () => {
+		setModalChange({
+			name,
+			priority,
+			id,
+			link,
+			lobby,
+			modalIsOpen: true,
+		})
+	}
 	return (
 		<Card centered className={type === 'lobby' ? s.item : ''}>
 			<Card.Content>
-				<Card.Header>{titleState}</Card.Header>
-				<Card.Meta>{priorityState}</Card.Meta>
+				<Card.Header>{name}</Card.Header>
+				<Card.Meta>{priority}</Card.Meta>
+				<Card.Meta><a href={link} about="issue link">Issue doc link</a></Card.Meta>
 				<Card.Description textAlign="right">
-					{type === 'lobby' ? (
+					{type === 'lobby' && 
 						<Button
 							basic
 							color="teal"
 							size="mini"
-							onClick={() =>
-								setModalChange({
-									name,
-									priority,
-									id,
-									lobby,
-									modalIsOpen: true,
-								})
-							}
+							onClick={openModalHandler}
 						>
 							Change
 						</Button>
-					) : (
-						''
-					)}
+					}
 					<Button
 						basic
 						color="red"
 						circular={type === 'game'}
 						icon={type === 'game' ? 'delete' : 'remove'}
-						onClick={() =>
-							setModalDelete({
-								id,
-								name,
-								modalIsOpen: true,
-							})
-						}
+						onClick={deleteHandler}
 						size="mini"
 					/>
 				</Card.Description>

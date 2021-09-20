@@ -1,48 +1,51 @@
 import React, { FC, useState } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
+import { VoteType } from 'src/interfaces/VoteType'
+import { IVoteKickState } from './MemberLayout/MemberLayout'
 
-interface ModalKickPlayerByDealerProps {
-	playerId: string
-	kickerName: string
-	kickedName: string
-	kickMemberHandler: (playerId: string) => void
+interface ModalKickPlayerByVoteProps {
+
+	allMembers: number
+	kickMemberStateHandler: React.Dispatch<React.SetStateAction<VoteType>>
+	kickByVoteHandler: (voteToKickPlayerId: string, playerName: string) => void
+	// setVoteState: React.Dispatch<React.SetStateAction<VoteType>>
+	voteData: VoteType
 }
 
-const ModalKickPlayerByDealer: FC<ModalKickPlayerByDealerProps> = ({
-	kickMemberHandler,
-	playerId,
-	kickerName,
-	kickedName,
+const ModalKickPlayerByVote: FC<ModalKickPlayerByVoteProps> = ({
+	kickMemberStateHandler,
+	kickByVoteHandler,
+	voteData,
+	allMembers
 }) => {
-	const [isOpen, setIsOpen] = useState(false)
 
 	const handlerVote = () => {
-		kickMemberHandler(playerId)
-		setIsOpen(!isOpen)
+		console.log('handlerVote');
+		
+		kickByVoteHandler(voteData.playerId, voteData.playerName)
+		closeHandler()
 	}
 
-	// const closeHandler = () => {
-	// 	setKickPlayer({
-	// 		modalIsOpen: false,
-	// 		playerName: '',
-	// 		id: ''
-	// 	})
-	// }
-	// const handlerKick = () => {
-	// 	kickMemberHandler(playerId)
-	// 	closeHandler()
-	// }
+	const closeHandler = () => {
+		kickMemberStateHandler({
+			...voteData,
+			modalIsOpen: false
+		})
+	}
 
 	return (
-		<Modal size="tiny" open={isOpen} onClose={() => setIsOpen(!isOpen)}>
-			<Modal.Header>Kick player?</Modal.Header>
+		<Modal size="tiny" open={voteData.modalIsOpen} onClose={closeHandler}>
+			<Modal.Header>Vote kick player</Modal.Header>
 			<Modal.Content>
 				<p>
-					{kickerName} want to kick member {kickedName}. Do you agree with it?{' '}
+					Do you want to vote to kick member <b>{voteData.playerName}</b>.
+				</p>
+				<p>
+					Votes: {voteData?.votesQuanity} / {allMembers}
 				</p>
 			</Modal.Content>
 			<Modal.Actions>
-				<Button negative onClick={() => setIsOpen(!isOpen)}>
+				<Button negative onClick={closeHandler}>
 					No
 				</Button>
 				<Button positive onClick={handlerVote}>
@@ -53,4 +56,4 @@ const ModalKickPlayerByDealer: FC<ModalKickPlayerByDealerProps> = ({
 	)
 }
 
-export default ModalKickPlayerByDealer
+export default ModalKickPlayerByVote
