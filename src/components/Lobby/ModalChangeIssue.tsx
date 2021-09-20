@@ -1,5 +1,5 @@
-import { FC } from 'react'
-import { Button, Input, Modal, Select } from 'semantic-ui-react'
+import React, { FC, useState } from 'react'
+import { Button, Form, Input, Modal, Select } from 'semantic-ui-react'
 import { IssuesAPI } from '../../api/IssuesAPI'
 import { IssueType } from '../../interfaces/IssueType'
 import { IModalCreateIssue } from './DealerLayout/IssueContainer'
@@ -18,54 +18,93 @@ const selectValues = [
 ]
 
 const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
+	const [error, setError] = useState({
+		errorLink: false,
+		errorName: false
+	})
+
 	const closeHandler = () => {
 		props.setModalChange({
-			...props.ModalChange,
+			link: '',
+			id: '',
+			name: '',
+			lobby: '',
+			priority: 'low',
 			modalIsOpen: false,
+		})
+		setError({
+			errorLink: false,
+			errorName: false
 		})
 	}
 
-	const updateHandler = async () => {
-		console.log('update ', props.ModalChange)
-		await new IssuesAPI().update(props.ModalChange)
-		props.updateIssue(props.ModalChange)
-		closeHandler()
+	const updateHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		e.preventDefault()
+		if (props.ModalChange.name && props.ModalChange.link) {
+			console.log('update ', props.ModalChange)
+			await new IssuesAPI().update(props.ModalChange)
+			props.updateIssue(props.ModalChange)
+			closeHandler()
+		} else {
+			setError({
+				errorLink: true,
+				errorName: true
+			})
+		}
 	}
 
 	return (
-		<Modal size="tiny" dimmer="blurring" open={props.ModalChange.modalIsOpen} onClose={closeHandler}>
+		<Modal size="small" dimmer="blurring" open={props.ModalChange.modalIsOpen} onClose={closeHandler}>
 			<Modal.Header>Update issue</Modal.Header>
 			<Modal.Content>
-				<Input
-					label="title"
-					placeholder="Issue 1"
-					value={props.ModalChange.name}
-					onChange={(e) => {
-						props.setModalChange({ ...props.ModalChange, name: e.target.value })
-					}}
-				/>
-				<Select
-					placeholder="Select priority"
-					value={props.ModalChange.priority}
-					options={selectValues}
-					onChange={(e, data) => {
-						props.setModalChange({
-							...props.ModalChange,
-							priority: data.value as 'low' | 'average' | 'high',
-						})
-					}}
-				/>
+				< Form >
+					<Form.Input
+						label="Title"
+						placeholder="Issue 1"
+						required
+						error={error.errorName}
+						value={props.ModalChange.name}
+						onChange={(e) => {
+							props.setModalChange({ ...props.ModalChange, name: e.target.value })
+						}}
+					/>
+					<Form.Input
+						label="link"
+						placeholder="http://www.localhost.com/doc/asdas-dasd2312"
+						required
+						error={error.errorLink}
+						value={props.ModalChange.link}
+						onChange={(e) => {
+							props.setModalChange({ ...props.ModalChange, link: e.target.value })
+						}}
+					/>
+					<Form.Select
+						label="Select priority"
+						placeholder="Priority"
+						required
+						value={props.ModalChange.priority}
+						options={selectValues}
+						onChange={(e, data) => {
+							props.setModalChange({
+								...props.ModalChange,
+								priority: data.value as 'low' | 'average' | 'high',
+							})
+						}}
+					/>
+					<Modal.Actions>
+						<Button negative onClick={closeHandler}>
+							Cancel
+						</Button>
+						<Button type="submit" positive onClick={updateHandler}>
+							Update
+						</Button>
+					</Modal.Actions>
+				</Form >
 			</Modal.Content>
-			<Modal.Actions>
-				<Button negative onClick={closeHandler}>
-					Cancel
-				</Button>
-				<Button positive onClick={() => updateHandler()}>
-					Update
-				</Button>
-			</Modal.Actions>
+
 		</Modal>
 	)
 }
 
 export default ModalChangeIssue
+

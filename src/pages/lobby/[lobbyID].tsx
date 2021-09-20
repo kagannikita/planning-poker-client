@@ -35,7 +35,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			{Loading ? (
 				<Loader loaderText="loading" />
 			) : (
-				<Container>
+				<Container className='main-container'>
 					{player?.role === Role.dealer ? (
 						<DealerLayout dealerPlayer={player} socketData={dataSocket} {...props} />
 					) : (

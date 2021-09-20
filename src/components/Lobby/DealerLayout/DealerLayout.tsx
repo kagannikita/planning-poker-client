@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
-import { IPlayer, Role } from '../../../interfaces/LobbyTypes'
+import { IGameSettings, IPlayer, Role } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
@@ -9,6 +9,7 @@ import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
 import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
 import GameSettings from '../../GameSettings/GameSettings'
+import SettingsAPI from 'src/api/SettingsApi'
 
 interface DealerLayoutProps {
 	dealerPlayer: IPlayer
@@ -22,8 +23,19 @@ export interface ModalState {
 }
 
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
+
 	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData
-	
+
+
+	const [settingsState, setsettingsState] = useState<IGameSettings>({...socketData.lobbyData.settings});
+
+	const startGameHandler = async () => {
+		// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
+	}
+
+	const exitGameHandler = async () => {
+	}
+
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
@@ -49,10 +61,10 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="left">
-						<Button positive>Start Game</Button>
+						<Button positive onClick={startGameHandler}>Start Game</Button>
 					</Grid.Column>
 					<Grid.Column floated="right">
-						<Button negative floated="right">
+						<Button negative floated="right" onClick={exitGameHandler}>
 							Cancel Game
 						</Button>
 					</Grid.Column>

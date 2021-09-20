@@ -1,48 +1,56 @@
 import React, { FC, useState } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
+import { IVoteKickState } from './MemberLayout/MemberLayout'
 
-interface ModalKickPlayerByDealerProps {
+interface ModalKickPlayerByVoteProps {
+	modalIsOpen: boolean
 	playerId: string
-	kickerName: string
+	// kickerName: string
 	kickedName: string
-	kickMemberHandler: (playerId: string) => void
+	votes: number
+	allMembers: number
+	kickMemberStateHandler: React.Dispatch<React.SetStateAction<IVoteKickState>>
+	kickByVoteHandler: (voteToKickPlayerId: string) => void
 }
 
-const ModalKickPlayerByDealer: FC<ModalKickPlayerByDealerProps> = ({
-	kickMemberHandler,
+const ModalKickPlayerByVote: FC<ModalKickPlayerByVoteProps> = ({
+	kickMemberStateHandler,
+	kickByVoteHandler,
+	modalIsOpen,
 	playerId,
-	kickerName,
+	// kickerName,
 	kickedName,
+	votes,
+	allMembers
 }) => {
-	const [isOpen, setIsOpen] = useState(false)
 
 	const handlerVote = () => {
-		kickMemberHandler(playerId)
-		setIsOpen(!isOpen)
+		kickByVoteHandler(playerId)
+		closeHandler()
 	}
 
-	// const closeHandler = () => {
-	// 	setKickPlayer({
-	// 		modalIsOpen: false,
-	// 		playerName: '',
-	// 		id: ''
-	// 	})
-	// }
-	// const handlerKick = () => {
-	// 	kickMemberHandler(playerId)
-	// 	closeHandler()
-	// }
+	const closeHandler = () => {
+		kickMemberStateHandler({
+			modalIsOpen: false,
+			kickedName: '',
+			playerId: '',
+			kickerName: ''
+		})
+	}
 
 	return (
-		<Modal size="tiny" open={isOpen} onClose={() => setIsOpen(!isOpen)}>
+		<Modal size="tiny" open={modalIsOpen} onClose={closeHandler}>
 			<Modal.Header>Kick player?</Modal.Header>
 			<Modal.Content>
 				<p>
-					{kickerName} want to kick member {kickedName}. Do you agree with it?{' '}
+					Do you want to vote to kick member {kickedName}.{' '}
+				</p>
+				<p>
+					Votes: {votes} / {allMembers}
 				</p>
 			</Modal.Content>
 			<Modal.Actions>
-				<Button negative onClick={() => setIsOpen(!isOpen)}>
+				<Button negative onClick={closeHandler}>
 					No
 				</Button>
 				<Button positive onClick={handlerVote}>
@@ -53,4 +61,4 @@ const ModalKickPlayerByDealer: FC<ModalKickPlayerByDealerProps> = ({
 	)
 }
 
-export default ModalKickPlayerByDealer
+export default ModalKickPlayerByVote

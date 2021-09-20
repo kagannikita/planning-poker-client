@@ -9,7 +9,9 @@ import router from 'next/router'
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby 
 	messages: IMessage[]
+	VotesQuanity: number
 	kickPlayer: (player_id: string) => void
+	kickPlayerByVote: (voteToKickPlayerId: string) => void
 	sendMessage: ({ msgText, senderName }: { msgText: string; senderName: string }) => void
 	removeMessage: (id: string) => void
 	createIssue: ({ name, priority }: IssueType) => void
@@ -23,6 +25,7 @@ const SERVER_URL = API.MAIN_API
 export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobbyDataSocket => {
 	const [lobbyData, setLobbyData] = useState<any>()
 	const [messages, setMessages] = useState<IMessage[]>([])
+	const [VotesQuanity, setVotesQuanity] = useState(0);
 
 	const socketRef = useRef<SocketIOClient.Socket | null>(null)
 
@@ -42,6 +45,10 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 			router.push('/')
 		})
 
+		socketRef.current.on('kick:voted', (votes: number) => {
+			setVotesQuanity(votes)
+		})
+
 		// socketRef.current.emit('message:get')
 
 		// socketRef.current.on('messages', (messages: IMessage[]) => {
@@ -59,6 +66,10 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 
 	const kickPlayer = (player_id: string) => {
 		socketRef.current?.emit('player:delete', { player_id, lobby_id: lobbyId })
+	}
+
+	const kickPlayerByVote = (voteToKickPlayerId: string) => {
+		socketRef.current?.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId })
 	}
 
 	const sendMessage = ({ msgText, senderName }: { msgText: string; senderName: string }) => {
@@ -85,10 +96,11 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		})
 	}
 
-	const updateIssue = ({ name }: IssueType) => {
+	const updateIssue = ({ name, link }: IssueType) => {
 		if (socketRef.current === null) return
 		socketRef.current.emit('issue:update', {
 			name,
+			link,
 			lobby_id: lobbyId,
 		})
 	}
@@ -116,7 +128,9 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 	return {
 		lobbyData,
 		messages,
+		VotesQuanity,
 		kickPlayer,
+		kickPlayerByVote,
 		sendMessage,
 		removeMessage,
 		createIssue,

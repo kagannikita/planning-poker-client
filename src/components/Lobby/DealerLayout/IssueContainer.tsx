@@ -20,6 +20,7 @@ interface IssueContainerProps {
 
 export interface IModalCreateIssue extends ModalState {
 	priority: 'low' | 'average' | 'high'
+	link: string
 	lobby: string
 }
 
@@ -33,6 +34,7 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 		modalIsOpen: false,
 		name: '',
 		priority: 'low',
+		link: '',
 		id: '',
 		lobby: lobbyID,
 	})
@@ -40,6 +42,7 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 		modalIsOpen: false,
 		name: '',
 		priority: 'low',
+		link: '',
 		id: '',
 		lobby: lobbyID,
 	})
