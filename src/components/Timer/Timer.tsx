@@ -1,15 +1,26 @@
 import React from 'react'
+import { ISettings } from '../../interfaces/SettingsTypes'
 
 type TimerProps = {
 	minutes: string
 	seconds: string
-	setMinutes: React.Dispatch<React.SetStateAction<string>>
-	setSeconds: React.Dispatch<React.SetStateAction<string>>
+	settings?: ISettings
+	setSettings?: React.Dispatch<React.SetStateAction<ISettings>>
 	isDisabled?: boolean
 }
 
-const Timer: React.FC<TimerProps> = ({ minutes, seconds, setMinutes, setSeconds, isDisabled = true }: TimerProps) => {
-	const validateTime = (time: string, setTime: React.Dispatch<React.SetStateAction<string>>) => {
+const Timer: React.FC<TimerProps> = ({ minutes, seconds, isDisabled = true, settings, setSettings }: TimerProps) => {
+	const setMinutes = (min: string) => {
+		if (!settings || !setSettings) return
+		setSettings({ ...settings, minutes: min })
+	}
+
+	const setSeconds = (sec: string) => {
+		if (!settings || !setSettings) return
+		setSettings({ ...settings, seconds: sec })
+	}
+
+	const validateTime = (time: string, setTime: (arg: string) => void) => {
 		if (time.length > 1) {
 			if (time[0] === '0') {
 				setTime(time[1])
@@ -38,6 +49,7 @@ const Timer: React.FC<TimerProps> = ({ minutes, seconds, setMinutes, setSeconds,
 						minutes
 					</label>
 					<input
+						type="number"
 						className="timer__inp"
 						maxLength={2}
 						id="minutes"
@@ -52,6 +64,7 @@ const Timer: React.FC<TimerProps> = ({ minutes, seconds, setMinutes, setSeconds,
 						seconds
 					</label>
 					<input
+						type="number"
 						className="timer__inp"
 						maxLength={2}
 						id="seconds"

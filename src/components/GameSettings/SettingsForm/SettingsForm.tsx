@@ -1,24 +1,13 @@
 import React from 'react'
 import Timer from '../../Timer/Timer'
+import { ISettings } from '../../../interfaces/SettingsTypes'
 
 type SettingsFormProps = {
-	masterAsPlayer: boolean
-	setMasterAsPlayer: React.Dispatch<React.SetStateAction<boolean>>
-	changingCards: boolean
-	setChangingCards: React.Dispatch<React.SetStateAction<boolean>>
-	timerIsOn: boolean
-	setTimerIsOn: React.Dispatch<React.SetStateAction<boolean>>
-	scoreType: string
-	setScoreType: React.Dispatch<React.SetStateAction<string>>
-	scoreTypeShort: string
-	setScoreTypeShort: React.Dispatch<React.SetStateAction<string>>
-	minutes: string
-	setMinutes: React.Dispatch<React.SetStateAction<string>>
-	seconds: string
-	setSeconds: React.Dispatch<React.SetStateAction<string>>
+	settings: ISettings
+	setSettings: React.Dispatch<React.SetStateAction<ISettings>>
 }
 
-const SettingsForm: React.FC<SettingsFormProps> = ({ ...props }: SettingsFormProps) => {
+const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings }) => {
 	return (
 		<form>
 			<div className="form__item">
@@ -29,8 +18,8 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ ...props }: SettingsFormPro
 					<input
 						id="masterAsPlayer"
 						type="checkbox"
-						defaultChecked={props.masterAsPlayer}
-						onClick={() => props.setMasterAsPlayer}
+						defaultChecked={settings.masterAsPlayer}
+						onChange={() => setSettings({ ...settings, masterAsPlayer: !settings.masterAsPlayer })}
 					/>
 					<label htmlFor="masterAsPlayer"> </label>
 				</div>
@@ -43,8 +32,8 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ ...props }: SettingsFormPro
 					<input
 						id="changingCards"
 						type="checkbox"
-						defaultChecked={props.changingCards}
-						onChange={() => props.setChangingCards}
+						defaultChecked={settings.changingCards}
+						onChange={() => setSettings({ ...settings, changingCards: !settings.changingCards })}
 					/>
 					<label htmlFor="masterAsPlayer"> </label>
 				</div>
@@ -54,7 +43,12 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ ...props }: SettingsFormPro
 					Is timer needed:
 				</label>
 				<div className="ui toggle checkbox">
-					<input id="timerIsOn" type="checkbox" defaultChecked={props.timerIsOn} onChange={() => props.setTimerIsOn} />
+					<input
+						id="timerIsOn"
+						type="checkbox"
+						defaultChecked={settings.timerIsOn}
+						onChange={() => setSettings({ ...settings, timerIsOn: !settings.timerIsOn })}
+					/>
 					<label htmlFor="masterAsPlayer"> </label>
 				</div>
 			</div>
@@ -66,8 +60,8 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ ...props }: SettingsFormPro
 					className="item__inp"
 					type="text"
 					id="scoreType"
-					value={props.scoreType}
-					onChange={(e) => props.setScoreType(e.target.value)}
+					value={settings.scoreType}
+					onChange={(e) => setSettings({ ...settings, scoreType: e.target.value })}
 				/>
 			</div>
 			<div className="form__item">
@@ -78,16 +72,17 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ ...props }: SettingsFormPro
 					className="item__inp"
 					type="text"
 					id="scoreTypeShort"
-					value={props.scoreTypeShort}
-					onChange={(e) => props.setScoreTypeShort(e.target.value)}
+					value={settings.scoreTypeShort}
+					maxLength={3}
+					onChange={(e) => setSettings({ ...settings, scoreTypeShort: e.target.value })}
 				/>
 			</div>
 			<div className="form__item">
 				<Timer
-					minutes={props.minutes}
-					seconds={props.seconds}
-					setMinutes={props.setMinutes}
-					setSeconds={props.setSeconds}
+					minutes={settings.minutes}
+					seconds={settings.seconds}
+					settings={settings}
+					setSettings={setSettings}
 					isDisabled={false}
 				/>
 			</div>

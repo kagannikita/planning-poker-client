@@ -30,24 +30,27 @@ export interface ILobby {
 	settings: IGameSettings
 }
 
-export interface IGameSettings {
-  is_dealer_play: boolean,
-	is_change_cards: boolean,
-	timer_needed: boolean,
-	score_type: string,
-	score_type_short: string,
-	timer: Date
+export interface IGameSettingsToUpload {
+	is_dealer_play: boolean
+	is_change_cards: boolean
+	timer_needed: boolean
+	score_type: string
+	score_type_short: string
+	timer: string
+}
+
+export interface IGameSettings extends IGameSettingsToUpload {
+	id: string
 	cards: ICardSettings[]
 }
 
 export interface ICardSettings {
-	name: string,
-	is_cover: boolean,
-	image: string,
+	name?: string
+	is_cover: boolean
+	image: string
 	settings: IGameSettings
 	id?: string
 }
-
 
 // {
 // 	"name": "swag",

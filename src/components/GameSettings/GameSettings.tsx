@@ -1,71 +1,68 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SettingsForm from './SettingsForm/SettingsForm'
 import CardsField from '../CardsField/CardsField'
-import { IGameSettings } from 'src/interfaces/LobbyTypes'
+import { ISettings } from '../../interfaces/SettingsTypes'
 
-
-interface GameSettingsProps {
-	settings: IGameSettings
+type GameSettingsProps = {
+	settings: ISettings
+	setSettings: React.Dispatch<React.SetStateAction<ISettings>>
+	lobbySettingsId: string
+	cards: { image: string; scoreTypeShort: string; name: string }[]
+	setCards: React.Dispatch<React.SetStateAction<{ image: string; scoreTypeShort: string; name: string }[]>>
+	defaultCover: string
+	setDefaultCover: React.Dispatch<React.SetStateAction<string>>
 }
 
-const GameSettings = ({ settings }:GameSettingsProps): JSX.Element => {
-	const [masterAsPlayer, setMasterAsPlayer] = useState(settings.is_dealer_play)
-	const [changingCards, setChangingCards] = useState(settings.is_change_cards)
-	const [timerIsOn, setTimerIsOn] = useState(settings.timer_needed)
-	const [scoreType, setScoreType] = useState(settings.score_type)
-	const [scoreTypeShort, setScoreTypeShort] = useState(settings.score_type_short)
-	const [minutes, setMinutes] = useState('2')
-	const [seconds, setSeconds] = useState('30')
+const GameSettings: React.FC<GameSettingsProps> = ({
+	settings,
+	setSettings,
+	cards,
+	setCards,
+	defaultCover,
+	setDefaultCover,
+}) => {
+	const getDefaultCover = (index: number) => {
+		let cover = 'https://res.cloudinary.com/plaining-poker/image/upload/v1631879184/dibpHF_vba7zs.jpg'
+		cardCovers.forEach((card, i) => {
+			if (index === i) cover = card.image
+		})
+		setDefaultCover(cover)
+	}
 
 	useEffect(() => {
-		// setCards(
-		// 	cards.map((card) => {
-		// 		if (card.scoreTypeShort !== 'default') card.scoreTypeShort = scoreTypeShort
-		// 		return card
-		// 	}),
-		// )
-	}, [scoreTypeShort])
+		setCards(
+			cards.map((card) => {
+				if (card.scoreTypeShort !== 'default') card.scoreTypeShort = settings.scoreTypeShort
+				return card
+			}),
+		)
+	}, [settings.scoreTypeShort])
 
-	const [cards, setCards] = useState([
+	const [cardCovers, setCardCovers] = useState([
 		{
-			image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
-			scoreTypeShort: 'default',
-			cardValue: 'unknown',
+			image: 'https://res.cloudinary.com/plaining-poker/image/upload/v1631879184/dibpHF_vba7zs.jpg',
 		},
 		{
-			image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
-			scoreTypeShort,
-			cardValue: '1',
+			image: 'https://res.cloudinary.com/plaining-poker/image/upload/v1631879177/scale_1200_zwr5jo.jpg',
 		},
 		{
-			image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
-			scoreTypeShort,
-			cardValue: '2',
+			image: 'https://res.cloudinary.com/plaining-poker/image/upload/v1631879169/linii-ogni-sfera_sxd6ry.jpg',
 		},
 	])
 
-	// const [cardCovers, setCardCovers] = useState([
-	// 	{
-	// 		image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
-	// 	},
-	// 	{
-	// 		image: 'https://wallpaper.ru/images/detailed/1/5-004.jpg',
-	// 	},
-	// ])
-
 	const deleteCard = (index: number) => {
-		// setCards(cards.filter((card, i) => i !== index))
+		setCards(cards.filter((card, i) => i !== index))
 	}
 
 	const addCard = () => {
-		// setCards([
-		// 	...cards,
-		// 	{
-		// 		image: 'https://www.fonewalls.com/wp-content/uploads/1668x2224-Background-HD-Wallpaper-070.jpg',
-		// 		scoreTypeShort,
-		// 		cardValue: 'unknown',
-		// 	},
-		// ])
+		setCards([
+			...cards,
+			{
+				image: defaultCover,
+				scoreTypeShort: settings.scoreTypeShort,
+				name: 'unknown',
+			},
+		])
 	}
 
 	const addCover = (input: EventTarget & HTMLInputElement) => {
@@ -74,67 +71,34 @@ const GameSettings = ({ settings }:GameSettingsProps): JSX.Element => {
 		const file = input.files[0]
 		reader.readAsDataURL(file)
 		reader.onload = () => {
-			// setCardCovers([
-			// 	...cardCovers,
-			// 	{
-			// 		image: reader.result as string,
-			// 	},
-			// ])
+			setCardCovers([
+				...cardCovers,
+				{
+					image: reader.result as string,
+				},
+			])
 		}
 	}
 
 	const setCardValue = (value: string, cardIndex: number) => {
-
-		// setCards(
-		// 	cards.map((card, index) => {
-		// 		if (index === cardIndex) {
-		// 			card.cardValue = value
-		// 		}
-		// 		return card
-		// 	}),
-		// )
-	}
-
-	// TODO подготовить данные для отправки настроек
-
-	const gameTimeInMS = (): number => {
-		const minutesMS = Number(minutes) * 60 * 1000
-		const secondsMS = Number(seconds) * 1000
-		return minutesMS + secondsMS
-	}
-
-	const gameSettings = {
-		masterAsPlayer,
-		changingCards,
-		timerIsOn,
-		scoreType,
-		scoreTypeShort,
-		timer: gameTimeInMS(),
+		setCards(
+			cards.map((card, index) => {
+				if (index === cardIndex) {
+					card.name = value
+				}
+				return card
+			}),
+		)
 	}
 
 	return (
 		<div className="game-settings">
-			<SettingsForm
-				seconds={seconds}
-				setSeconds={setSeconds}
-				minutes={minutes}
-				setMinutes={setMinutes}
-				masterAsPlayer={masterAsPlayer}
-				setMasterAsPlayer={setMasterAsPlayer}
-				changingCards={changingCards}
-				setChangingCards={setChangingCards}
-				timerIsOn={timerIsOn}
-				setTimerIsOn={setTimerIsOn}
-				scoreType={scoreType}
-				setScoreType={setScoreType}
-				scoreTypeShort={scoreTypeShort}
-				setScoreTypeShort={setScoreTypeShort}
-			/>
+			<SettingsForm settings={settings} setSettings={setSettings} />
 			<div className="cards-settings">
 				<div className="cards-cover">
 					<h3 className="cards-settings__title">Select cover:</h3>
 					<div className="cards-settings__wrapper">
-						{/* <CardsField cards={cardCovers} cardIsOpen={false} pickCards={true} /> */}
+						<CardsField cards={cardCovers} cardIsOpen={false} pickCards={true} setDefaultCover={getDefaultCover} />
 						<div className="cards-settings__btn">
 							<input className="cards-settings__inp" type="file" onChange={(e) => addCover(e.target)} />
 						</div>
@@ -143,12 +107,7 @@ const GameSettings = ({ settings }:GameSettingsProps): JSX.Element => {
 				<div className="cards-front">
 					<h3 className="cards-settings__title">Add card values:</h3>
 					<div className="cards-settings__wrapper">
-						<CardsField 
-						cards={settings.cards} 
-						deleteCard={deleteCard} 
-						setCardValue={setCardValue}
-						scoreType={scoreType}
-						scoreTypeShort={scoreTypeShort} />
+						<CardsField cards={cards} deleteCard={deleteCard} setCardValue={setCardValue} />
 						<button className="cards-settings__btn" onClick={addCard} />
 					</div>
 				</div>
