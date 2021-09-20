@@ -5,11 +5,12 @@ import { API } from '../interfaces/ApiEnum'
 import { ILobby, IMessage } from '../interfaces/LobbyTypes'
 import { IssueType } from '../interfaces/IssueType'
 import router from 'next/router'
+import { VoteType } from 'src/interfaces/VoteType'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby 
 	messages: IMessage[]
-	VotesQuanity: number
+	VotesQuanity: VoteType
 	kickPlayer: (player_id: string) => void
 	kickPlayerByVote: (voteToKickPlayerId: string) => void
 	sendMessage: ({ msgText, senderName }: { msgText: string; senderName: string }) => void
@@ -25,7 +26,12 @@ const SERVER_URL = API.MAIN_API
 export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobbyDataSocket => {
 	const [lobbyData, setLobbyData] = useState<any>()
 	const [messages, setMessages] = useState<IMessage[]>([])
-	const [VotesQuanity, setVotesQuanity] = useState(0);
+	const [VotesQuanity, setVotesQuanity] = useState<VoteType>({
+		modalIsOpen: false,
+		playerId: '',
+		playerName: '',
+		votesQuanity: 0
+	});
 
 	const socketRef = useRef<SocketIOClient.Socket | null>(null)
 
@@ -45,8 +51,8 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 			router.push('/')
 		})
 
-		socketRef.current.on('kick:voted', (votes: number) => {
-			setVotesQuanity(votes)
+		socketRef.current.on('kick:voted', (voteData: VoteType) => {
+			setVotesQuanity(voteData)
 		})
 
 		// socketRef.current.emit('message:get')
