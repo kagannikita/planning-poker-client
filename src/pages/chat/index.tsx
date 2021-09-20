@@ -18,7 +18,7 @@ const Chat = (props: Props) => {
 			name: location.query.name,
 		}
 	}, [location])
-	const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8082'), [])
+	const socket = React.useMemo<SocketIOClient.Socket>(() => io('http://localhost:8080'), [])
 	const inputRef = React.useRef() as React.MutableRefObject<any>
 
 	const [messages, setMessages] = React.useState<Message[]>([])

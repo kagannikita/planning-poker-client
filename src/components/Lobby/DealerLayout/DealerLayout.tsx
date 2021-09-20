@@ -1,16 +1,15 @@
-import React, { useContext, useState } from 'react'
-import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
-import { IGameSettings, IPlayer, Role } from '../../../interfaces/LobbyTypes'
+import React, {useState} from 'react'
+import {Button, Container, Grid, Header as HeaderTitle} from 'semantic-ui-react'
+import {IGameSettings, IPlayer, Role} from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
-import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
-import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
+import {IUseLobbyDataSocket} from '../../../hooks/useLobbyDataSocket'
 import GameSettings from '../../GameSettings/GameSettings'
-import SettingsAPI from 'src/api/SettingsApi'
-import router from 'next/router'
+import SettingsAPI from '../../../api/SettingsApi'
+import {ISettings} from '../../../interfaces/SettingsTypes'
 
 interface DealerLayoutProps {
 	dealerPlayer: IPlayer
@@ -32,6 +31,8 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 
 	const startGameHandler = async () => {
 		// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// TODO НА СТРОКЕ 117 я добавил функцию старт гейм, нужно либо эту удалить либо из 116 строки перенести данные сюда
 	}
 
 	const exitGameHandler = async () => {
@@ -43,6 +44,85 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		name: '',
 		id: '',
 	})
+
+	const [settings, setSettings] = useState<ISettings>({
+		masterAsPlayer: true,
+		changingCards: false,
+		timerIsOn: true,
+		scoreType: 'story point',
+		scoreTypeShort: 'SP',
+		minutes: '2',
+		seconds: '30',
+	})
+
+	const [defaultCover, setDefaultCover] = useState<string>(`https://
+	res.cloudinary.com/plaining-poker/image/upload/v1631879184/dibpHF_vba7zs.jpg`)
+
+	const [cards, setCards] = useState([
+		{
+			image: defaultCover,
+			scoreTypeShort: 'default',
+			name: 'unknown',
+		},
+		{
+			image: defaultCover,
+			scoreTypeShort: settings.scoreTypeShort,
+			name: '1',
+		},
+		{
+			image: defaultCover,
+			scoreTypeShort: settings.scoreTypeShort,
+			name: '2',
+		},
+	])
+
+	const gameTime = () => {
+		let minutes = settings.minutes
+		let seconds = settings.seconds
+		if (settings.minutes.length === 1) minutes = `0${settings.minutes}`
+		if (settings.seconds.length === 1) seconds = `0${settings.seconds}`
+		return `1943-03-09T00:${minutes}:${seconds}Z`
+	}
+
+	const gameSettings = {
+		is_dealer_play: settings.masterAsPlayer,
+		is_change_cards: settings.changingCards,
+		timer_needed: settings.timerIsOn,
+		score_type: settings.scoreType,
+		score_type_short: settings.scoreTypeShort,
+		timer: gameTime(),
+	}
+
+	const getCoverFromUrl = (src: string) => {
+		return fetch(src)
+			.then((res) => res.arrayBuffer())
+			.then((buf) => new File([buf], 'cover.png', { type: 'image/png' }))
+	}
+
+	const cardSettings = async () => {
+		const fileCover = await getCoverFromUrl(cards[0].image)
+
+		return cards.map((card) => {
+			const cardFormData = new FormData()
+			cardFormData.set('name', card.name)
+			cardFormData.set('image', fileCover, 'cover.png')
+			cardFormData.set('is_cover', 'true')
+			cardFormData.set('settings', lobbyData.settings.id)
+			return cardFormData
+		})
+	}
+
+	const api = new SettingsAPI()
+
+	const startGame = () => {
+		api.createSettings(lobbyData.settings.id, gameSettings).then(() => {
+			cardSettings().then((data) => {
+				data.forEach((card) => {
+					api.createCard(card)
+				})
+			})
+		})
+	}
 
 	return (
 		<>
@@ -63,7 +143,9 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="left">
-						<Button positive onClick={startGameHandler}>Start Game</Button>
+						<Button positive onClick={startGame}>
+							Start Game
+						</Button>
 					</Grid.Column>
 					<Grid.Column floated="right">
 						<Button negative floated="right" onClick={exitGameHandler}>
@@ -100,7 +182,15 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				playerName={modalkickPlayer.name}
 			/>
 			<Container>
-				<GameSettings settings={lobbyData?.settings} />
+				<GameSettings
+					lobbySettingsId={lobbyData.settings.id}
+					settings={settings}
+					setSettings={setSettings}
+					cards={cards}
+					setCards={setCards}
+					defaultCover={defaultCover}
+					setDefaultCover={setDefaultCover}
+				/>
 			</Container>
 		</>
 	)

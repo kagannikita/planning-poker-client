@@ -7,7 +7,7 @@ export type CardProps = {
 	cardIsOpen: boolean
 	cardIsSelected?: boolean
 	index: number
-	setIndexOfSelectedCard: React.Dispatch<React.SetStateAction<number>>
+	selectCard: (index: number) => void
 	pickCards: boolean
 	scoreTypeShort: string
 	cardValue: string
@@ -20,7 +20,7 @@ const Card: React.FC<CardProps> = ({
 	cardIsOpen,
 	cardIsSelected = false,
 	index,
-	setIndexOfSelectedCard,
+	selectCard,
 	pickCards,
 	scoreTypeShort,
 	cardValue,
@@ -35,7 +35,7 @@ const Card: React.FC<CardProps> = ({
 	if (cardIsSelected) cardStyle.push(cls.cardSelected)
 
 	const pickCard = () => {
-		if (pickCards) setIndexOfSelectedCard(index)
+		if (pickCards) selectCard(index)
 	}
 
 	if (!pickCards) cardStyle.push(cls.noPick)
