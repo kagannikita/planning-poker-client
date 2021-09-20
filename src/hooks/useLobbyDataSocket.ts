@@ -8,7 +8,7 @@ import router from 'next/router'
 import { VoteType } from 'src/interfaces/VoteType'
 
 export interface IUseLobbyDataSocket {
-	lobbyData: ILobby 
+	lobbyData: ILobby
 	messages: IMessage[]
 	VotesQuanity: VoteType
 	kickPlayer: (player_id: string) => void
