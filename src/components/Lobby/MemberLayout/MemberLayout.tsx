@@ -66,6 +66,7 @@ const MemberLayout = ({ socketData }: MemberLayoutProps): JSX.Element => {
 					return <MemberItem
 						playersQuanity={socketData.lobbyData?.players.length}
 						centered={true} 
+						btnDisabled={socketData.btnDeleteState}
 						key={member.id} 
 						{...(member as IPlayer)}
 						setVoteKickPlayer={socketData.setVotesQuanity}

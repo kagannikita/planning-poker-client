@@ -7,16 +7,18 @@ import { ModalState } from './DealerLayout/DealerLayout'
 import s from './lobby.module.scss'
 import { IVoteKickState } from './MemberLayout/MemberLayout'
 
-const PLAYERS_FOR_VOTE = 4
+const PLAYERS_FOR_VOTE = 3
 
 interface MemberItemProps extends IPlayer {
 	playersQuanity?: number
 	centered?: boolean
+	btnDisabled?: boolean
 	setKickPlayer?: Dispatch<SetStateAction<ModalState>>
 	setVoteKickPlayer?: React.Dispatch<React.SetStateAction<VoteType>>
 }
 
 const MemberItem: FC<MemberItemProps> = ({
+	btnDisabled,
 	playersQuanity,
 	firstName,
 	lastName,
@@ -57,6 +59,7 @@ const MemberItem: FC<MemberItemProps> = ({
 								icon="remove circle"
 								role="button"
 								floated="right"
+								disabled={btnDisabled}
 								negative
 								compact
 								onClick={() => setVoteKickPlayer({ 

@@ -11,6 +11,7 @@ export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
 	messages: IMessage[]
 	VotesQuanity: VoteType
+	btnDeleteState: boolean
 	setVotesQuanity: Dispatch<SetStateAction<VoteType>>
 	kickPlayer: (player_id: string) => void
 	kickPlayerByVote: (voteToKickPlayerId: string, playerName: string) => void
@@ -33,6 +34,7 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		playerName: '',
 		votesQuanity: 0
 	});
+	const [btnDeleteState, setBtnDeleteState] = useState(false);
 
 	const socketRef = useRef<SocketIOClient.Socket | null>(null)
 
@@ -52,10 +54,17 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 			router.push('/')
 		})
 
-		socketRef.current.on('kick:voted', (voteData: VoteType) => {
-			console.log('kick voted', voteData);
+		socketRef.current.on('kick:voted', ({ data, btnBlocked }: { data: VoteType, btnBlocked: boolean }) => {
+			console.log('kick voted', data, btnBlocked);
 			
-			setVotesQuanity(voteData)
+			setBtnDeleteState(btnBlocked)
+			setVotesQuanity(data)
+		})
+
+		socketRef.current.on('player:kicked', ({ btnBlocked } : { btnBlocked: boolean }) => {
+			console.log('player:kicked', btnBlocked);
+			
+			setBtnDeleteState(btnBlocked)
 		})
 
 		// socketRef.current.emit('message:get')
@@ -140,6 +149,7 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		lobbyData,
 		messages,
 		VotesQuanity,
+		btnDeleteState,
 		setVotesQuanity,
 		kickPlayer,
 		kickPlayerByVote,
