@@ -9,23 +9,29 @@ import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
 import { useLobbyDataSocket } from '../../hooks'
 import Loader from '../../components/loader/loader'
+import { IUseLobbyDataSocket } from 'src/hooks/useLobbyDataSocket'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
 	const [playerId, setPlayerId] = useState('')
 	const [Loading, setLoading] = useState(true)
-
+	// const [dataSocket, setdataSocket] = useState<IUseLobbyDataSocket>();
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
 		if (!id) router.push('/404')
-
+		// setdataSocket(dataSocket)
 		setPlayerId(id as string)
-		setLoading(false)
-	}, [router])
+
+	}, [router, playerId])
 
 	const dataSocket = useLobbyDataSocket(props.lobbyId, playerId)
+	// const dataSocket = useLobbyDataSocket(props.lobbyId, playerId)
 	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
-
+	useEffect(() => {
+		console.log('player', player);
+		
+		setLoading(false)
+	}, [player])
 	return (
 		<>
 			<Head>
@@ -36,8 +42,8 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 				<Loader loaderText="loading" />
 			) : (
 				<Container className='main-container'>
-					{player?.role === Role.dealer ? (
-						<DealerLayout dealerPlayer={player} socketData={dataSocket} {...props} />
+						{player?.role === Role.dealer ? (
+							<DealerLayout dealerPlayer={player} socketData={dataSocket} {...props} />
 					) : (
 						<MemberLayout socketData={dataSocket} />
 					)}
