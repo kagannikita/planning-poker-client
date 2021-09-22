@@ -151,6 +151,14 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				modalIsOpen: true,
 			})
 		}
+		if (lobbyData.issues.length < 1) {
+			isValid = false
+			setModalMessageState({
+				...modalMessageState,
+				message: 'Issues can not be empty, add at least one issue',
+				modalIsOpen: true,
+			})
+		}
 		return isValid
 	}
 
