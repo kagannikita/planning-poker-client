@@ -53,6 +53,7 @@ const MemberItem: FC<MemberItemProps> = ({
 
 				<Card.Header>{`${firstName} ${lastName}`} </Card.Header>
 				<Card.Meta>{position}</Card.Meta>
+				<Card.Meta>{role}</Card.Meta>
 				<Card.Description>
 					{setKickPlayer && (
 						<Button
@@ -64,14 +65,14 @@ const MemberItem: FC<MemberItemProps> = ({
 							onClick={() => setKickPlayer({ modalIsOpen: true, name: `${firstName} ${lastName}`, id })}
 						/>
 					)}
-					{setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
+					{role !== 'spectator' && setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
 						<Card.Meta>
 							Votes: {playersVoted}/{members}{' '}
 						</Card.Meta>
 					)}
 					{isYou ||
 						checkVoted ||
-						(setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
+						(role !== 'spectator' && setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
 							<Button
 								icon="remove circle"
 								role="button"
