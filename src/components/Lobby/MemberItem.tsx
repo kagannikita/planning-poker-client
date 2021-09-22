@@ -1,16 +1,21 @@
-import React, { Dispatch, FC, SetStateAction } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect } from 'react'
 import { Button, Card, Image } from 'semantic-ui-react'
-import { VoteType } from 'src/interfaces/VoteType'
 
 import { IPlayer } from '../../interfaces/LobbyTypes'
 import { ModalState } from './DealerLayout/DealerLayout'
 import s from './lobby.module.scss'
 import { IVoteKickState } from './MemberLayout/MemberLayout'
+import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
+import { VoteType } from '../../interfaces/VoteType'
 
 const PLAYERS_FOR_VOTE = 3
 
 interface MemberItemProps extends IPlayer {
-	playersQuanity?: number
+	playersQuanity?: IPlayer[]
+	votedQuantity?: Map<string, string[]>
+	isYou?: boolean
+	checkVoted?: boolean
+	playersVoted?: number
 	centered?: boolean
 	btnDisabled?: boolean
 	setKickPlayer?: Dispatch<SetStateAction<ModalState>>
@@ -19,7 +24,11 @@ interface MemberItemProps extends IPlayer {
 
 const MemberItem: FC<MemberItemProps> = ({
 	btnDisabled,
+	votedQuantity,
+	isYou,
+	checkVoted,
 	playersQuanity,
+	playersVoted,
 	firstName,
 	lastName,
 	id,
@@ -28,12 +37,13 @@ const MemberItem: FC<MemberItemProps> = ({
 	centered,
 	role,
 	setKickPlayer,
-	setVoteKickPlayer
+	setVoteKickPlayer,
 }): JSX.Element => {
+	const members = playersQuanity?.filter((player) => player.role === 'player').length
+
 	return (
 		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
-			<Card.Content >
-
+			<Card.Content>
 				<Image
 					floated="right"
 					size="mini"
@@ -54,7 +64,14 @@ const MemberItem: FC<MemberItemProps> = ({
 							onClick={() => setKickPlayer({ modalIsOpen: true, name: `${firstName} ${lastName}`, id })}
 						/>
 					)}
-					{setVoteKickPlayer && playersQuanity && playersQuanity > PLAYERS_FOR_VOTE && (
+					{setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
+						<Card.Meta>
+							Votes: {playersVoted}/{members}{' '}
+						</Card.Meta>
+					)}
+					{isYou ||
+						checkVoted ||
+						(setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
 							<Button
 								icon="remove circle"
 								role="button"
@@ -62,17 +79,19 @@ const MemberItem: FC<MemberItemProps> = ({
 								disabled={btnDisabled}
 								negative
 								compact
-								onClick={() => setVoteKickPlayer({ 
-									modalIsOpen: true, 
-									playerName: `${firstName} ${lastName}`, 
-									votesQuanity: 0,
-									playerId: id
-								})}
+								onClick={() =>
+									setVoteKickPlayer({
+										modalIsOpen: true,
+										playerName: `${firstName} ${lastName}`,
+										kickPlayer: votedQuantity!,
+										playerId: id,
+										currentPlayer: window.sessionStorage.getItem(LocalStorageEnum.playerid) as string,
+									})
+								}
 							/>
-					)}
+						))}
 				</Card.Description>
 			</Card.Content>
-
 		</Card>
 	)
 }

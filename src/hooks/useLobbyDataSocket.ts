@@ -5,7 +5,8 @@ import { API } from '../interfaces/ApiEnum'
 import { ILobby, IMessage } from '../interfaces/LobbyTypes'
 import { IssueType } from '../interfaces/IssueType'
 import router from 'next/router'
-import { VoteType } from 'src/interfaces/VoteType'
+import { LocalStorageEnum } from '../interfaces/localStorageEnum'
+import { VoteType } from '../interfaces/VoteType'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
@@ -23,8 +24,6 @@ export interface IUseLobbyDataSocket {
 	renameLobbyNameHandler: (name: string) => void
 }
 
-const SERVER_URL = API.MAIN_API
-
 export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobbyDataSocket => {
 	const [lobbyData, setLobbyData] = useState<any>()
 	const [messages, setMessages] = useState<IMessage[]>([])
@@ -32,38 +31,50 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		modalIsOpen: false,
 		playerId: '',
 		playerName: '',
-		votesQuanity: 0
-	});
-	const [btnDeleteState, setBtnDeleteState] = useState(false);
+		kickPlayer: new Map<string, string[]>(),
+		currentPlayer: '',
+	})
+	const [btnDeleteState, setBtnDeleteState] = useState(false)
 
 	const socketRef = useRef<SocketIOClient.Socket | null>(null)
 
 	useEffect(() => {
-		socketRef.current = io(SERVER_URL, {
+		socketRef.current = io(API.MAIN_API, {
 			query: { lobbyId },
 		})
 
 		socketRef.current.emit('join', { name: playerId, lobby_id: lobbyId })
 
 		socketRef.current.on('lobby:get', ({ data, name }: { data: ILobby; name: string }) => {
-			console.log('lobby:get', data, name)
 			setLobbyData(data)
+		})
+
+		socketRef.current.on('vote:data', ({ kickPlayer, btnBlocked }: { kickPlayer: any; btnBlocked: boolean }) => {
+			console.log(kickPlayer);
+			
+			// setBtnDeleteState(btnBlocked)
+			setVotesQuanity({
+				...VotesQuanity,
+				kickPlayer: new Map(JSON.parse(kickPlayer))
+			})
 		})
 
 		socketRef.current.on('player:deleted', () => {
 			router.push('/')
+			sessionStorage.clear()
 		})
 
-		socketRef.current.on('kick:voted', ({ data, btnBlocked }: { data: VoteType, btnBlocked: boolean }) => {
-			console.log('kick voted', data, btnBlocked);
-			
+		socketRef.current.on('kick:voted', (data: VoteType, btnBlocked: boolean) => {
+			data.currentPlayer = playerId
+			data.kickPlayer = new Map(JSON.parse(data.kickPlayer as unknown as string))
+			console.log('kick voted', data)
 			setBtnDeleteState(btnBlocked)
 			setVotesQuanity(data)
 		})
 
-		socketRef.current.on('player:kicked', ({ btnBlocked } : { btnBlocked: boolean }) => {
-			console.log('player:kicked', btnBlocked);
-			
+		socketRef.current.on('player:kicked', ({ btnBlocked }: { btnBlocked: boolean }) => {
+			console.log('player:kicked', btnBlocked)
+			// setVotesQuanity({})
 			setBtnDeleteState(btnBlocked)
 		})
 
@@ -86,10 +97,11 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		socketRef.current?.emit('player:delete', { player_id, lobby_id: lobbyId })
 	}
 
-	const kickPlayerByVote = (voteToKickPlayerId: string, playerName: string) => {
-		console.log('kickVote', voteToKickPlayerId);
-		
-		socketRef.current?.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName })
+	const kickPlayerByVote = (voteToKickPlayerId: string, playerName: string, currentPlayer: string) => {
+		console.log('kickVote', voteToKickPlayerId, playerName)
+		let player = currentPlayer
+		player = sessionStorage.getItem(LocalStorageEnum.playerid) as string
+		socketRef.current!.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName, player })
 	}
 
 	const sendMessage = ({ msgText, senderName }: { msgText: string; senderName: string }) => {
@@ -145,7 +157,7 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		socketRef.current.emit('leave', { player_id: playerId, lobby_id: lobbyId })
 	})
 
-	return {
+	return <IUseLobbyDataSocket>{
 		lobbyData,
 		messages,
 		VotesQuanity,
