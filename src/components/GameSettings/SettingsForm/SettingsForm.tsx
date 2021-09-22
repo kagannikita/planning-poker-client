@@ -25,7 +25,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings }) =>
 				</div>
 			</div>
 			<div className="form__item">
-				<label htmlFor="masterAsPlayer" className="item-title">
+				<label htmlFor="changingCards" className="item-title">
 					Changing cards in round end:
 				</label>
 				<div className="ui toggle checkbox">
@@ -35,11 +35,11 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings }) =>
 						defaultChecked={settings.changingCards}
 						onChange={() => setSettings({ ...settings, changingCards: !settings.changingCards })}
 					/>
-					<label htmlFor="masterAsPlayer"> </label>
+					<label htmlFor="changingCards"> </label>
 				</div>
 			</div>
 			<div className="form__item">
-				<label htmlFor="masterAsPlayer" className="item-title">
+				<label htmlFor="timerIsOn" className="item-title">
 					Is timer needed:
 				</label>
 				<div className="ui toggle checkbox">
@@ -49,8 +49,23 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings }) =>
 						defaultChecked={settings.timerIsOn}
 						onChange={() => setSettings({ ...settings, timerIsOn: !settings.timerIsOn })}
 					/>
-					<label htmlFor="masterAsPlayer"> </label>
+					<label htmlFor="timerIsOn"> </label>
 				</div>
+			</div>
+			<div className="form__item">
+				<label htmlFor="deckOfCards" className="item-title">
+					Deck of cards:
+				</label>
+				<select
+					id="deckOfCards"
+					className="item-select"
+					value={settings.deckOfCards}
+					onChange={(e) => setSettings({ ...settings, deckOfCards: e.target.value })}
+				>
+					<option value="fibonacci">Fibonacci numbers</option>
+					<option value="planningPoker">Planning Poker</option>
+					<option value="custom">Custom</option>
+				</select>
 			</div>
 			<div className="form__item">
 				<label htmlFor="scoreType" className="item-title">

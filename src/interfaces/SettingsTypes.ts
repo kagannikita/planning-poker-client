@@ -6,4 +6,5 @@ export interface ISettings {
 	scoreTypeShort: string
 	minutes: string
 	seconds: string
+	deckOfCards: string
 }
