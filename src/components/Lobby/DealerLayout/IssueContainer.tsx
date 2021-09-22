@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { Container, Header as HeaderTitle } from 'semantic-ui-react'
 import Issue, { IssueProps } from '../Issue'
 import IssueCreate from '../IssueCardCreate'
@@ -46,6 +46,7 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 		id: '',
 		lobby: lobbyID,
 	})
+
 
 	return (
 		<>

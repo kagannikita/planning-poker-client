@@ -9,7 +9,7 @@ import ModalKickPlayerByVote from '../ModalKickPlayerByVote'
 import { VoteType } from 'src/interfaces/VoteType'
 
 interface MemberLayoutProps {
-	socketData: IUseLobbyDataSocket
+	socketData: IUseLobbyDataSocket,
 }
 
 export interface IVoteKickState {
@@ -21,7 +21,6 @@ export interface IVoteKickState {
 
 const MemberLayout = ({ socketData }: MemberLayoutProps): JSX.Element => {
 	console.log(socketData.VotesQuanity);
-
 	const [ModalKick, setModalKick] = useState(socketData.VotesQuanity.modalIsOpen);
 	// const [voteKickPlayer, setvoteKickPlayer] = useState<VoteType>({...socketData.VotesQuanity})
 	
@@ -61,8 +60,10 @@ const MemberLayout = ({ socketData }: MemberLayoutProps): JSX.Element => {
 				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
+
 				{socketData.lobbyData?.players.map((member) => {
 					if (member.role === 'dealer') return
+
 					return <MemberItem
 						playersQuanity={socketData.lobbyData?.players.length}
 						centered={true} 
@@ -72,6 +73,7 @@ const MemberLayout = ({ socketData }: MemberLayoutProps): JSX.Element => {
 						setVoteKickPlayer={socketData.setVotesQuanity}
 					 />
 				})}
+
 			</Container>
 			<ModalKickPlayerByVote 
 			

@@ -10,6 +10,8 @@ import {IUseLobbyDataSocket} from '../../../hooks/useLobbyDataSocket'
 import GameSettings from '../../GameSettings/GameSettings'
 import SettingsAPI from '../../../api/SettingsApi'
 import {ISettings} from '../../../interfaces/SettingsTypes'
+import router from 'next/router'
+import { API } from 'src/interfaces/ApiEnum'
 
 interface DealerLayoutProps {
 	dealerPlayer: IPlayer
@@ -31,6 +33,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 
 	const startGameHandler = async () => {
 		// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
+		router.push({ hostname: API.GAME, pathname: socketData.lobbyData.id})
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// TODO НА СТРОКЕ 117 я добавил функцию старт гейм, нужно либо эту удалить либо из 116 строки перенести данные сюда
 	}
@@ -143,7 +146,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="left">
-						<Button positive onClick={startGame}>
+						<Button positive onClick={startGameHandler}>
 							Start Game
 						</Button>
 					</Grid.Column>

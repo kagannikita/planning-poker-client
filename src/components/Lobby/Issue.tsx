@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Card } from 'semantic-ui-react'
 import { ModalState } from './DealerLayout/DealerLayout'
 import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 import s from './lobby.module.scss'
 import { IssueType } from '../../interfaces/IssueType'
+import { CurrentIssueContext } from 'src/context/CurrentIssueContext'
 
 export interface IssueProps extends IssueType {
 	type: 'lobby' | 'game'
@@ -12,6 +13,16 @@ export interface IssueProps extends IssueType {
 }
 
 const Issue = ({ name, priority, id, type, link, setModalChange, setModalDelete, lobby }: IssueProps) => {
+
+	const { CurrentIssue, setCurrentIssue } = useContext(CurrentIssueContext);
+
+	const clickOnCurrIssue = () => {
+
+		setCurrentIssue({
+			id,
+			name,
+		})
+	}
 
 	const deleteHandler = () => {
 		setModalDelete({
@@ -31,12 +42,28 @@ const Issue = ({ name, priority, id, type, link, setModalChange, setModalDelete,
 			modalIsOpen: true,
 		})
 	}
+
+	// const styleCard = () => {
+	// 	if(type === 'game' && CurrentIssue.id === id) {
+	// 		console.log('log3');
+	// 		return s.itemAcitve
+	// 	} else if (type === 'lobby') {
+	// 		return s.item;
+	// 	} else {
+	// 		console.log('log2');
+	// 		return ''
+	// 	}	
+	// }
+
 	return (
-		<Card centered className={type === 'lobby' ? s.item : ''}>
+		<Card centered 
+			className={CurrentIssue.id === id && type === 'game' ? s.itemActive : '' ? s.item : '' }
+			onClick={type === 'game' ? clickOnCurrIssue : undefined}>
 			<Card.Content>
 				<Card.Header>{name}</Card.Header>
+				<Card.Meta><b>{CurrentIssue.id === id && "Current: "}</b></Card.Meta>
 				<Card.Meta>{priority}</Card.Meta>
-				<Card.Meta><a href={link} about="issue link">Issue doc link</a></Card.Meta>
+				<Card.Meta><span about="issue link">{link} </span></Card.Meta>
 				<Card.Description textAlign="right">
 					{type === 'lobby' && 
 						<Button

@@ -1,3 +1,5 @@
+@import '../../styles/colors.scss';
+
 .title {
 	margin: 2rem auto !important;
 }
@@ -14,6 +16,10 @@
 	max-width: 253px !important;
 	align-self: stretch;
 	margin: 1rem !important;
+}
+
+.itemActive {
+	background-color: rgba($color:  $second-blue, $alpha: .2) !important;
 }
 
 .itemCreateDescription {
