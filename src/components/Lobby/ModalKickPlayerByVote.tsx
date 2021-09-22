@@ -35,7 +35,7 @@ const ModalKickPlayerByVote: FC<ModalKickPlayerByVoteProps> = ({
 		}
 		return 0
 	}
-	console.log('handlerVote', voteData)
+	console.log('handlerVote', voteData.kickPlayer)
 	return (
 		<Modal size="tiny" open={voteData.modalIsOpen} onClose={closeHandler}>
 			<Modal.Header>Vote kick player</Modal.Header>

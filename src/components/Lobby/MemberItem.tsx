@@ -40,19 +40,33 @@ const MemberItem: FC<MemberItemProps> = ({
 	setVoteKickPlayer,
 }): JSX.Element => {
 	const members = playersQuanity?.filter((player) => player.role === 'player').length
+	
+	const styles = () => {
+		if (role !== 'dealer' && isYou) {
+			return `${s.item} ${s.itsYou}`
+		}
+		if (role == 'dealer' && isYou){
+			return `${s.itsYou}`
+		}
+		return ''
+	}
+
+	// role !== 'dealer' ? s.item : '' 
 
 	return (
-		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
+		<Card centered={centered} className={styles()} >
 			<Card.Content>
 				<Image
 					floated="right"
 					size="mini"
 					circular
+					className={isYou ? s.itsYou : ''}
 					src={image || `https://ui-avatars.com/api/?name=${firstName}+${lastName}`}
 				/>
 
 				<Card.Header>{`${firstName} ${lastName}`} </Card.Header>
 				<Card.Meta>{position}</Card.Meta>
+				<Card.Meta>{role}</Card.Meta>
 				<Card.Description>
 					{setKickPlayer && (
 						<Button
@@ -64,14 +78,14 @@ const MemberItem: FC<MemberItemProps> = ({
 							onClick={() => setKickPlayer({ modalIsOpen: true, name: `${firstName} ${lastName}`, id })}
 						/>
 					)}
-					{setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
+					{role !== 'spectator' && setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
 						<Card.Meta>
-							Votes: {playersVoted}/{members}{' '}
+							Votes: {playersVoted}/{members}
 						</Card.Meta>
 					)}
 					{isYou ||
 						checkVoted ||
-						(setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
+						(role !== 'spectator' && setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
 							<Button
 								icon="remove circle"
 								role="button"

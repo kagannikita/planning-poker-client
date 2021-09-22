@@ -2,17 +2,17 @@ import React, { FC, useEffect, useState } from 'react'
 import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import DealerLayouGame from '../../components/Game/DealerPageName'
-import MemberItem from 'src/components/Lobby/MemberItem'
-import IssueContainer from 'src/components/Lobby/DealerLayout/IssueContainer'
-import { useLobbyDataSocket } from 'src/hooks'
-import { LocalStorageEnum } from 'src/interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
 import { CurrentIssueContext } from 'src/context/CurrentIssueContext'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
+import { useLobbyDataSocket } from '../../hooks'
+import IssueContainer from '../../components/Lobby/DealerLayout/IssueContainer'
+import MemberItem from 'src/components/Lobby/MemberItem'
 
 export interface CurrentIssue {
-	id: string,
-	name: string,
+	id: string
+	name: string
 }
 
 
@@ -20,6 +20,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const router = useRouter()
 	const [playerId, setplayerId] = useState('');
 	const [GameState, setGameState] = useState<'pause' | 'started'>('pause');
+
+
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
 		if (!id) router.push('/404')
@@ -27,19 +29,21 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	}, [ playerId])
 	
 	const dataSocket = useLobbyDataSocket(props.lobbyId, playerId)
+	console.log('data asdasd');
+	
 	
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
 		id: dataSocket.lobbyData?.issues[0]?.id || '',
 		name: dataSocket.lobbyData?.issues[0]?.name || ''
 	});
-	console.log('current issue', CurrentIssue);
-	
+
+
 	const startRoundHandler = () => {
 		// send CurrentIssue
 	}
 
 	const nextRoundHandler = () => {
-		// send 
+		// send
 	}
 
 	return (
@@ -54,11 +58,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							<HeaderTitle as="h3">Scram master</HeaderTitle>
 							{/* <MemberItem firstName="Max" lastName="Yazykov" role={Role.dealer} id="asd" /> */}
 							{dataSocket.lobbyData?.players.map((dealer) => {
-              if (dealer.role === Role.dealer) {
-                return <MemberItem key={dealer.id} {...(dealer as IPlayer)} />
-              }
-              return
-            })}
+								if (dealer.role === Role.dealer) {
+									return <MemberItem isYou={dealer.id === playerId} key={dealer.id} {...(dealer as IPlayer)} />
+								}
+								return
+							})}
 						</Grid.Column>
 						<Grid.Column verticalAlign="bottom" width="10">
 							<Button negative floated="right">
@@ -66,23 +70,28 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							</Button>
 						</Grid.Column>
 					</Grid.Row>
-						<GridRow centered columns='3'>
-						<Grid.Column >
-							<Button color="blue" onClick={startRoundHandler}>Run Round</Button>
-							<Button color="blue" onClick={nextRoundHandler}>Next Round</Button>
+					<GridRow centered columns="3">
+						<Grid.Column>
+							<Button color="blue" onClick={startRoundHandler}>
+								Run Round
+							</Button>
+							<Button color="blue" onClick={nextRoundHandler}>
+								Next Round
+							</Button>
 						</Grid.Column>
-						</GridRow>
+					</GridRow>
 					<Grid columns="1">
 						<Grid.Column width="14">
 							<HeaderTitle as="h2">Issues:</HeaderTitle>
 
-							<CurrentIssueContext.Provider value={{ CurrentIssue, setCurrentIssue}}>
-								<IssueContainer type="game"
-								issues={dataSocket.lobbyData?.issues}
-								lobbyID={router.query.id as string}
-								createIssue={dataSocket.createIssue}
-								removeIssue={dataSocket.removeIssue}
-								updateIssue={dataSocket.updateIssue}
+							<CurrentIssueContext.Provider value={{ CurrentIssue, setCurrentIssue }}>
+								<IssueContainer
+									type="game"
+									issues={dataSocket.lobbyData?.issues}
+									lobbyID={router.query.id as string}
+									createIssue={dataSocket.createIssue}
+									removeIssue={dataSocket.removeIssue}
+									updateIssue={dataSocket.updateIssue}
 								/>
 							</CurrentIssueContext.Provider>
 						</Grid.Column>
