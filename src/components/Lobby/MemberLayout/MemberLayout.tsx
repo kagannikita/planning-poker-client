@@ -30,9 +30,12 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 		return 0
 	}
 	const checkVoted = (id: string) => {
+		console.log(id)
+		console.log(socketData.VotesQuanity.kickPlayer)
 		const votedPlayer = socketData.VotesQuanity.kickPlayer.get(id)
 		if (votedPlayer) {
 			const findPlayer = votedPlayer.find((player) => player === you)
+			console.log(findPlayer)
 			return !!findPlayer
 		}
 		return false
@@ -71,7 +74,6 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
-
 				{socketData.lobbyData?.players.map((member) => {
 					if (member.role === 'dealer') return
 					return (
@@ -89,7 +91,6 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 						/>
 					)
 				})}
-
 			</Container>
 			<ModalKickPlayerByVote
 				allMembers={socketData.lobbyData?.players.filter((player) => player.role === 'player').length}

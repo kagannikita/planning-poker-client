@@ -1,17 +1,17 @@
-import React, {useState} from 'react'
-import {Button, Container, Grid, Header as HeaderTitle} from 'semantic-ui-react'
-import {IGameSettings, IPlayer, Role} from '../../../interfaces/LobbyTypes'
+import React, { useState } from 'react'
+import { Button, Container, Grid, Header as HeaderTitle } from 'semantic-ui-react'
+import { IGameSettings, IPlayer, Role } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 import IssueContainer from './IssueContainer'
 import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
-import {IUseLobbyDataSocket} from '../../../hooks/useLobbyDataSocket'
+import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
 import GameSettings from '../../GameSettings/GameSettings'
 import SettingsAPI from '../../../api/SettingsApi'
-import {ISettings} from '../../../interfaces/SettingsTypes'
+import { ISettings } from '../../../interfaces/SettingsTypes'
 import router from 'next/router'
-import { API } from 'src/interfaces/ApiEnum'
+import { API } from '../../../interfaces/ApiEnum'
 
 interface DealerLayoutProps {
 	dealerPlayer: IPlayer
@@ -25,15 +25,13 @@ export interface ModalState {
 }
 
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
-
 	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData
 
-
-	const [settingsState, setsettingsState] = useState<IGameSettings>({...socketData.lobbyData.settings});
+	const [settingsState, setsettingsState] = useState<IGameSettings>({ ...socketData.lobbyData.settings })
 
 	const startGameHandler = async () => {
 		// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
-		router.push({ hostname: API.GAME, pathname: socketData.lobbyData.id})
+		router.push({ hostname: API.GAME, pathname: socketData.lobbyData.id })
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// TODO НА СТРОКЕ 117 я добавил функцию старт гейм, нужно либо эту удалить либо из 116 строки перенести данные сюда
 	}
