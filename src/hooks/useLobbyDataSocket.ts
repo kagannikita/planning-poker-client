@@ -24,8 +24,6 @@ export interface IUseLobbyDataSocket {
 	renameLobbyNameHandler: (name: string) => void
 }
 
-const SERVER_URL = API.MAIN_API
-
 export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobbyDataSocket => {
 	const [lobbyData, setLobbyData] = useState<any>()
 	const [messages, setMessages] = useState<IMessage[]>([])
@@ -41,7 +39,7 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 	const socketRef = useRef<SocketIOClient.Socket | null>(null)
 
 	useEffect(() => {
-		socketRef.current = io(SERVER_URL, {
+		socketRef.current = io(API.MAIN_API, {
 			query: { lobbyId },
 		})
 
@@ -51,12 +49,23 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 			setLobbyData(data)
 		})
 
+		socketRef.current.on('vote:data', ({ kickPlayer, btnBlocked }: { kickPlayer: any; btnBlocked: boolean }) => {
+			console.log(kickPlayer);
+			
+			// setBtnDeleteState(btnBlocked)
+			setVotesQuanity({
+				...VotesQuanity,
+				kickPlayer: new Map(JSON.parse(kickPlayer))
+			})
+		})
+
 		socketRef.current.on('player:deleted', () => {
 			router.push('/')
+			sessionStorage.clear()
 		})
 
 		socketRef.current.on('kick:voted', (data: VoteType, btnBlocked: boolean) => {
-			data.currentPlayer = sessionStorage.getItem(LocalStorageEnum.playerid) as string
+			data.currentPlayer = playerId
 			data.kickPlayer = new Map(JSON.parse(data.kickPlayer as unknown as string))
 			console.log('kick voted', data)
 			setBtnDeleteState(btnBlocked)
@@ -65,7 +74,7 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 
 		socketRef.current.on('player:kicked', ({ btnBlocked }: { btnBlocked: boolean }) => {
 			console.log('player:kicked', btnBlocked)
-
+			// setVotesQuanity({})
 			setBtnDeleteState(btnBlocked)
 		})
 

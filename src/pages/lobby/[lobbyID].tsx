@@ -28,6 +28,8 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 	useEffect(() => {
 		setLoading(false)
 	}, [player])
+
+	
 	return (
 		<>
 			<Head>

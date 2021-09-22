@@ -71,6 +71,7 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
+
 				{socketData.lobbyData?.players.map((member) => {
 					if (member.role === 'dealer') return
 					return (
@@ -88,6 +89,7 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 						/>
 					)
 				})}
+
 			</Container>
 			<ModalKickPlayerByVote
 				allMembers={socketData.lobbyData?.players.filter((player) => player.role === 'player').length}
