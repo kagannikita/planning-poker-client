@@ -8,6 +8,7 @@ import { useLobbyDataSocket } from 'src/hooks'
 import { LocalStorageEnum } from 'src/interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
 import { CurrentIssueContext } from 'src/context/CurrentIssueContext'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 export interface CurrentIssue {
 	id: string,
@@ -15,22 +16,21 @@ export interface CurrentIssue {
 }
 
 
-const GamePage: FC = () => {
+const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>):JSX.Element => {
 	const router = useRouter()
 	const [playerId, setplayerId] = useState('');
-	const [GameState, setGameState] = useState<'pause' | 'started'>();
+	const [GameState, setGameState] = useState<'pause' | 'started'>('pause');
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
 		if (!id) router.push('/404')
 		setplayerId(id as string)
-
-	}, [router, playerId])
+	}, [ playerId])
 	
-	const dataSocket = useLobbyDataSocket(router.query.id as string, playerId)
-
+	const dataSocket = useLobbyDataSocket(props.lobbyId, playerId)
+	
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
-		id: dataSocket.lobbyData?.issues[0].id || '',
-		name: dataSocket.lobbyData?.issues[0].name || ''
+		id: dataSocket.lobbyData?.issues[0]?.id || '',
+		name: dataSocket.lobbyData?.issues[0]?.name || ''
 	});
 	console.log('current issue', CurrentIssue);
 	
@@ -91,6 +91,18 @@ const GamePage: FC = () => {
 			</Container>
 		</>
 	)
+}
+
+interface GameSSRProps {
+	lobbyId: string
+}
+
+export const getServerSideProps: GetServerSideProps<GameSSRProps> = async ({ query }) => {
+	return {
+		props: {
+			lobbyId: query.id as string,
+		},
+	}
 }
 
 export default GamePage
