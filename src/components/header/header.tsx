@@ -1,8 +1,6 @@
 import React from 'react'
-import headerLogo from '../../../public/images/logo.png'
-import Image from 'next/image'
-import Link from 'next/link'
 import s from './header.module.scss'
+import Logo from '../Logo/logo'
 
 export const HeaderBlock = () => {
 	return (
@@ -10,7 +8,8 @@ export const HeaderBlock = () => {
 			<div className={s['header__first_row']} />
 			<div className={s['header__second_row']} />
 			<div className={s['header__logo-link']}>
-				<Image src={headerLogo} alt="Header logo" />
+				{/*<Image src={headerLogo} alt="Header logo" />*/}
+				<Logo />
 			</div>
 		</header>
 	)
