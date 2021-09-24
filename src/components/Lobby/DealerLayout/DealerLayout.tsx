@@ -179,13 +179,15 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 
 	return (
 		<>
-			<HeaderTitle as="h1" className={s.title}>
+			<HeaderTitle as="h2" className={s.title + ' heading'}>
 				{lobbyData?.name}
 			</HeaderTitle>
 			<Grid columns="1">
-				<Grid.Row color="blue">
+				<Grid.Row className={s.lobbyInfo}>
 					<Grid.Column>
-						<HeaderTitle as="h3">Scram master</HeaderTitle>
+						<HeaderTitle as="h3" className={'heading'}>
+							Scram master
+						</HeaderTitle>
 						<MemberItem {...(dealerPlayer as IPlayer)} />
 					</Grid.Column>
 				</Grid.Row>
@@ -196,18 +198,18 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="left">
-						<Button positive onClick={startGameHandler}>
+						<Button positive onClick={startGameHandler} className={s.startBtn}>
 							Start Game
 						</Button>
 					</Grid.Column>
 					<Grid.Column floated="right">
-						<Button negative floated="right" onClick={exitGameHandler}>
+						<Button negative floated="right" onClick={exitGameHandler} className={s.cancelBtn}>
 							Cancel Game
 						</Button>
 					</Grid.Column>
 				</Grid.Row>
 			</Grid>
-			<HeaderTitle as="h1" textAlign="center">
+			<HeaderTitle as="h2" className="heading" textAlign="center">
 				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
@@ -234,6 +236,9 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				playerId={modalkickPlayer.id}
 				playerName={modalkickPlayer.name}
 			/>
+			<HeaderTitle as="h2" className={s.title + ' heading'} textAlign="center">
+				Game Settings:
+			</HeaderTitle>
 			<Container>
 				<GameSettings
 					lobbySettingsId={lobbyData.settings.id}
