@@ -1,5 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
-import io from 'socket.io-client'
+import { Dispatch, MutableRefObject, SetStateAction, useEffect, useRef, useState } from 'react'
 import { useBeforeUnload } from '.'
 import { API } from '../interfaces/ApiEnum'
 import { ILobby, IMessage } from '../interfaces/LobbyTypes'
@@ -10,23 +9,24 @@ import { VoteType } from '../interfaces/VoteType'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
-	messages: IMessage[]
 	VotesQuanity: VoteType
-	btnDeleteState: boolean
+	// btnDeleteState: boolean
 	setVotesQuanity: Dispatch<SetStateAction<VoteType>>
 	kickPlayer: (player_id: string) => void
 	kickPlayerByVote: (voteToKickPlayerId: string, playerName: string) => void
-	sendMessage: ({ msgText, senderName }: { msgText: string; senderName: string }) => void
-	removeMessage: (id: string) => void
+
 	createIssue: ({ name, priority }: IssueType) => void
 	removeIssue: (id: string) => void
 	updateIssue: ({ id, name, priority }: IssueType) => void
 	renameLobbyNameHandler: (name: string) => void
 }
 
-export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobbyDataSocket => {
+export const useLobbyDataSocket = (
+	socketRef: MutableRefObject<SocketIOClient.Socket>,
+	lobbyId: string,
+	playerId: string): IUseLobbyDataSocket => {
+
 	const [lobbyData, setLobbyData] = useState<any>()
-	const [messages, setMessages] = useState<IMessage[]>([])
 	const [VotesQuanity, setVotesQuanity] = useState<VoteType>({
 		modalIsOpen: false,
 		playerId: '',
@@ -34,14 +34,9 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		kickPlayer: new Map<string, string[]>(),
 		currentPlayer: '',
 	})
-	const [btnDeleteState, setBtnDeleteState] = useState(false)
-
-	const socketRef = useRef<SocketIOClient.Socket | null>(null)
+	// const [btnDeleteState, setBtnDeleteState] = useState(false)
 
 	useEffect(() => {
-		socketRef.current = io(API.MAIN_API, {
-			query: { lobbyId },
-		})
 
 		socketRef.current.emit('join', { name: playerId, lobby_id: lobbyId })
 
@@ -59,32 +54,29 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 			})
 		})
 
+		//// redirects 
+
 		socketRef.current.on('player:deleted', () => {
 			router.push('/')
 			sessionStorage.clear()
+		})
+
+		socketRef.current.on('redirect:get', (pathname: string) => {
+			router.push({ hostname: pathname, query: lobbyId })
 		})
 
 		socketRef.current.on('kick:voted', (data: VoteType, btnBlocked: boolean) => {
 			data.currentPlayer = playerId
 			data.kickPlayer = new Map(JSON.parse(data.kickPlayer as unknown as string))
 			console.log('kick voted', data)
-			setBtnDeleteState(btnBlocked)
+			// setBtnDeleteState(btnBlocked)
 			setVotesQuanity(data)
 		})
 
-		socketRef.current.on('player:kicked', ({ btnBlocked }: { btnBlocked: boolean }) => {
-			console.log('player:kicked', btnBlocked)
-			// setVotesQuanity({})
-			setBtnDeleteState(btnBlocked)
-		})
-
-		// socketRef.current.emit('message:get')
-
-		// socketRef.current.on('messages', (messages: IMessage[]) => {
-		//   const newMessages = messages.map((msg) =>
-		//     msg.id === userId ? { ...msg, currentUser: true } : msg
-		//   )
-		//   setMessages(newMessages)
+		// socketRef.current.on('player:kicked', ({ btnBlocked }: { btnBlocked: boolean }) => {
+		// 	console.log('player:kicked', btnBlocked)
+		// 	// setVotesQuanity({})
+		// 	setBtnDeleteState(btnBlocked)
 		// })
 
 		return () => {
@@ -103,22 +95,8 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 		socketRef.current!.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName, currentPlayer })
 	}
 
-	const sendMessage = ({ msgText, senderName }: { msgText: string; senderName: string }) => {
-		if (socketRef.current === null) return
-		socketRef.current.emit('message:add', {
-			playerId,
-			msgText,
-			senderName,
-		})
-	}
-
-	const removeMessage = (id: string) => {
-		if (socketRef.current === null) return
-		socketRef.current.emit('message:remove', id)
-	}
-
-	const createIssue = ({ name, priority }: IssueType) => {
-		console.log('create issue ', name, priority, lobbyId)
+	const createIssue = ({ name, priority, score = '-' }: IssueType) => {
+		console.log('create issue ', name, priority, lobbyId, score)
 
 		if (socketRef.current === null) return
 		socketRef.current.emit('issue:added', {
@@ -158,14 +136,11 @@ export const useLobbyDataSocket = (lobbyId: string, playerId: string): IUseLobby
 
 	return <IUseLobbyDataSocket>{
 		lobbyData,
-		messages,
 		VotesQuanity,
-		btnDeleteState,
+		// btnDeleteState,
 		setVotesQuanity,
 		kickPlayer,
 		kickPlayerByVote,
-		sendMessage,
-		removeMessage,
 		createIssue,
 		removeIssue,
 		updateIssue,

@@ -21,8 +21,6 @@ export interface IVoteKickState {
 
 const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 	console.log('Data in MemberLayout', socketData.VotesQuanity)
-	const [ModalKick, setModalKick] = useState(socketData.VotesQuanity.modalIsOpen)
-	// const [voteKickPlayer, setvoteKickPlayer] = useState<VoteType>({...socketData.VotesQuanity})
 	const getMembersVote = (id: string) => {
 		if (socketData.VotesQuanity.kickPlayer.get(id)) {
 			return socketData.VotesQuanity.kickPlayer.get(id)!.length
@@ -40,6 +38,8 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 		}
 		return false
 	}
+
+
 	return (
 		<>
 			<HeaderTitle as="h1" className={s.title + ' heading'}>
@@ -85,11 +85,10 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 							checkVoted={checkVoted(member.id)}
 							playersVoted={getMembersVote(member.id)}
 							playersQuanity={socketData.lobbyData?.players}
+							setVoteKickPlayer={socketData.setVotesQuanity}
 							centered={true}
-							btnDisabled={socketData.btnDeleteState}
 							key={member.id}
 							{...(member as IPlayer)}
-							setVoteKickPlayer={socketData.setVotesQuanity}
 						/>
 					)
 				})}

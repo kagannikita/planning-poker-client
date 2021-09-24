@@ -3,6 +3,7 @@ export interface IssueTypeAPI {
 	priority: 'low' | 'average' | 'high'
 	lobby: string
 	link: string
+	score: string
 }
 
 

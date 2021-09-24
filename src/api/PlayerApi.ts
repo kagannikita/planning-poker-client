@@ -22,7 +22,6 @@ export default class PlayerAPI {
 	}
 
 	async createPlayer(data: FormData): Promise<IPlayer> {
-		// return new Promise((resolve, reject) => {
 		return await axios({
 			method: 'post',
 			url: `${API.MAIN_API}${API.PLAYER}`,
@@ -31,9 +30,6 @@ export default class PlayerAPI {
 		})
 			.then((res) => res.data)
 			.catch((err) => err)
-		// .then((res) => resolve(res.data))
-		// .catch((err) => reject(err))
-		// })
 	}
 
 	deletePlayer(id: string): Promise<IPlayer> {

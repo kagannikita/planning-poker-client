@@ -26,6 +26,7 @@ const ModalCreateIssue: FC<ModalCreateIssueProps> = (props) => {
 		id: '',
 		name: '',
 		link: '',
+		score: '-',
 		priority: 'low',
 		lobby: props.lobbyID,
 	})
@@ -35,6 +36,7 @@ const ModalCreateIssue: FC<ModalCreateIssueProps> = (props) => {
 			id: '',
 			name: '',
 			link: '',
+			score: '-',
 			priority: 'low',
 			lobby: props.lobbyID,
 		})
@@ -55,6 +57,7 @@ const ModalCreateIssue: FC<ModalCreateIssueProps> = (props) => {
 				lobby: newIssue.lobby,
 				name: newIssue.name,
 				link: newIssue.link,
+				score: newIssue.score,
 				priority: newIssue.priority,
 			})
 			props.createIssue(newIssue)
