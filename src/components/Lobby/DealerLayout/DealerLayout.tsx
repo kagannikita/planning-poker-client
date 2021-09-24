@@ -29,8 +29,6 @@ export interface ModalState {
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
 	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData
 
-	const [settingsState, setsettingsState] = useState<IGameSettings>({ ...socketData.lobbyData.settings })
-
 	const exitGameHandler = async () => {
 		// router.push('/')
 	}

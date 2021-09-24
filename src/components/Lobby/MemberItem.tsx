@@ -17,13 +17,11 @@ interface MemberItemProps extends IPlayer {
 	checkVoted?: boolean
 	playersVoted?: number
 	centered?: boolean
-	btnDisabled?: boolean
 	setKickPlayer?: Dispatch<SetStateAction<ModalState>>
 	setVoteKickPlayer?: React.Dispatch<React.SetStateAction<VoteType>>
 }
 
 const MemberItem: FC<MemberItemProps> = ({
-	btnDisabled,
 	votedQuantity,
 	isYou,
 	checkVoted,
@@ -90,7 +88,6 @@ const MemberItem: FC<MemberItemProps> = ({
 								icon="remove circle"
 								role="button"
 								floated="right"
-								disabled={btnDisabled}
 								negative
 								compact
 								onClick={() =>

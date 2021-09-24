@@ -1,14 +1,20 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, MutableRefObject, useEffect, useRef, useState } from 'react'
+import io from 'socket.io-client'
 import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
-import DealerLayouGame from '../../components/Game/DealerPageName'
 import { useRouter } from 'next/router'
 import { CurrentIssueContext } from 'src/context/CurrentIssueContext'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
-import { useLobbyDataSocket } from '../../hooks'
+import { useGameDataSocket, useLobbyDataSocket } from '../../hooks'
 import IssueContainer from '../../components/Lobby/DealerLayout/IssueContainer'
 import MemberItem from 'src/components/Lobby/MemberItem'
+import { API } from 'src/interfaces/ApiEnum'
+import { ModalState } from 'src/components/Lobby/DealerLayout/DealerLayout'
+import ModalKickPlayerByDealer from 'src/components/Lobby/ModalKickPlayerByDealer'
+import ModalKickPlayerByVote from 'src/components/Lobby/ModalKickPlayerByVote'
+import { GameState } from 'src/interfaces/GameTypes'
+import Timer from 'src/components/Timer/Timer'
 
 export interface CurrentIssue {
 	id: string
@@ -16,30 +22,64 @@ export interface CurrentIssue {
 }
 
 
-const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>):JSX.Element => {
+const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
 	const [playerId, setplayerId] = useState('');
-	const [GameState, setGameState] = useState<'pause' | 'started'>('pause');
-
 
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
 		if (!id) router.push('/404')
 		setplayerId(id as string)
-	}, [ playerId])
-	
-	const dataSocket = useLobbyDataSocket(props.lobbyId, playerId)
+	}, [playerId])
+
+	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
+		modalIsOpen: false,
+		name: '',
+		id: '',
+	})
+
+	const socketRef = useRef<SocketIOClient.Socket | undefined>()
+	socketRef.current = io(API.MAIN_API, { query: props.lobbyId })
+
+	const dataSocket = useLobbyDataSocket(
+		socketRef as MutableRefObject<SocketIOClient.Socket>,
+		props.lobbyId, playerId)
 	console.log('data asdasd');
-	
-	
+
+	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
+
+	const { GameData, emitPauseGame, emitStartGame, setGameData } = useGameDataSocket(
+		socketRef as MutableRefObject<SocketIOClient.Socket>,
+		props.lobbyId)
+
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
 		id: dataSocket.lobbyData?.issues[0]?.id || '',
 		name: dataSocket.lobbyData?.issues[0]?.name || ''
 	});
 
+	const getMembersVote = (id: string) => {
+		if (dataSocket.VotesQuanity.kickPlayer.get(id)) {
+			return dataSocket.VotesQuanity.kickPlayer.get(id)!.length
+		}
+		return 0
+	}
+	const checkVoted = (id: string) => {
+		const votedPlayer = dataSocket.VotesQuanity.kickPlayer.get(id)
+		if (votedPlayer) {
+			const findPlayer = votedPlayer.find((player) => player === playerId)
+			return !!findPlayer
+		}
+		return false
+	}
 
 	const startRoundHandler = () => {
 		// send CurrentIssue
+		setGameData({...GameData, currIssueId: CurrentIssue.id, timer: 10})
+		emitStartGame(GameData)
+	}
+
+	const pauseRoundHandler = () => {
+		emitPauseGame(GameData)
 	}
 
 	const nextRoundHandler = () => {
@@ -56,13 +96,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					<Grid.Row>
 						<Grid.Column>
 							<HeaderTitle as="h3">Scram master</HeaderTitle>
-							{/* <MemberItem firstName="Max" lastName="Yazykov" role={Role.dealer} id="asd" /> */}
-							{dataSocket.lobbyData?.players.map((dealer) => {
-								if (dealer.role === Role.dealer) {
-									return <MemberItem isYou={dealer.id === playerId} key={dealer.id} {...(dealer as IPlayer)} />
-								}
-								return
-							})}
+							<MemberItem isYou  {...player} />
 						</Grid.Column>
 						<Grid.Column verticalAlign="bottom" width="10">
 							<Button negative floated="right">
@@ -70,20 +104,28 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							</Button>
 						</Grid.Column>
 					</Grid.Row>
-					<GridRow centered columns="3">
+					<GridRow centered >
 						<Grid.Column>
-							<Button color="blue" onClick={startRoundHandler}>
-								Run Round
-							</Button>
-							<Button color="blue" onClick={nextRoundHandler}>
-								Next Round
-							</Button>
+							{
+								(GameData.status === GameState.init || GameData.status === GameState.paused) ?
+									<Button color="blue" onClick={startRoundHandler}>
+										Run Round
+									</Button>
+									:
+									<Button color="blue" onClick={pauseRoundHandler}>
+										Pause Round
+									</Button>
+							}
+							{
+								GameData.status === GameState.paused &&
+								<Button color="blue" onClick={nextRoundHandler}>
+									Next Round
+								</Button>
+							}
 						</Grid.Column>
 					</GridRow>
-					<Grid columns="1">
-						<Grid.Column width="14">
-							<HeaderTitle as="h2">Issues:</HeaderTitle>
-
+					<Grid columns="1" >
+						<Grid.Column >
 							<CurrentIssueContext.Provider value={{ CurrentIssue, setCurrentIssue }}>
 								<IssueContainer
 									type="game"
@@ -96,8 +138,82 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							</CurrentIssueContext.Provider>
 						</Grid.Column>
 					</Grid>
+					<Grid columns="1">
+						<Grid.Column >
+							<Timer minutes={''} seconds={GameData?.timer.toString()} />
+						</Grid.Column>
+					</Grid>
+					<Grid columns="1">
+						<Grid.Column stretched >
+							<HeaderTitle as="h2">Players:</HeaderTitle>
+							{
+								player?.role === Role.player && dataSocket.lobbyData?.players.map(member => {
+									if (member.role === Role.dealer) return
+									if (member.role === Role.spectator) return
+									return <MemberItem
+										votedQuantity={dataSocket.VotesQuanity.kickPlayer}
+										checkVoted={checkVoted(member.id)}
+										playersVoted={getMembersVote(member.id)}
+										playersQuanity={dataSocket.lobbyData?.players}
+										setVoteKickPlayer={dataSocket.setVotesQuanity}
+										isYou={member.id === playerId}
+										key={member.id}
+										{...member}
+									/>
+								})
+							}
+							{
+								player?.role === Role.dealer && dataSocket.lobbyData?.players.map(member => {
+									if (member.role === Role.dealer) return
+									if (member.role === Role.spectator) return
+									return <MemberItem
+										isYou={member.id === playerId}
+										votedQuantity={dataSocket.VotesQuanity.kickPlayer}
+										checkVoted={checkVoted(member.id)}
+										playersVoted={getMembersVote(member.id)}
+										playersQuanity={dataSocket.lobbyData?.players}
+										setKickPlayer={setModalKickPlayer}
+										key={member.id}
+										{...member}
+									/>
+								})
+							}
+							{
+								player?.role === Role.spectator && dataSocket.lobbyData?.players.map(member => {
+									if (member.role === Role.dealer) return
+									if (member.role === Role.spectator) return
+									return <MemberItem
+										isYou={member.id === playerId}
+										votedQuantity={dataSocket.VotesQuanity.kickPlayer}
+										checkVoted={checkVoted(member.id)}
+										playersVoted={getMembersVote(member.id)}
+										playersQuanity={dataSocket.lobbyData?.players}
+										key={member.id}
+										{...member}
+									/>
+								})
+							}
+						</Grid.Column>
+					</Grid>
 				</Grid>
 			</Container>
+			{
+				player?.role === Role.dealer && <ModalKickPlayerByDealer
+					isOpen={modalkickPlayer.modalIsOpen}
+					setKickPlayer={setModalKickPlayer}
+					kickMemberHandler={dataSocket.kickPlayer}
+					playerId={modalkickPlayer.id}
+					playerName={modalkickPlayer.name}
+				/>
+			}
+			{
+				player?.role === Role.player && <ModalKickPlayerByVote
+					allMembers={dataSocket.lobbyData?.players.filter((player) => player.role === 'player').length}
+					kickMemberStateHandler={dataSocket.setVotesQuanity}
+					kickByVoteHandler={dataSocket.kickPlayerByVote}
+					voteData={dataSocket.VotesQuanity}
+				/>
+			}
 		</>
 	)
 }

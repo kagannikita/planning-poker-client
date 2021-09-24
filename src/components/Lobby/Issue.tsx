@@ -56,7 +56,7 @@ const 	Issue = ({ name, priority, id, type, link, score, setModalChange, setModa
 	return (
 		<Card
 			centered
-			className={CurrentIssue.id === id && type === 'game' ? s.itemActive : '' ? s.item : ''}
+			className={CurrentIssue.id === id && type === 'game' ? `${s.itemActive} ${s.item}` : s.item }
 			onClick={type === 'game' ? clickOnCurrIssue : undefined}
 		>
 			<Card.Content>
