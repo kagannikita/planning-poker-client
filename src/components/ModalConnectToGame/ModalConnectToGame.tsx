@@ -101,7 +101,7 @@ export const ModalConnectToGame = ({
 	return (
 		<Modal dimmer={dimmer} open={!isClosed} onClose={onClose}>
 			<Modal.Header className="modal-title">
-				<h2>{formName}</h2>
+				<h2 className="heading">{formName}</h2>
 				{formName === 'Create new game' ? null : (
 					<Form.Radio form="regForm" name="role" toggle label="Connect as Observer" />
 				)}

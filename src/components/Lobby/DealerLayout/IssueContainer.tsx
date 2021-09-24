@@ -47,10 +47,9 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 		lobby: lobbyID,
 	})
 
-
 	return (
 		<>
-			<HeaderTitle textAlign="center" as="h1">
+			<HeaderTitle textAlign="center" className="heading" as="h2">
 				Issues:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>

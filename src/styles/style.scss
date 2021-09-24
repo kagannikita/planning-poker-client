@@ -6,8 +6,15 @@
 	padding: 0;
 }
 
+#__next {
+	position: relative;
+	min-height: 100%;
+}
+
 .ui.container {
 	max-width: 1000px !important;
+	margin-bottom: 50px;
+	padding-top: 50px;
 }
 
 .main-container {
@@ -17,6 +24,5 @@
 
 .mainLogo {
 	overflow: auto !important;
-	margin-bottom: 80px;
-	margin-top: 130px !important;
+	margin-bottom: 50px !important;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Header as HeaderTitle } from 'semantic-ui-react'
+import cls from './lobby.module.scss'
 
 const CopyLink = (): JSX.Element => {
 	const input = useRef<HTMLInputElement>(null)
@@ -18,7 +19,7 @@ const CopyLink = (): JSX.Element => {
 			<HeaderTitle as="h3">Lobby link:</HeaderTitle>
 			<div className="ui action input">
 				<input ref={input} type="text" readOnly defaultValue={locationState} />
-				<button onClick={clickCopy} className="ui teal right labeled icon button">
+				<button onClick={clickCopy} className={'ui teal right labeled icon button ' + cls.copyBtn}>
 					<i className="copy icon" />
 					Copy
 				</button>

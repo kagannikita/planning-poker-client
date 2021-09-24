@@ -13,7 +13,7 @@ const MainForm: React.FC<MainFormProps> = ({ modalHandler, lobbyID, setLobbyID, 
 		<>
 			<Form id="form" className="center aligned">
 				<Header as="h2" className="heading" size="huge">
-					Start your planning:
+					Start your <span className="form-label__span">planning</span>:
 				</Header>
 				<Form.Group inline widths="two">
 					<label htmlFor="new game" className="header__main">
@@ -28,7 +28,7 @@ const MainForm: React.FC<MainFormProps> = ({ modalHandler, lobbyID, setLobbyID, 
 				</Header>
 				<Form.Group inline widths="one">
 					<label htmlFor="connect to lobby" className="header__main">
-						Connect to lobby by URL:
+						Connect to lobby by <span className="form-label__span">URL</span>:
 					</label>
 					<div className="ui action input">
 						<input
