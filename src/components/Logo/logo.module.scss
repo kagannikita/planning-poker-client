@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+
+.logo {
+	width: 60px;
+	height: 60px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	cursor: default;
+
+	& > span {
+		font-family: 'Monoton', cursive;
+		font-size: 3rem;
+	}
+
+	& :first-child {
+		text-align: right;
+		animation: shadowLight 3s infinite;
+	}
+
+	& :last-child {
+		color: white;
+		animation: shadowDark 3s infinite;
+	}
+}
+
+@keyframes shadowLight {
+	0% {
+		text-shadow: 0 0 10px rgb(255, 255, 255);
+	}
+
+	50% {
+		text-shadow: 0 0 3px rgb(255, 255, 255);
+	}
+
+	100% {
+		text-shadow: 0 0 10px rgb(255, 255, 255);
+	}
+}
+
+@keyframes shadowDark {
+	0% {
+		text-shadow: 0 0 10px rgb(0, 0, 0);
+	}
+
+	50% {
+		text-shadow: 0 0 3px rgb(0, 0, 0);
+	}
+
+	100% {
+		text-shadow: 0 0 10px rgb(0, 0, 0);
+	}
+}

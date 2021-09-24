@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ISettings } from '../../interfaces/SettingsTypes'
 
 type TimerProps = {
@@ -10,6 +10,11 @@ type TimerProps = {
 }
 
 const Timer: React.FC<TimerProps> = ({ minutes, seconds, isDisabled = true, settings, setSettings }: TimerProps) => {
+	const [clsTimer, setClsTimer] = useState(['form__timer'])
+
+	if (!settings?.timerIsOn && !clsTimer.includes('disabled')) setClsTimer([...clsTimer, 'disabled'])
+	if (settings?.timerIsOn && clsTimer.includes('disabled')) setClsTimer(clsTimer.filter((cls) => cls !== 'disabled'))
+
 	const setMinutes = (min: string) => {
 		if (!settings || !setSettings) return
 		setSettings({ ...settings, minutes: min })
@@ -43,7 +48,7 @@ const Timer: React.FC<TimerProps> = ({ minutes, seconds, isDisabled = true, sett
 			<label htmlFor="minutes" className="item-title">
 				Round time:
 			</label>
-			<div className="form__timer">
+			<div className={clsTimer.join(' ')}>
 				<div className="timer__item">
 					<label htmlFor="minutes" className="timer__title">
 						minutes

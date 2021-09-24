@@ -52,8 +52,8 @@ const MemberItem: FC<MemberItemProps> = ({
 	// role !== 'dealer' ? s.item : '' 
 
 	return (
-		<Card centered={centered} className={styles()} >
-			<Card.Content>
+		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
+			<Card.Content className={s.lobbyInfo__userInfo}>
 				<Image
 					floated="right"
 					size="mini"
