@@ -12,7 +12,7 @@ export interface IssueProps extends IssueType {
 	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
 }
 
-const Issue = ({ name, priority, id, type, link, setModalChange, setModalDelete, lobby }: IssueProps) => {
+const 	Issue = ({ name, priority, id, type, link, score, setModalChange, setModalDelete, lobby }: IssueProps) => {
 	const { CurrentIssue, setCurrentIssue } = useContext(CurrentIssueContext)
 
 	const clickOnCurrIssue = () => {
@@ -56,7 +56,7 @@ const Issue = ({ name, priority, id, type, link, setModalChange, setModalDelete,
 	return (
 		<Card
 			centered
-			className={CurrentIssue.id === id && type === 'game' ? s.itemActive : '' ? s.item : ''}
+			className={CurrentIssue.id === id && type === 'game' ? `${s.itemActive} ${s.item}` : s.item }
 			onClick={type === 'game' ? clickOnCurrIssue : undefined}
 		>
 			<Card.Content>
@@ -65,6 +65,7 @@ const Issue = ({ name, priority, id, type, link, setModalChange, setModalDelete,
 					<b>{CurrentIssue.id === id && 'Current: '}</b>
 				</Card.Meta>
 				<Card.Meta>{priority}</Card.Meta>
+				{type === 'game' && <Card.Meta>{score}</Card.Meta>}
 				<Card.Meta>
 					<span about="issue link">{link} </span>
 				</Card.Meta>

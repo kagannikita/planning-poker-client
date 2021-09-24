@@ -29,8 +29,6 @@ export interface ModalState {
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
 	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData
 
-	const [settingsState, setsettingsState] = useState<IGameSettings>({ ...socketData.lobbyData.settings })
-
 	const exitGameHandler = async () => {
 		// router.push('/')
 	}
@@ -164,18 +162,24 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 
 	const startGameHandler = async () => {
 		if (validateSettings()) {
-			api.createSettings(lobbyData.settings.id, gameSettings).then((data) => {
-				console.log(data)
-				cardSettings().then((data) => {
-					data.forEach((card) => {
-						api.createCard(card).then((data) => console.log(data))
-					})
-				})
+			await api.createSettings(lobbyData.settings.id, gameSettings)
+			const data = await cardSettings()
+			data.forEach(async (formdata) => {
+				await api.createCard(formdata)
 			})
+			// api.createSettings(lobbyData.settings.id, gameSettings).then((data) => {
+			// 	console.log(data)
+			// 	cardSettings().then((data) => {
+			// 		data.forEach((card) => {
+			// 			api.createCard(card).then((data) => console.log(data))
+			// 		})
+			// 	})
+			}
 			// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
-			// router.push({ hostname: API.GAME, pathname: socketData.lobbyData.id })
+		router.push({ hostname: API.GAME, pathname:  socketData.lobbyData.id })
 		}
-	}
+	
+
 
 	return (
 		<>

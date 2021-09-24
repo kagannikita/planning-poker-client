@@ -17,13 +17,11 @@ interface MemberItemProps extends IPlayer {
 	checkVoted?: boolean
 	playersVoted?: number
 	centered?: boolean
-	btnDisabled?: boolean
 	setKickPlayer?: Dispatch<SetStateAction<ModalState>>
 	setVoteKickPlayer?: React.Dispatch<React.SetStateAction<VoteType>>
 }
 
 const MemberItem: FC<MemberItemProps> = ({
-	btnDisabled,
 	votedQuantity,
 	isYou,
 	checkVoted,
@@ -40,6 +38,18 @@ const MemberItem: FC<MemberItemProps> = ({
 	setVoteKickPlayer,
 }): JSX.Element => {
 	const members = playersQuanity?.filter((player) => player.role === 'player').length
+	
+	const styles = () => {
+		if (role !== 'dealer' && isYou) {
+			return `${s.item} ${s.itsYou}`
+		}
+		if (role == 'dealer' && isYou){
+			return `${s.itsYou}`
+		}
+		return ''
+	}
+
+	// role !== 'dealer' ? s.item : '' 
 
 	return (
 		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
@@ -48,6 +58,7 @@ const MemberItem: FC<MemberItemProps> = ({
 					floated="right"
 					size="mini"
 					circular
+					className={isYou ? s.itsYou : ''}
 					src={image || `https://ui-avatars.com/api/?name=${firstName}+${lastName}`}
 				/>
 
@@ -67,7 +78,7 @@ const MemberItem: FC<MemberItemProps> = ({
 					)}
 					{role !== 'spectator' && setVoteKickPlayer && members && members > PLAYERS_FOR_VOTE && (
 						<Card.Meta>
-							Votes: {playersVoted}/{members}{' '}
+							Votes: {playersVoted}/{members}
 						</Card.Meta>
 					)}
 					{isYou ||
@@ -77,7 +88,6 @@ const MemberItem: FC<MemberItemProps> = ({
 								icon="remove circle"
 								role="button"
 								floated="right"
-								disabled={btnDisabled}
 								negative
 								compact
 								onClick={() =>
