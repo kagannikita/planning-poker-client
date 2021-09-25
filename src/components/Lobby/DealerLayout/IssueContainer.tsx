@@ -7,7 +7,9 @@ import ModalChangeIssue from '../ModalChangeIssue'
 import ModalCreateIssue from '../ModalCreateIssue'
 import ModalDeleteIssue from '../ModalDeleteIssue'
 import { ModalState } from './DealerLayout'
-import { IssueType } from '../../../interfaces/IssueType'
+import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
+import * as XLSX from 'xlsx'
+import { IssuesAPI } from '../../../api/IssuesAPI'
 
 interface IssueContainerProps {
 	type: 'lobby' | 'game'
@@ -46,6 +48,27 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 		id: '',
 		lobby: lobbyID,
 	})
+
+	const uploadExcel = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const promise = new Promise((resolve, reject) => {
+			const fileReader = new FileReader()
+			fileReader.readAsArrayBuffer(e.target.files![0])
+			fileReader.onload = (e) => {
+				const bufferArray = e.target!.result
+				const wb = XLSX.read(bufferArray, { type: 'buffer' })
+				const wsname = wb.SheetNames[0]
+				const ws = wb.Sheets[wsname]
+				const data = XLSX.utils.sheet_to_json(ws)
+				resolve(data)
+			}
+			fileReader.onerror = (error) => {
+				reject(error)
+			}
+		})
+		promise.then(async (d) => {
+			await new IssuesAPI().createByTable(d as IssueTypeAPI[], lobbyID)
+		})
+	}
 
 	return (
 		<>
@@ -87,6 +110,10 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 				setModalChange={setModalChange}
 				updateIssue={updateIssue}
 			/>
+			<div className="upload-settings">
+				Upload issues
+				<input type="file" className="read-excel" onChange={uploadExcel} />
+			</div>
 		</>
 	)
 }
