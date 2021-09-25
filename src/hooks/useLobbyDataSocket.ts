@@ -14,7 +14,7 @@ export interface IUseLobbyDataSocket {
 	setVotesQuanity: Dispatch<SetStateAction<VoteType>>
 	kickPlayer: (player_id: string) => void
 	kickPlayerByVote: (voteToKickPlayerId: string, playerName: string) => void
-
+	redirectTo: (pathname: string, isDealer: boolean, exit: boolean) => void
 	createIssue: ({ name, priority }: IssueType) => void
 	removeIssue: (id: string) => void
 	updateIssue: ({ id, name, priority }: IssueType) => void
@@ -34,7 +34,6 @@ export const useLobbyDataSocket = (
 		kickPlayer: new Map<string, string[]>(),
 		currentPlayer: '',
 	})
-	// const [btnDeleteState, setBtnDeleteState] = useState(false)
 
 	useEffect(() => {
 
@@ -61,11 +60,14 @@ export const useLobbyDataSocket = (
 			sessionStorage.clear()
 		})
 
-		socketRef.current.on('redirect:get', (pathname: string) => {
-			router.push({ hostname: pathname, query: lobbyId })
+		socketRef.current.on('redirect:get', (body: {path:string, lobbyId:string}) => {
+			// pathname: string, lobbyId: string
+			// console.log(path, lobbyId);
+			router.push(`http://localhost:3000/` + body.path + body.lobbyId)
+			// router.push({ hostname: body.path, pathname: body.lobbyId})
 		})
 
-		socketRef.current.on('kick:voted', (data: VoteType, btnBlocked: boolean) => {
+		socketRef.current.on('kick:voted', (data: VoteType) => {
 			data.currentPlayer = playerId
 			data.kickPlayer = new Map(JSON.parse(data.kickPlayer as unknown as string))
 			console.log('kick voted', data)
@@ -84,6 +86,11 @@ export const useLobbyDataSocket = (
 			socketRef.current.disconnect()
 		}
 	}, [lobbyId, playerId])
+
+	const redirectTo = (path: string, isDealer: boolean, exit: boolean = false) => {
+		socketRef.current?.emit('redirect', { path, lobbyId: lobbyId, playerId, isDealer, exit })
+		// router.push({ hostname: API.GAME, path: lobbyId})
+	}
 
 	const kickPlayer = (player_id: string) => {
 		socketRef.current?.emit('player:delete', { player_id, lobby_id: lobbyId })
@@ -137,7 +144,7 @@ export const useLobbyDataSocket = (
 	return <IUseLobbyDataSocket>{
 		lobbyData,
 		VotesQuanity,
-		// btnDeleteState,
+		redirectTo,
 		setVotesQuanity,
 		kickPlayer,
 		kickPlayerByVote,
