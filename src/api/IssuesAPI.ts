@@ -4,6 +4,7 @@ import { API } from '../interfaces/ApiEnum'
 
 interface IIssuesAPI {
 	create(issue: IssueType): Promise<IssueType>
+	createByTable(issue: IssueType[], lobby: string): Promise<IssueType[]>
 	delete(issueId: string): Promise<IssueType>
 	update(dataIssue: IssueType): Promise<IssueType>
 	getAllByLobbyId(id: string): Promise<IssueType[]>
@@ -54,6 +55,19 @@ export class IssuesAPI implements IIssuesAPI {
 			axios
 				.get(`${API.MAIN_API}${API.ISSUES}${id}`)
 				.then((res) => resolve(res.data))
+				.catch((err) => reject(err))
+		})
+	}
+	createByTable(issue: IssueTypeAPI[], lobby: string): Promise<IssueType[]> {
+		return new Promise((resolve, reject) => {
+			for (const item of issue) {
+				item.lobby = lobby
+			}
+			axios
+				.post(`${API.MAIN_API}${API.ISSUES}table/`, issue)
+				.then((res) => {
+					resolve(res.data)
+				})
 				.catch((err) => reject(err))
 		})
 	}
