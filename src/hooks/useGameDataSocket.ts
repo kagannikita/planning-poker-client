@@ -9,7 +9,7 @@ export interface IGameDataSocket {
 }
 
 export const useGameDataSocket = (
-  socketRef: MutableRefObject<SocketIOClient.Socket>,
+  socketRef: SocketIOClient.Socket,
   lobbyId: string, 
   // playerId: string
 ): IGameDataSocket=> {
@@ -20,7 +20,7 @@ export const useGameDataSocket = (
     issueScore: 0,
     status: GameState.init
   });
-  socketRef.current.on('game:started', (gameData: GameData) => {
+  socketRef.on('game:started', (gameData: GameData) => {
     console.log('gamestarted ', gameData);
     
     setGameData({
@@ -30,7 +30,7 @@ export const useGameDataSocket = (
     })
   })
 
-  socketRef.current.on('game:paused', (gameData: GameData) => {
+  socketRef.on('game:paused', (gameData: GameData) => {
     console.log('game paused ', gameData);
     setGameData({
       ...GameData,
@@ -40,11 +40,11 @@ export const useGameDataSocket = (
   })
 
   const emitStartGame = (gameData: GameData) => {
-    socketRef.current.emit('game:start', { gameData, lobbyId })
+    socketRef.emit('game:start', { gameData, lobbyId })
   }
 
   const emitPauseGame = (gameData: GameData) => {
-    socketRef.current.emit('game:pause', { gameData, lobbyId})
+    socketRef.emit('game:pause', { gameData, lobbyId})
   }
 
   return {

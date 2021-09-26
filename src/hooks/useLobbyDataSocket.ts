@@ -63,10 +63,10 @@ export const useLobbyDataSocket = (
 			sessionStorage.clear()
 		})
 
-		socketRef.on('redirect:get', (body: { path: string; lobbyId: string }) => {
+		socketRef.on('redirect:get', (body: { pathname: string; lobbyId: string }) => {
 			// pathname: string, lobbyId: string
 			console.log(body)
-			router.push(`http://localhost:3000/` + body.path + body.lobbyId)
+			router.push(`http://localhost:3000/` + body.pathname + body.lobbyId)
 			// router.push({ hostname: body.path, pathname: body.lobbyId})
 		})
 
@@ -90,8 +90,8 @@ export const useLobbyDataSocket = (
 		}
 	}, [lobbyId, playerId])
 
-	const redirectTo = (path: string, isDealer: boolean, exit: boolean = false) => {
-		socketRef?.emit('redirect', { path, lobbyId: lobbyId, playerId, isDealer, exit })
+	const redirectTo = (pathname: string, isDealer: boolean, exit: boolean = false) => {
+		socketRef?.emit('redirect', { pathname, lobbyId, playerId, isDealer, exit })
 		// router.push({ hostname: API.GAME, path: lobbyId})
 	}
 

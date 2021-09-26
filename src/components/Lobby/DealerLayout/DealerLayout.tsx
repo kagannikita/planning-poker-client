@@ -162,16 +162,17 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 	}
 
 	const startGameHandler = async () => {
+
 		if (validateSettings()) {
 			await api.createSettings(lobbyData.settings.id, gameSettings)
 			const data = await cardSettings()
 			data.forEach(async (formdata) => {
 				await api.createCard(formdata)
 			})
+			redirectTo(API.GAME, true, false)
+			} else {
+				return
 			}
-			// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
-
-		redirectTo(API.GAME, true, false)
 		}
 	
 

@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject, useEffect, useRef, useState } from 'react'
+import React, { FC, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import io from 'socket.io-client'
 import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
@@ -38,18 +38,17 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		id: '',
 	})
 
-	const socketRef = useRef<SocketIOClient.Socket | undefined>()
-	socketRef.current = io(API.MAIN_API, { query: props.lobbyId })
 
+	const socket = useMemo(() => io(API.MAIN_API, { query: props.lobbyId }), [playerId])
 	const dataSocket = useLobbyDataSocket(
-		socketRef as MutableRefObject<SocketIOClient.Socket>,
+		socket,
 		props.lobbyId, playerId)
 	console.log('data asdasd');
 
 	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 
 	const { GameData, emitPauseGame, emitStartGame, setGameData } = useGameDataSocket(
-		socketRef as MutableRefObject<SocketIOClient.Socket>,
+		socket,
 		props.lobbyId)
 
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
