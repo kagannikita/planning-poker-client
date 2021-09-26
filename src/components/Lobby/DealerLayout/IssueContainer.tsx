@@ -1,5 +1,5 @@
 import React, { FC, useContext, useState } from 'react'
-import { Container, Header as HeaderTitle } from 'semantic-ui-react'
+import { Button, Container, Header as HeaderTitle, Input } from 'semantic-ui-react'
 import Issue, { IssueProps } from '../Issue'
 import IssueCreate from '../IssueCardCreate'
 import s from '../lobby.module.scss'
@@ -89,7 +89,13 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 
 				<IssueCreate lobbyId={lobbyID} setModalCreate={setModalCreate} />
 			</Container>
-
+			<div className={s.uploadIssues}>
+				<label htmlFor="upload-btn" className={`ui primary right labeled icon button ${s.startBtn}`}>
+					<i className="upload icon"></i>
+					Upload issues
+				</label>
+				<input type="file" className={s.inputExcel} onChange={uploadExcel} id="upload-btn" hidden />
+			</div>
 			<ModalDeleteIssue
 				issuesArr={issues}
 				state={ModalDelete}
@@ -110,10 +116,6 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 				setModalChange={setModalChange}
 				updateIssue={updateIssue}
 			/>
-			<div className="upload-settings">
-				Upload issues
-				<input type="file" className="read-excel" onChange={uploadExcel} />
-			</div>
 		</>
 	)
 }

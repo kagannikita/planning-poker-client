@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react'
 import SettingsForm from './SettingsForm/SettingsForm'
 import CardsField from '../CardsField/CardsField'
 import { ISettings } from '../../interfaces/SettingsTypes'
-import * as XLSX from 'xlsx'
-import { IssuesAPI } from '../../api/IssuesAPI'
-import { IssueTypeAPI } from '../../interfaces/IssueType'
 
 type GameSettingsProps = {
 	settings: ISettings
