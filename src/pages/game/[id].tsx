@@ -78,13 +78,19 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		emitStartGame(GameData)
 	}
 
-	const pauseRoundHandler = () => {
-		emitPauseGame(GameData)
-	}
+	const pauseRoundHandler = () => emitPauseGame(GameData)
+	
 
 	const nextRoundHandler = () => {
 		// send
 	}
+
+	const closeGameHandler = () => 
+		dataSocket.redirectTo('/', true, true)
+	
+
+	const exitGameHandler = () => 
+	dataSocket.redirectTo('/', false, true)
 
 	return (
 		<>
@@ -96,12 +102,30 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					<Grid.Row>
 						<Grid.Column>
 							<HeaderTitle as="h3">Scram master</HeaderTitle>
-							<MemberItem isYou  {...player} />
+							{
+								dataSocket.lobbyData?.players.map(member => {
+									if (member.role === Role.player) return
+									if (member.role === Role.spectator) return
+									return <MemberItem
+										isYou={member.id ===playerId}
+										{...member}
+									/>
+								})
+							}
 						</Grid.Column>
 						<Grid.Column verticalAlign="bottom" width="10">
-							<Button negative floated="right">
-								Stop game
-							</Button>
+							{
+								player?.role === Role.dealer ? (
+								<Button negative floated="right" onClick={closeGameHandler}>
+									Close game
+								</Button>
+								) : (
+										<Button negative floated="right" onClick={exitGameHandler}>
+											Exit game
+										</Button>
+								)
+							}
+
 						</Grid.Column>
 					</Grid.Row>
 					<GridRow centered >
@@ -195,6 +219,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							}
 						</Grid.Column>
 					</Grid>
+					
 				</Grid>
 			</Container>
 			{
