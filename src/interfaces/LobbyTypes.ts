@@ -36,7 +36,7 @@ export interface IGameSettingsToUpload {
 	timer_needed: boolean
 	score_type: string
 	score_type_short: string
-	timer: string
+	timer: number
 }
 
 export interface IGameSettings extends IGameSettingsToUpload {

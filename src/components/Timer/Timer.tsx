@@ -3,7 +3,7 @@ import { ISettings } from '../../interfaces/SettingsTypes'
 
 type TimerProps = {
 	minutes: string
-	seconds: string
+	seconds: number
 	settings?: ISettings
 	setSettings?: React.Dispatch<React.SetStateAction<ISettings>>
 	isDisabled?: boolean
