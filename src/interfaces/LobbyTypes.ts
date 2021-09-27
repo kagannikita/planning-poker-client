@@ -36,7 +36,7 @@ export interface IGameSettingsToUpload {
 	timer_needed: boolean
 	score_type: string
 	score_type_short: string
-	timer: string
+	timer: number
 }
 
 export interface IGameSettings extends IGameSettingsToUpload {
@@ -45,9 +45,9 @@ export interface IGameSettings extends IGameSettingsToUpload {
 }
 
 export interface ICardSettings {
-	name: string,
+	name: string
 	// is_cover: boolean,
-	image: File,
+	image: File
 	settings: IGameSettings
 	id?: string
 }

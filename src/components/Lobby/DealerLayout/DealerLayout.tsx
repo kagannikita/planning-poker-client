@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Container, Grid, Header as HeaderTitle } from 'semantic-ui-react'
-import { IGameSettings, IPlayer, Role } from '../../../interfaces/LobbyTypes'
+import { IPlayer, Role } from '../../../interfaces/LobbyTypes'
 import { ISettings } from '../../../interfaces/SettingsTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
@@ -50,8 +50,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		timerIsOn: true,
 		scoreType: 'story point',
 		scoreTypeShort: 'SP',
-		minutes: '2',
-		seconds: '30',
+		time: 150,
 		deckOfCards: 'fibonacci',
 	})
 
@@ -93,21 +92,13 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		setDeckOfCards()
 	}, [settings.deckOfCards])
 
-	const gameTime = () => {
-		let minutes = settings.minutes
-		let seconds = settings.seconds
-		if (settings.minutes.length === 1) minutes = `0${settings.minutes}`
-		if (settings.seconds.length === 1) seconds = `0${settings.seconds}`
-		return `1943-03-09T00:${minutes}:${seconds}Z`
-	}
-
 	const gameSettings = {
 		is_dealer_play: settings.masterAsPlayer,
 		is_change_cards: settings.changingCards,
 		timer_needed: settings.timerIsOn,
 		score_type: settings.scoreType,
 		score_type_short: settings.scoreTypeShort,
-		timer: gameTime(),
+		timer: settings.time,
 	}
 
 	const getCoverFromUrl = (src: string) => {
@@ -174,12 +165,10 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 			// 			api.createCard(card).then((data) => console.log(data))
 			// 		})
 			// 	})
-			}
-			// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
-		router.push({ hostname: API.GAME, pathname:  socketData.lobbyData.id })
 		}
-	
-
+		// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
+		router.push({ hostname: API.GAME, pathname: socketData.lobbyData.id })
+	}
 
 	return (
 		<>
