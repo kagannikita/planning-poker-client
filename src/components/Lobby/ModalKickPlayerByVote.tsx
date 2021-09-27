@@ -1,14 +1,12 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
 
-import { IVoteKickState } from './MemberLayout/MemberLayout'
 import { VoteType } from '../../interfaces/VoteType'
 
 interface ModalKickPlayerByVoteProps {
 	allMembers: number
 	kickMemberStateHandler: React.Dispatch<React.SetStateAction<VoteType>>
 	kickByVoteHandler: (voteToKickPlayerId: string, playerName: string) => void
-	// setVoteState: React.Dispatch<React.SetStateAction<VoteType>>
 	voteData: VoteType
 }
 
@@ -35,7 +33,6 @@ const ModalKickPlayerByVote: FC<ModalKickPlayerByVoteProps> = ({
 		}
 		return 0
 	}
-	console.log('handlerVote', voteData.kickPlayer)
 	return (
 		<Modal size="tiny" open={voteData.modalIsOpen} onClose={closeHandler}>
 			<Modal.Header>Vote kick player</Modal.Header>

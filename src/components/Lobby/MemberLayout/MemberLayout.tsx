@@ -20,7 +20,6 @@ export interface IVoteKickState {
 }
 
 const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
-	console.log('Data in MemberLayout', socketData.VotesQuanity)
 	const getMembersVote = (id: string) => {
 		if (socketData.VotesQuanity.kickPlayer.get(id)) {
 			return socketData.VotesQuanity.kickPlayer.get(id)!.length
@@ -28,21 +27,19 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 		return 0
 	}
 	const checkVoted = (id: string) => {
-		console.log(id)
-		console.log(socketData.VotesQuanity.kickPlayer)
 		const votedPlayer = socketData.VotesQuanity.kickPlayer.get(id)
 		if (votedPlayer) {
 			const findPlayer = votedPlayer.find((player) => player === you)
-			console.log(findPlayer)
 			return !!findPlayer
 		}
 		return false
 	}
 
+	const exitLobbyHandler = () => socketData.redirectTo('/', false, true)
 
 	return (
 		<>
-			<HeaderTitle as="h1" className={s.title + ' heading'}>
+			<HeaderTitle as="h2" className={s.title + ' heading'}>
 				{socketData.lobbyData?.name}
 			</HeaderTitle>
 			<Grid columns="1">
@@ -66,13 +63,13 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="right">
-						<Button negative className={s.cancelBtn} floated="right">
-							Exit Game
+						<Button negative className={s.cancelBtn} floated="right" onClick={exitLobbyHandler}>
+							Exit Lobby
 						</Button>
 					</Grid.Column>
 				</Grid.Row>
 			</Grid>
-			<HeaderTitle as="h1" className="heading" textAlign="center">
+			<HeaderTitle as="h2" className="heading" textAlign="center">
 				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>

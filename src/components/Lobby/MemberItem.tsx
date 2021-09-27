@@ -38,18 +38,18 @@ const MemberItem: FC<MemberItemProps> = ({
 	setVoteKickPlayer,
 }): JSX.Element => {
 	const members = playersQuanity?.filter((player) => player.role === 'player').length
-	
+
 	const styles = () => {
 		if (role !== 'dealer' && isYou) {
 			return `${s.item} ${s.itsYou}`
 		}
-		if (role == 'dealer' && isYou){
+		if (role == 'dealer' && isYou) {
 			return `${s.itsYou}`
 		}
 		return ''
 	}
 
-	// role !== 'dealer' ? s.item : '' 
+	// role !== 'dealer' ? s.item : ''
 
 	return (
 		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
@@ -65,7 +65,7 @@ const MemberItem: FC<MemberItemProps> = ({
 				<Card.Header>{`${firstName} ${lastName}`} </Card.Header>
 				<Card.Meta>{position}</Card.Meta>
 				<Card.Meta>{role}</Card.Meta>
-				<Card.Description>
+				<Card.Description as="div">
 					{setKickPlayer && (
 						<Button
 							icon="delete"

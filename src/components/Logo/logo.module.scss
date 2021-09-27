@@ -14,11 +14,13 @@
 	}
 
 	& :first-child {
+		margin-top: -10px;
 		text-align: right;
 		animation: shadowLight 3s infinite;
 	}
 
 	& :last-child {
+		margin-top: -60px;
 		color: white;
 		animation: shadowDark 3s infinite;
 	}

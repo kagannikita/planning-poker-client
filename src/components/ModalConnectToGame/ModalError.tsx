@@ -9,6 +9,7 @@ interface ModalErrorProps extends ErrorModalState {
 const ModalError: FC<ModalErrorProps> = ({ message, isError, setErrorModalState }) => {
 	return (
 		<Confirm
+			size="tiny"
 			content={message}
 			open={isError}
 			onConfirm={() => setErrorModalState({ message, isError: !isError })}

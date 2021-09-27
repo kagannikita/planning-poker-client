@@ -20,7 +20,7 @@ const selectValues = [
 const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
 	const [error, setError] = useState({
 		errorLink: false,
-		errorName: false
+		errorName: false,
 	})
 
 	const closeHandler = () => {
@@ -34,7 +34,7 @@ const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
 		})
 		setError({
 			errorLink: false,
-			errorName: false
+			errorName: false,
 		})
 	}
 
@@ -42,13 +42,13 @@ const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
 		e.preventDefault()
 		if (props.ModalChange.name && props.ModalChange.link) {
 			console.log('update ', props.ModalChange)
-			await new IssuesAPI().update(props.ModalChange)
-			props.updateIssue(props.ModalChange)
+			await new IssuesAPI().update(props.ModalChange as unknown as IssueType)
+			props.updateIssue(props.ModalChange as unknown as IssueType)
 			closeHandler()
 		} else {
 			setError({
 				errorLink: true,
-				errorName: true
+				errorName: true,
 			})
 		}
 	}
@@ -57,7 +57,7 @@ const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
 		<Modal size="small" dimmer="blurring" open={props.ModalChange.modalIsOpen} onClose={closeHandler}>
 			<Modal.Header>Update issue</Modal.Header>
 			<Modal.Content>
-				< Form >
+				<Form>
 					<Form.Input
 						label="Title"
 						placeholder="Issue 1"
@@ -99,12 +99,10 @@ const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
 							Update
 						</Button>
 					</Modal.Actions>
-				</Form >
+				</Form>
 			</Modal.Content>
-
 		</Modal>
 	)
 }
 
 export default ModalChangeIssue
-

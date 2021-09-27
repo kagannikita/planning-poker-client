@@ -99,7 +99,7 @@ export const ModalConnectToGame = ({
 							The name\`s lengths is up to 30 symbols`
 
 	return (
-		<Modal dimmer={dimmer} open={!isClosed} onClose={onClose}>
+		<Modal size="tiny" dimmer={dimmer} open={!isClosed} onClose={onClose}>
 			<Modal.Header className="modal-title">
 				<h2 className="heading">{formName}</h2>
 				{formName === 'Create new game' ? null : (
@@ -157,11 +157,11 @@ export const ModalConnectToGame = ({
 					</Form.Field>
 				</Modal.Content>
 				<Modal.Actions>
-					<Button positive type="submit">
-						Confirm
-					</Button>
 					<Button negative onClick={onClose}>
 						Cancel
+					</Button>
+					<Button positive type="submit">
+						Confirm
 					</Button>
 				</Modal.Actions>
 			</Form>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Container, Grid, Header as HeaderTitle } from 'semantic-ui-react'
-import { IPlayer, Role } from '../../../interfaces/LobbyTypes'
+import { IGameSettings, IPlayer, Role } from '../../../interfaces/LobbyTypes'
 import { ISettings } from '../../../interfaces/SettingsTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
@@ -27,11 +27,8 @@ export interface ModalState {
 }
 
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
-	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData } = socketData
-
-	const exitGameHandler = async () => {
-		// router.push('/')
-	}
+	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData,
+	redirectTo } = socketData
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
@@ -151,24 +148,25 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		return isValid
 	}
 
+	const exitGameHandler = async () => {
+		redirectTo('/', true, true)
+	}
+
 	const startGameHandler = async () => {
+
 		if (validateSettings()) {
 			await api.createSettings(lobbyData.settings.id, gameSettings)
 			const data = await cardSettings()
 			data.forEach(async (formdata) => {
 				await api.createCard(formdata)
 			})
-			// api.createSettings(lobbyData.settings.id, gameSettings).then((data) => {
-			// 	console.log(data)
-			// 	cardSettings().then((data) => {
-			// 		data.forEach((card) => {
-			// 			api.createCard(card).then((data) => console.log(data))
-			// 		})
-			// 	})
+			redirectTo(API.GAME, true, false)
+			} else {
+				return
+			}
 		}
-		// await new SettingsAPI().createSettings(socketData.lobbyData.id, )
-		router.push({ hostname: API.GAME, pathname: socketData.lobbyData.id })
-	}
+
+
 
 	return (
 		<>
