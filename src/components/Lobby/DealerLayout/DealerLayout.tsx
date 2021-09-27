@@ -27,8 +27,7 @@ export interface ModalState {
 }
 
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
-	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData,
-	createIssuesFromFile, redirectTo } = socketData
+	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData, createIssuesFromFile, redirectTo } = socketData
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
@@ -153,7 +152,6 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 	}
 
 	const startGameHandler = async () => {
-
 		if (validateSettings()) {
 			await api.createSettings(lobbyData.settings.id, gameSettings)
 			const data = await cardSettings()
@@ -161,12 +159,10 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				await api.createCard(formdata)
 			})
 			redirectTo(API.GAME, true, false)
-			} else {
-				return
-			}
+		} else {
+			return
 		}
-
-
+	}
 
 	return (
 		<>
