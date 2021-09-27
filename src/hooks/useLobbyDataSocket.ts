@@ -19,6 +19,7 @@ export interface IUseLobbyDataSocket {
 	removeIssue: (id: string) => void
 	updateIssue: ({ id, name, priority }: IssueType) => void
 	renameLobbyNameHandler: (name: string) => void
+	createIssuesFromFile: () => void
 }
 
 export const useLobbyDataSocket = (
@@ -117,6 +118,10 @@ export const useLobbyDataSocket = (
 		})
 	}
 
+	const createIssuesFromFile = () => {
+		socketRef.emit('issue:file-added', lobbyId)
+	}
+
 	const updateIssue = ({ name, link }: IssueType) => {
 		if (socketRef === null) return
 		socketRef.emit('issue:update', {
@@ -154,6 +159,7 @@ export const useLobbyDataSocket = (
 		kickPlayer,
 		kickPlayerByVote,
 		createIssue,
+		createIssuesFromFile,
 		removeIssue,
 		updateIssue,
 		renameLobbyNameHandler,
