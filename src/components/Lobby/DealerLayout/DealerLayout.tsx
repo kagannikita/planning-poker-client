@@ -91,11 +91,12 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 	}, [settings.deckOfCards])
 
 	const gameTime = () => {
-		let minutes = settings.minutes
-		let seconds = settings.seconds
-		if (settings.minutes.length === 1) minutes = `0${settings.minutes}`
-		if (settings.seconds.length === 1) seconds = `0${settings.seconds}`
-		return `1943-03-09T00:${minutes}:${seconds}Z`
+		// let minutes = settings.minutes
+		// let seconds = settings.seconds
+		// if (settings.minutes.length === 1) minutes = `0${settings.minutes}`
+		// if (settings.seconds.length === 1) seconds = `0${settings.seconds}`
+		// return `1943-03-09T00:${minutes}:${seconds}Z`
+		return 123;
 	}
 
 	const gameSettings = {

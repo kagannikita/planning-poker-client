@@ -156,14 +156,16 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									lobbyID={router.query.id as string}
 									createIssue={dataSocket.createIssue}
 									removeIssue={dataSocket.removeIssue}
-									updateIssue={dataSocket.updateIssue}
-								/>
+									updateIssue={dataSocket.updateIssue} 
+									createIssuesFromFile={function (): void {
+										throw new Error('Function not implemented.')
+									} }								/>
 							</CurrentIssueContext.Provider>
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column >
-							<Timer minutes={''} seconds={GameData?.timer.toString()} />
+							<Timer minutes={''} seconds={GameData?.timer} />
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
