@@ -18,6 +18,7 @@ interface IssueContainerProps {
 	createIssue: ({ name, priority }: IssueType) => void
 	removeIssue: (id: string) => void
 	updateIssue: ({ id, name, priority }: IssueType) => void
+	createIssuesFromFile: () => void
 }
 
 export interface IModalCreateIssue extends ModalState {
@@ -26,7 +27,7 @@ export interface IModalCreateIssue extends ModalState {
 	lobby: string
 }
 
-const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssue, createIssue, issues, lobbyID }) => {
+const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssue, createIssue, createIssuesFromFile, issues, lobbyID }) => {
 	const [ModalDelete, setModalDelete] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
@@ -67,6 +68,7 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 		})
 		promise.then(async (d) => {
 			await new IssuesAPI().createByTable(d as IssueTypeAPI[], lobbyID)
+			createIssuesFromFile()
 		})
 	}
 
@@ -94,7 +96,7 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 					<i className="upload icon"></i>
 					Upload issues
 				</label>
-				<input type="file" className={s.inputExcel} onChange={uploadExcel} id="upload-btn" hidden />
+				<input type="file" accept=".xlsx, .csv" className={s.inputExcel} onChange={uploadExcel} id="upload-btn" hidden />
 			</div>
 			<ModalDeleteIssue
 				issuesArr={issues}

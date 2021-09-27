@@ -21,7 +21,7 @@ export const useGameDataSocket = (
     status: GameState.init
   });
   socketRef.on('game:started', (gameData: GameData) => {
-    console.log('gamestarted ', gameData);
+    console.log('gamestarted ', gameData.timer);
     
     setGameData({
       ...GameData,
