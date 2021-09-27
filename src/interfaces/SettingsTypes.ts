@@ -4,7 +4,6 @@ export interface ISettings {
 	timerIsOn: boolean
 	scoreType: string
 	scoreTypeShort: string
-	minutes: string
-	seconds: string
+	time: number
 	deckOfCards: string
 }

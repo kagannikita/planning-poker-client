@@ -5,6 +5,7 @@ import Logo from '../Logo/logo'
 export const HeaderBlock = () => {
 	return (
 		<header className={s.header}>
+			<h1 className={s.mainHeader}>Planning Poker</h1>
 			<div className={s['header__first_row']} />
 			{/* <div className={s['header__second_row']} /> */}
 			<div className={s['header__logo-link']}>

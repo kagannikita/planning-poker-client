@@ -2,45 +2,36 @@ import React, { useState } from 'react'
 import { ISettings } from '../../interfaces/SettingsTypes'
 
 type TimerProps = {
-	minutes: string
-	seconds: number
+	time: number
 	settings?: ISettings
 	setSettings?: React.Dispatch<React.SetStateAction<ISettings>>
 	isDisabled?: boolean
 }
 
-const Timer: React.FC<TimerProps> = ({ minutes, seconds, isDisabled = true, settings, setSettings }: TimerProps) => {
+const Timer: React.FC<TimerProps> = ({ time, isDisabled = true, settings, setSettings }: TimerProps) => {
 	const [clsTimer, setClsTimer] = useState(['form__timer'])
 
 	if (!settings?.timerIsOn && !clsTimer.includes('disabled')) setClsTimer([...clsTimer, 'disabled'])
 	if (settings?.timerIsOn && clsTimer.includes('disabled')) setClsTimer(clsTimer.filter((cls) => cls !== 'disabled'))
 
+	const minutes = Math.floor(time / 60)
+	const seconds = time - minutes * 60
+
+	const validateMaxTime = (time: number) => {
+		if (time > 59) return 59
+		return time
+	}
+
 	const setMinutes = (min: string) => {
-		if (!settings || !setSettings) return
-		setSettings({ ...settings, minutes: min })
+		if (!settings || !setSettings || min.length > 2) return
+		const time = validateMaxTime(+min) * 60 + seconds
+		setSettings({ ...settings, time })
 	}
 
 	const setSeconds = (sec: string) => {
-		if (!settings || !setSettings) return
-		setSettings({ ...settings, seconds: sec })
-	}
-
-	const validateTime = (time: string, setTime: (arg: string) => void) => {
-		if (time.length > 1) {
-			if (time[0] === '0') {
-				setTime(time[1])
-			} else {
-				setTime(time)
-			}
-		} else {
-			setTime(time)
-		}
-		if (!time || Number(time) < 0) {
-			setTime('0')
-		}
-		if (Number(time) > 59) {
-			setTime('59')
-		}
+		if (!settings || !setSettings || sec.length > 2) return
+		const time = validateMaxTime(+sec) + minutes * 60
+		setSettings({ ...settings, time })
 	}
 
 	return (
@@ -56,11 +47,10 @@ const Timer: React.FC<TimerProps> = ({ minutes, seconds, isDisabled = true, sett
 					<input
 						type="number"
 						className="timer__inp"
-						maxLength={2}
 						id="minutes"
 						disabled={isDisabled}
 						value={minutes}
-						onChange={(e) => validateTime(e.target.value, setMinutes)}
+						onChange={(e) => setMinutes(e.target.value)}
 					/>
 				</div>
 				<span className="timer__double-dot">:</span>
@@ -71,11 +61,10 @@ const Timer: React.FC<TimerProps> = ({ minutes, seconds, isDisabled = true, sett
 					<input
 						type="number"
 						className="timer__inp"
-						maxLength={2}
 						id="seconds"
 						disabled={isDisabled}
 						value={seconds}
-						onChange={(e) => validateTime(e.target.value, setSeconds)}
+						onChange={(e) => setSeconds(e.target.value)}
 					/>
 				</div>
 			</div>

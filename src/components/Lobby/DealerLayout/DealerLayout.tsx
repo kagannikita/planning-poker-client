@@ -27,8 +27,7 @@ export interface ModalState {
 }
 
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
-	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData,
-	createIssuesFromFile, redirectTo } = socketData
+	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData, createIssuesFromFile, redirectTo } = socketData
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
@@ -47,8 +46,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		timerIsOn: true,
 		scoreType: 'story point',
 		scoreTypeShort: 'SP',
-		minutes: '2',
-		seconds: '30',
+		time: 150,
 		deckOfCards: 'fibonacci',
 	})
 
@@ -90,22 +88,13 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		setDeckOfCards()
 	}, [settings.deckOfCards])
 
-	const gameTime = () => {
-		// let minutes = settings.minutes
-		// let seconds = settings.seconds
-		// if (settings.minutes.length === 1) minutes = `0${settings.minutes}`
-		// if (settings.seconds.length === 1) seconds = `0${settings.seconds}`
-		// return `1943-03-09T00:${minutes}:${seconds}Z`
-		return 123;
-	}
-
 	const gameSettings = {
 		is_dealer_play: settings.masterAsPlayer,
 		is_change_cards: settings.changingCards,
 		timer_needed: settings.timerIsOn,
 		score_type: settings.scoreType,
 		score_type_short: settings.scoreTypeShort,
-		timer: gameTime(),
+		timer: settings.time,
 	}
 
 	const getCoverFromUrl = (src: string) => {
@@ -163,7 +152,6 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 	}
 
 	const startGameHandler = async () => {
-
 		if (validateSettings()) {
 			await api.createSettings(lobbyData.settings.id, gameSettings)
 			const data = await cardSettings()
@@ -171,12 +159,10 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				await api.createCard(formdata)
 			})
 			redirectTo(API.GAME, true, false)
-			} else {
-				return
-			}
+		} else {
+			return
 		}
-	
-
+	}
 
 	return (
 		<>

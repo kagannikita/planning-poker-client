@@ -39,13 +39,15 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 
 	return (
 		<>
-			<HeaderTitle as="h1" className={s.title}>
+			<HeaderTitle as="h2" className={s.title + ' heading'}>
 				{socketData.lobbyData?.name}
 			</HeaderTitle>
 			<Grid columns="1">
-				<Grid.Row color="blue">
+				<Grid.Row className={s.lobbyInfo}>
 					<Grid.Column>
-						<HeaderTitle as="h3">Scram master</HeaderTitle>
+						<HeaderTitle as="h3" className={'heading'}>
+							Scram master
+						</HeaderTitle>
 						{socketData.lobbyData?.players.map((dealer) => {
 							if (dealer.role === 'dealer') {
 								return <MemberItem key={dealer.id} {...(dealer as IPlayer)} />
@@ -61,13 +63,13 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="right">
-						<Button negative floated="right" onClick={exitLobbyHandler}>
+						<Button negative className={s.cancelBtn} floated="right" onClick={exitLobbyHandler}>
 							Exit Lobby
 						</Button>
 					</Grid.Column>
 				</Grid.Row>
 			</Grid>
-			<HeaderTitle as="h1" textAlign="center">
+			<HeaderTitle as="h2" className="heading" textAlign="center">
 				Members:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
