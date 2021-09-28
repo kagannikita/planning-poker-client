@@ -6,6 +6,7 @@ import { IssueType } from '../interfaces/IssueType'
 import router from 'next/router'
 import { LocalStorageEnum } from '../interfaces/localStorageEnum'
 import { VoteType } from '../interfaces/VoteType'
+import { SocketState } from '../context/SocketContext'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
@@ -23,11 +24,13 @@ export interface IUseLobbyDataSocket {
 }
 
 export const useLobbyDataSocket = (
-	socketRef: SocketIOClient.Socket,
+	socketRef: SocketState,
 	lobbyId: string,
 	playerId: string,
 ): IUseLobbyDataSocket => {
+
 	const [lobbyData, setLobbyData] = useState<any>()
+	
 	const [VotesQuanity, setVotesQuanity] = useState<VoteType>({
 		modalIsOpen: false,
 		playerId: '',
@@ -35,17 +38,18 @@ export const useLobbyDataSocket = (
 		kickPlayer: new Map<string, string[]>(),
 		currentPlayer: '',
 	})
+	console.log('useLobby', playerId);
+	
+	socketRef?.lobbySpace.emit('join', { playerId, lobbyId })
 
 	useEffect(() => {
-		socketRef.emit('join', { playerId, lobby_id: lobbyId })
-
-		socketRef.on('lobby:get', ({ data, playerID }: { data: ILobby; playerID: string }) => {
+		socketRef.lobbySpace.on('lobby:get', ({ data, playerID, }: { data: ILobby; playerID: string }) => {
 			console.log(data, playerID)
 
 			setLobbyData(data)
 		})
 
-		socketRef.on('vote:data', ({ kickPlayer, btnBlocked }: { kickPlayer: any; btnBlocked: boolean }) => {
+		socketRef.mainSpace.on('vote:data', ({ kickPlayer, btnBlocked }: { kickPlayer: any; btnBlocked: boolean }) => {
 			console.log(kickPlayer)
 
 			// setBtnDeleteState(btnBlocked)
@@ -57,90 +61,81 @@ export const useLobbyDataSocket = (
 
 		//// redirects
 
-		socketRef.on('player:deleted', () => {
+		socketRef.lobbySpace.on('player:deleted', () => {
 			console.log('deleted')
 
-			router.push('/')
+			router.push(`http://localhost:3000/`)
 			sessionStorage.clear()
 		})
 
-		socketRef.on('redirect:get', (body: { pathname: string; lobbyId: string }) => {
-			// pathname: string, lobbyId: string
+		socketRef.gameSpace.on('redirect:get', (body: { pathname: string; lobbyId: string }) => {
 			console.log(body)
 			router.push(`http://localhost:3000/` + body.pathname + body.lobbyId)
 			// router.push({ hostname: body.path, pathname: body.lobbyId})
 		})
 
-		socketRef.on('kick:voted', (data: VoteType) => {
+		socketRef.lobbySpace.on('kick:voted', (data: VoteType) => {
 			data.currentPlayer = playerId
 			data.kickPlayer = new Map(JSON.parse(data.kickPlayer as unknown as string))
 			console.log('kick voted', data)
-			// setBtnDeleteState(btnBlocked)
 			setVotesQuanity(data)
 		})
 
-		// socketRef.on('player:kicked', ({ btnBlocked }: { btnBlocked: boolean }) => {
-		// 	console.log('player:kicked', btnBlocked)
-		// 	// setVotesQuanity({})
-		// 	setBtnDeleteState(btnBlocked)
-		// })
-
 		return () => {
 			if (socketRef === null) return
-			socketRef.disconnect()
+			socketRef.mainSpace.disconnect()
+			socketRef.issueSpace.disconnect()
+			socketRef.gameSpace.disconnect()
+			socketRef.lobbySpace.disconnect()
 		}
-	}, [lobbyId, playerId])
+	}, [])
 
 	const redirectTo = (pathname: string, isDealer: boolean, exit: boolean = false) => {
-		socketRef?.emit('redirect', { pathname, lobbyId, playerId, isDealer, exit })
+		socketRef.gameSpace.emit('redirect', { pathname, lobbyId, playerId, isDealer, exit })
 		// router.push({ hostname: API.GAME, path: lobbyId})
 	}
 
 	const kickPlayer = (player_id: string) => {
 		console.log(player_id)
 
-		socketRef?.emit('player:delete', { player_id, lobby_id: lobbyId })
+		socketRef.lobbySpace.emit('player:delete', { player_id, lobby_id: lobbyId })
 	}
 
 	const kickPlayerByVote = (voteToKickPlayerId: string, playerName: string) => {
 		console.log('kickVote', voteToKickPlayerId, playerName)
 		const currentPlayer = sessionStorage.getItem(LocalStorageEnum.playerid) as string
-		socketRef!.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName, currentPlayer })
+		socketRef.lobbySpace.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName, currentPlayer })
 	}
 
 	const createIssue = ({ name, priority, score = '-' }: IssueType) => {
 		console.log('create issue ', name, priority, lobbyId, score)
 
-		if (socketRef === null) return
-		socketRef.emit('issue:added', {
+		socketRef.issueSpace.emit('issue:added', {
 			name,
 			lobby_id: lobbyId,
 		})
 	}
 
 	const createIssuesFromFile = () => {
-		socketRef.emit('issue:file-added', lobbyId)
+		socketRef.issueSpace.emit('issue:file-added', lobbyId)
 	}
 
 	const updateIssue = ({ name, link }: IssueType) => {
-		if (socketRef === null) return
-		socketRef.emit('issue:update', {
+		socketRef.issueSpace.emit('issue:update', {
 			name,
 			link,
 			lobby_id: lobbyId,
 		})
 	}
 	const removeIssue = (id: string) => {
-		if (socketRef === null) return
-		socketRef.emit('issue:delete', {
+		socketRef.issueSpace.emit('issue:delete', {
 			id,
 			lobby_id: lobbyId,
 		})
 	}
 
 	const renameLobbyNameHandler = (name: string) => {
-		if (socketRef === null) return
-		socketRef.emit('lobby:rename', {
+		socketRef.lobbySpace.emit('lobby:rename', {
 			id: lobbyData?.id,
 			name,
 		})
@@ -148,7 +143,7 @@ export const useLobbyDataSocket = (
 
 	useBeforeUnload(() => {
 		if (socketRef === null) return
-		socketRef.emit('leave', { player_id: playerId, lobby_id: lobbyId })
+		socketRef.lobbySpace.emit('leave', { player_id: playerId, lobby_id: lobbyId })
 	})
 
 	return <IUseLobbyDataSocket>{

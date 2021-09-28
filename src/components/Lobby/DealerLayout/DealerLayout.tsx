@@ -148,7 +148,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 	}
 
 	const exitGameHandler = async () => {
-		redirectTo('/', true, true)
+		redirectTo('', true, true)
 	}
 
 	const startGameHandler = async () => {

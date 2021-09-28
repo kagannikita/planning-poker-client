@@ -1,5 +1,4 @@
-import React, { FC, MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
-import io from 'socket.io-client'
+import React, { FC, MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { useRouter } from 'next/router'
@@ -15,6 +14,7 @@ import ModalKickPlayerByDealer from 'src/components/Lobby/ModalKickPlayerByDeale
 import ModalKickPlayerByVote from 'src/components/Lobby/ModalKickPlayerByVote'
 import { GameState } from 'src/interfaces/GameTypes'
 import Timer from 'src/components/Timer/Timer'
+import SocketContext from 'src/context/socketContext'
 
 export interface CurrentIssue {
 	id: string
@@ -39,7 +39,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	})
 
 
-	const socket = useMemo(() => io(API.MAIN_API, { query: props.lobbyId }), [playerId])
+	// const socket = useMemo(() => io(API.MAIN_API, { query: props.lobbyId }), [playerId])
+	const socket = useContext(SocketContext)
 	const dataSocket = useLobbyDataSocket(
 		socket,
 		props.lobbyId, playerId)
@@ -84,12 +85,13 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		// send
 	}
 
+	// func for dealer
 	const closeGameHandler = () => 
-		dataSocket.redirectTo('/', true, true)
+		dataSocket.redirectTo('', true, true)
 	
-
+	// func for player
 	const exitGameHandler = () => 
-	dataSocket.redirectTo('/', false, true)
+	dataSocket.redirectTo('', false, true)
 
 	return (
 		<>
@@ -165,7 +167,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column >
-							<Timer minutes={''} seconds={GameData?.timer} />
+							<Timer time={GameData?.timer} />
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">

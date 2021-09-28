@@ -24,18 +24,14 @@ export const useGameDataSocket = (
     console.log('gamestarted ', gameData.timer);
     
     setGameData({
-      ...GameData,
-      status: gameData.status,
-     timer: gameData.timer
+      ...gameData
     })
   })
 
   socketRef.on('game:paused', (gameData: GameData) => {
     console.log('game paused ', gameData);
     setGameData({
-      ...GameData,
-      status: gameData.status,
-      timer: gameData.timer
+      ...gameData
     })
   })
 
