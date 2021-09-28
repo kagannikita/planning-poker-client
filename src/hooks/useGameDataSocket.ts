@@ -1,4 +1,4 @@
-import { Dispatch, MutableRefObject, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { GameData, GameState } from "src/interfaces/GameTypes"
 
 export interface IGameDataSocket {

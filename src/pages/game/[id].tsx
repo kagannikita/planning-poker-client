@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo,  useState } from 'react'
 import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { useRouter } from 'next/router'
@@ -14,7 +14,6 @@ import ModalKickPlayerByDealer from 'src/components/Lobby/ModalKickPlayerByDeale
 import ModalKickPlayerByVote from 'src/components/Lobby/ModalKickPlayerByVote'
 import { GameState } from 'src/interfaces/GameTypes'
 import Timer from 'src/components/Timer/Timer'
-import SocketContext from 'src/context/socketContext'
 
 export interface CurrentIssue {
 	id: string
@@ -39,11 +38,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	})
 
 
-	// const socket = useMemo(() => io(API.MAIN_API, { query: props.lobbyId }), [playerId])
-	const socket = useContext(SocketContext)
+	const socket = useMemo(() => io(API.MAIN_API), [playerId])
 	const dataSocket = useLobbyDataSocket(
 		socket,
 		props.lobbyId, playerId)
+		
 	console.log('data asdasd');
 
 	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
