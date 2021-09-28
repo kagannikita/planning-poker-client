@@ -1,6 +1,6 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import React, { MutableRefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Container } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import DealerLayout from '../../components/Lobby/DealerLayout/DealerLayout'
@@ -10,7 +10,6 @@ import { useRouter } from 'next/router'
 import { useLobbyDataSocket } from '../../hooks'
 import Loader from '../../components/loader/loader'
 import { API } from 'src/interfaces/ApiEnum'
-import SocketContext, { socket, SocketState } from '../../context/SocketContext'
 import io from 'socket.io-client'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
@@ -25,16 +24,8 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 		setPlayerId(id as string)
 	}, [playerId])
 	
-	const sockets = useContext(SocketContext)
-
-	// const socket = useMemo(() => io(API.MAIN_API, { query: props.lobbyId }), [playerId])
-	// const socket = io(API.MAIN_API, { query: props.lobbyId })
-	console.log('lobby page', playerId);
-	// const dataSocket = playerId ? useLobbyDataSocket(socket, props.lobbyId, playerId) : undefined
-	// const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
- 	// if(playerId) {
+	const sockets = useMemo(() => io(API.MAIN_API), [playerId])
 	const dataSocket = useLobbyDataSocket(sockets, props.lobbyId, playerId )
-	// }
 	const player = dataSocket?.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 	useEffect(() => {
 		setLoading(false)

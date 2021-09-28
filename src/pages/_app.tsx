@@ -7,20 +7,17 @@ import 'semantic-ui-css/semantic.min.css'
 import TransitionLayout from '../components/layout/Layout'
 import { Provider } from 'react-redux'
 import { useStore } from '../store/store'
-import SocketContext, { socket } from '../context/SocketContext'
 
 const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 	const store = useStore()
 
 	return (
 		<Provider store={store}>
-			<SocketContext.Provider value={socket} >
 			<TransitionLayout>
 				{/* <div style={{ position: 'relative' }}> */}
 				<Component {...pageProps} />
 				{/* </div> */}
 			</TransitionLayout>
-				</SocketContext.Provider>
 		</Provider>
 	)
 }
