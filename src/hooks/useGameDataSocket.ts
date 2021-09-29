@@ -18,7 +18,7 @@ export const useGameDataSocket = (
   const [GameData, setGameData] = useState<GameData>({
     currIssueId: '',
     timer: 10,
-    playersScore: new Map(),
+    playersScore:'',
     issueScore: 0,
     status: GameState.init
   });
@@ -30,7 +30,7 @@ export const useGameDataSocket = (
       
       setGameData({
         ...gameData,
-        playersScore: new Map(JSON.parse(gameData.playersScore))
+        playersScore: JSON.parse(gameData.playersScore)
       })
     })
 
@@ -38,9 +38,16 @@ export const useGameDataSocket = (
       console.log('game paused ', gameData);
       setGameData({
         ...gameData,
-        playersScore: new Map(JSON.parse(gameData.playersScore))
       })
     })
+
+    socketRef.on('game:round-finished', ({ gameData }: { gameData: GameData }) => {
+      console.log('game:round-finished', gameData);
+      setGameData({
+        ...gameData,
+      })
+    })
+
 
     socketRef.on('game:score-setted', () =>{
       console.log('scored');

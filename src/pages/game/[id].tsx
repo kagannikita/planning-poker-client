@@ -58,9 +58,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		name: dataSocket.lobbyData?.issues[0]?.name || ''
 	});
 
-	console.log('лог ', dataSocket.lobbyData?.settings);
-	
-
 	const getMembersVote = (id: string) => {
 		if (dataSocket.VotesQuanity.kickPlayer.get(id)) {
 			return dataSocket.VotesQuanity.kickPlayer.get(id)!.length
@@ -76,11 +73,12 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		return false
 	}
 	console.log(CurrentIssue)
-
+	
 	const startRoundHandler = () => {
 		// send CurrentIssue
+		console.log(CurrentIssue)
 		setGameData({ ...GameData, currIssueId: CurrentIssue.id })
-
+		
 		emitStartGame()
 		setBtnDisabled(!BtnDisabled)
 		console.log('start round', GameData);

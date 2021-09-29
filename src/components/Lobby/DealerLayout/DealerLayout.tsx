@@ -174,7 +174,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 			cardSettings().then(data => data.forEach(card => {
 				api.createCard(card)
 				.then((data) => console.log('card', data));
-			}))
+			})).then(() => redirectTo(API.GAME, true, false))
 		} else {
 			return
 		}
