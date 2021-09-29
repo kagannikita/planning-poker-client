@@ -16,6 +16,9 @@ import { ModalState } from '../../components/Lobby/DealerLayout/DealerLayout'
 import { API } from '../../interfaces/ApiEnum'
 import ModalKickPlayerByVote from '../../components/Lobby/ModalKickPlayerByVote'
 import ModalKickPlayerByDealer from '../../components/Lobby/ModalKickPlayerByDealer'
+import MemberGameStatus from '../../components/MemberGameStatus/MemberGameStatus'
+import cls from './gamePage.module.scss'
+import CardsField from '../../components/CardsField/CardsField'
 
 export interface CurrentIssue {
 	id: string
@@ -172,21 +175,24 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									kickSettings = undefined
 								}
 								return (
-									<MemberItem
-										key={member.id}
-										{...member}
-										isYou={member.id === playerId}
-										votedQuantity={dataSocket.VotesQuanity.kickPlayer}
-										playersQuanity={dataSocket.lobbyData?.players}
-										checkVoted={checkVoted(member.id)}
-										playersVoted={getMembersVote(member.id)}
-										setVoteKickPlayer={voteKickSettings}
-										setKickPlayer={kickSettings}
-									/>
+									<div className={cls.playerCard} key={member.id}>
+										<MemberGameStatus />
+										<MemberItem
+											{...member}
+											isYou={member.id === playerId}
+											votedQuantity={dataSocket.VotesQuanity.kickPlayer}
+											playersQuanity={dataSocket.lobbyData?.players}
+											checkVoted={checkVoted(member.id)}
+											playersVoted={getMembersVote(member.id)}
+											setVoteKickPlayer={voteKickSettings}
+											setKickPlayer={kickSettings}
+										/>
+									</div>
 								)
 							})}
 						</Grid.Column>
 					</Grid>
+					<GridRow centered>{/*<CardsField cards={} />*/}</GridRow>
 				</Grid>
 			</Container>
 			{player?.role === Role.dealer && (
