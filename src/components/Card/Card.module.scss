@@ -30,6 +30,10 @@
 	box-shadow: 0 4px 10px -2px black;
 	border-radius: 5px;
 
+	&__front {
+		background-color: white;
+	}
+	
 	&__front,
 	&__back {
 		position: absolute;

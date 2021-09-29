@@ -1,11 +1,12 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { GameData, GameState } from "src/interfaces/GameTypes"
 
 export interface IGameDataSocket {
   GameData: GameData,
   setGameData: Dispatch<SetStateAction<GameData>>
-  emitStartGame: (gameData: GameData) => void,
-  emitPauseGame: (gameData: GameData) => void
+  emitStartGame: () => void,
+  emitPauseGame: () => void,
+  setScore: (body: { score: number, playerId: string, currIssueId: string }) => void
 }
 
 export const useGameDataSocket = (
@@ -17,36 +18,53 @@ export const useGameDataSocket = (
   const [GameData, setGameData] = useState<GameData>({
     currIssueId: '',
     timer: 10,
+    playersScore: new Map(),
     issueScore: 0,
     status: GameState.init
   });
-  socketRef.on('game:started', (gameData: GameData) => {
-    console.log('gamestarted ', gameData.timer);
-    
-    setGameData({
-      ...gameData
-    })
-  })
 
-  socketRef.on('game:paused', (gameData: GameData) => {
-    console.log('game paused ', gameData);
-    setGameData({
-      ...gameData
+  useEffect(() => {
+    socketRef.on('game:started', ({gameData}: {gameData: GameData}) => {
+      console.log('gamestarted timer ', gameData.timer);
+      console.log('gamestarted ', gameData);
+      
+      setGameData({
+        ...gameData,
+        playersScore: new Map(JSON.parse(gameData.playersScore))
+      })
     })
-  })
 
-  const emitStartGame = (gameData: GameData) => {
-    socketRef.emit('game:start', { gameData, lobbyId })
+    socketRef.on('game:paused', ({ gameData }: { gameData: GameData }) => {
+      console.log('game paused ', gameData);
+      setGameData({
+        ...gameData,
+        playersScore: new Map(JSON.parse(gameData.playersScore))
+      })
+    })
+
+    socketRef.on('game:score-setted', () =>{
+      console.log('scored');
+    })
+
+  }, [lobbyId, socketRef])
+
+  const emitStartGame = () => {
+    socketRef.emit('game:start', { gameData: GameData, lobbyId })
   }
 
-  const emitPauseGame = (gameData: GameData) => {
-    socketRef.emit('game:pause', { gameData, lobbyId})
+  const emitPauseGame = () => {
+    socketRef.emit('game:pause', { gameData: GameData, lobbyId})
+  }
+
+  const setScore = (body: { score: number, playerId: string, currIssueId: string }) => {
+    socketRef.emit('game:set-score', { ...body })
   }
 
   return {
     GameData,
     setGameData,
     emitStartGame,
-    emitPauseGame
+    emitPauseGame,
+    setScore
   }
 }

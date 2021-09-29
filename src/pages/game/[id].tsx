@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo,  useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { useRouter } from 'next/router'
@@ -14,6 +14,8 @@ import ModalKickPlayerByDealer from 'src/components/Lobby/ModalKickPlayerByDeale
 import ModalKickPlayerByVote from 'src/components/Lobby/ModalKickPlayerByVote'
 import { GameState } from 'src/interfaces/GameTypes'
 import Timer from 'src/components/Timer/Timer'
+import io from 'socket.io-client'
+import CardsField from 'src/components/CardsField/CardsField'
 
 export interface CurrentIssue {
 	id: string
@@ -24,6 +26,7 @@ export interface CurrentIssue {
 const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
 	const [playerId, setplayerId] = useState('');
+	const [BtnDisabled, setBtnDisabled] = useState(false);
 
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
@@ -42,10 +45,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const dataSocket = useLobbyDataSocket(
 		socket,
 		props.lobbyId, playerId)
-		
-	console.log('data asdasd');
 
-	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
+	const player = dataSocket.lobbyData?.players
+		.find((player) => player.id === playerId) as IPlayer
 
 	const { GameData, emitPauseGame, emitStartGame, setGameData } = useGameDataSocket(
 		socket,
@@ -55,6 +57,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		id: dataSocket.lobbyData?.issues[0]?.id || '',
 		name: dataSocket.lobbyData?.issues[0]?.name || ''
 	});
+
+	console.log('лог ', dataSocket.lobbyData?.settings);
+	
 
 	const getMembersVote = (id: string) => {
 		if (dataSocket.VotesQuanity.kickPlayer.get(id)) {
@@ -70,27 +75,34 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		}
 		return false
 	}
+	console.log(CurrentIssue)
 
 	const startRoundHandler = () => {
 		// send CurrentIssue
-		setGameData({...GameData, currIssueId: CurrentIssue.id, timer: 10})
-		emitStartGame(GameData)
+		setGameData({ ...GameData, currIssueId: CurrentIssue.id })
+
+		emitStartGame()
+		setBtnDisabled(!BtnDisabled)
+		console.log('start round', GameData);
 	}
 
-	const pauseRoundHandler = () => emitPauseGame(GameData)
-	
+	const pauseRoundHandler = () => {
+		emitPauseGame()
+		setBtnDisabled(!BtnDisabled)
+	}
+
 
 	const nextRoundHandler = () => {
 		// send
 	}
 
 	// func for dealer
-	const closeGameHandler = () => 
+	const closeGameHandler = () =>
 		dataSocket.redirectTo('', true, true)
-	
+
 	// func for player
-	const exitGameHandler = () => 
-	dataSocket.redirectTo('', false, true)
+	const exitGameHandler = () =>
+		dataSocket.redirectTo('', false, true)
 
 	return (
 		<>
@@ -107,7 +119,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									if (member.role === Role.player) return
 									if (member.role === Role.spectator) return
 									return <MemberItem
-										isYou={member.id ===playerId}
+										key={member.id}
+										isYou={member.id === playerId}
 										{...member}
 									/>
 								})
@@ -116,13 +129,13 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						<Grid.Column verticalAlign="bottom" width="10">
 							{
 								player?.role === Role.dealer ? (
-								<Button negative floated="right" onClick={closeGameHandler}>
-									Close game
-								</Button>
+									<Button negative floated="right" onClick={closeGameHandler}>
+										Close game
+									</Button>
 								) : (
-										<Button negative floated="right" onClick={exitGameHandler}>
-											Exit game
-										</Button>
+									<Button negative floated="right" onClick={exitGameHandler}>
+										Exit game
+									</Button>
 								)
 							}
 
@@ -131,17 +144,24 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					<GridRow centered >
 						<Grid.Column>
 							{
-								(GameData.status === GameState.init || GameData.status === GameState.paused) ?
-									<Button color="blue" onClick={startRoundHandler}>
+								(player?.role === Role.dealer) &&
+								<>
+									<Button
+										color="blue"
+										disabled={BtnDisabled}
+										onClick={startRoundHandler}>
 										Run Round
 									</Button>
-									:
-									<Button color="blue" onClick={pauseRoundHandler}>
+									<Button
+										color="blue"
+										disabled={!BtnDisabled}
+										onClick={pauseRoundHandler}>
 										Pause Round
 									</Button>
+								</>
 							}
 							{
-								GameData.status === GameState.paused &&
+								player?.role === Role.dealer && GameData.status === GameState.roundFinished &&
 								<Button color="blue" onClick={nextRoundHandler}>
 									Next Round
 								</Button>
@@ -157,71 +177,82 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									lobbyID={router.query.id as string}
 									createIssue={dataSocket.createIssue}
 									removeIssue={dataSocket.removeIssue}
-									updateIssue={dataSocket.updateIssue} 
+									updateIssue={dataSocket.updateIssue}
 									createIssuesFromFile={function (): void {
 										throw new Error('Function not implemented.')
-									} }								/>
+									}} />
 							</CurrentIssueContext.Provider>
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column >
-							<Timer time={GameData?.timer} />
+							<Timer time={GameData.timer} />
 						</Grid.Column>
 					</Grid>
-					<Grid columns="1">
-						<Grid.Column stretched >
-							<HeaderTitle as="h2">Players:</HeaderTitle>
-							{
-								player?.role === Role.player && dataSocket.lobbyData?.players.map(member => {
-									if (member.role === Role.dealer) return
-									if (member.role === Role.spectator) return
-									return <MemberItem
+					<Grid columns="2">
+						{/* <Grid.Column stretched > */}
+						<HeaderTitle as="h2">Players:</HeaderTitle>
+						{
+							player?.role === Role.player && dataSocket.lobbyData?.players.map(member => {
+								if (member.role === Role.dealer) return
+								if (member.role === Role.spectator) return
+								return <Grid.Column>
+									<span>Score:</span>
+									<MemberItem
+										key={member.id}
 										votedQuantity={dataSocket.VotesQuanity.kickPlayer}
 										checkVoted={checkVoted(member.id)}
 										playersVoted={getMembersVote(member.id)}
 										playersQuanity={dataSocket.lobbyData?.players}
 										setVoteKickPlayer={dataSocket.setVotesQuanity}
 										isYou={member.id === playerId}
-										key={member.id}
 										{...member}
 									/>
-								})
-							}
-							{
-								player?.role === Role.dealer && dataSocket.lobbyData?.players.map(member => {
-									if (member.role === Role.dealer) return
-									if (member.role === Role.spectator) return
-									return <MemberItem
+								</Grid.Column>
+							})
+						}
+						{
+							player?.role === Role.dealer && dataSocket.lobbyData?.players.map(member => {
+								if (member.role === Role.dealer) return
+								if (member.role === Role.spectator) return
+								return <Grid.Column>
+									<span>Score:</span>
+									<MemberItem
+										key={member.id}
 										isYou={member.id === playerId}
 										votedQuantity={dataSocket.VotesQuanity.kickPlayer}
 										checkVoted={checkVoted(member.id)}
 										playersVoted={getMembersVote(member.id)}
 										playersQuanity={dataSocket.lobbyData?.players}
 										setKickPlayer={setModalKickPlayer}
-										key={member.id}
 										{...member}
 									/>
-								})
-							}
-							{
-								player?.role === Role.spectator && dataSocket.lobbyData?.players.map(member => {
-									if (member.role === Role.dealer) return
-									if (member.role === Role.spectator) return
-									return <MemberItem
+								</Grid.Column>
+							})
+						}
+						{
+							player?.role === Role.spectator && dataSocket.lobbyData?.players.map(member => {
+								if (member.role === Role.dealer) return
+								if (member.role === Role.spectator) return
+								return <Grid.Column>
+									<span>Score:</span>
+									<MemberItem
+										key={member.id}
 										isYou={member.id === playerId}
 										votedQuantity={dataSocket.VotesQuanity.kickPlayer}
 										checkVoted={checkVoted(member.id)}
 										playersVoted={getMembersVote(member.id)}
 										playersQuanity={dataSocket.lobbyData?.players}
-										key={member.id}
 										{...member}
 									/>
-								})
-							}
-						</Grid.Column>
+								</Grid.Column>
+							})
+						}
+						{/* </Grid.Column> */}
 					</Grid>
-					
+					<Grid.Column>
+						{/* <CardsField cards={dataSocket?.lobbyData?.settings?.cards as any} /> */}
+					</Grid.Column>
 				</Grid>
 			</Container>
 			{

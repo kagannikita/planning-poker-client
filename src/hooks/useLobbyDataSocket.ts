@@ -38,7 +38,6 @@ export const useLobbyDataSocket = (
 	
 	
 	useEffect(() => {
-		console.log('useLobby', playerId);
 		socketRef.emit('join', { player_id: playerId, lobby_id: lobbyId })
 
 		socketRef.on('lobby:get', ({ data, player_id, }: { data: ILobby; player_id: string }) => {
