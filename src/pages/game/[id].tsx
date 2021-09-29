@@ -58,6 +58,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		name: dataSocket.lobbyData?.issues[0]?.name || ''
 	});
 
+	console.log('лог ', dataSocket.lobbyData?.settings);
+	
+
 	const getMembersVote = (id: string) => {
 		if (dataSocket.VotesQuanity.kickPlayer.get(id)) {
 			return dataSocket.VotesQuanity.kickPlayer.get(id)!.length

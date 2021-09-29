@@ -109,7 +109,8 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		return cards.map((card) => {
 			const cardFormData = new FormData()
 			cardFormData.set('name', card.name)
-			cardFormData.set('image', fileCover, 'cover.png')
+			// cardFormData.set('image', fileCover, 'cover.png')
+			cardFormData.set('image', "http://res.cloudinary.com/plaining-poker/image/upload/v1632916481/wve1jvulhqqiooln4juc.jpg"	)
 			cardFormData.set('is_cover', 'true')
 			cardFormData.set('settings', lobbyData.settings.id)
 			return cardFormData
@@ -151,18 +152,34 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		redirectTo('', true, true)
 	}
 
+	// const startGameHandler = async () => {
+	// 	if (validateSettings()) {
+	// 		await api.createSettings(lobbyData.settings.id, gameSettings)
+	// 		const data = await cardSettings()
+	// 		console.log( 'cards data', data);
+			
+	// 		data.forEach(async (formdata) => {
+	// 			await api.createCard(formdata)
+	// 		})
+	// 		// redirectTo(API.GAME, true, false)
+	// 	} else {
+	// 		return
+	// 	}
+	// }
+
 	const startGameHandler = async () => {
 		if (validateSettings()) {
 			await api.createSettings(lobbyData.settings.id, gameSettings)
 			const data = await cardSettings()
-			data.forEach(async (formdata) => {
-				await api.createCard(formdata)
-			})
-			redirectTo(API.GAME, true, false)
+			cardSettings().then(data => data.forEach(card => {
+				api.createCard(card)
+				.then((data) => console.log('card', data));
+			}))
 		} else {
 			return
 		}
 	}
+
 
 	return (
 		<>
