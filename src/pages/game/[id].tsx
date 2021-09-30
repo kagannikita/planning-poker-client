@@ -27,6 +27,7 @@ export interface CurrentIssue {
 
 type voteKickSettingsType = React.Dispatch<React.SetStateAction<VoteType>> | undefined
 type kickSettingsType = React.Dispatch<React.SetStateAction<ModalState>> | undefined
+type setScoreType = ((cardName: string) => void) | undefined
 
 const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
@@ -110,6 +111,14 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setScore({ score: cardName, playerId: playerId })
 	}
 
+	const [cardSelect, setSardSelect] = useState<setScoreType>(undefined)
+	const [pickCard, setPickCard] = useState<boolean>(false)
+
+	if (GameData?.status === GameState.started) {
+		setSardSelect(setSelectedCard)
+		setPickCard(true)
+	}
+
 	return (
 		<>
 			<Container>
@@ -176,7 +185,12 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column>
-							<Timer time={GameData.timer} />
+							<Timer
+								time={GameData.timer}
+								settings={{
+									timerIsOn: dataSocket.lobbyData?.settings.timer_needed,
+								}}
+							/>
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
@@ -215,9 +229,10 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							})}
 						</Grid.Column>
 					</Grid>
+					<GridRow centered></GridRow>
 					{dataSocket.lobbyData?.settings.cards !== undefined ? (
 						<GridRow centered>
-							<CardsField cards={arrayOfCards} pickCards={true} setSelectedCard={setSelectedCard} />
+							<CardsField cards={arrayOfCards} pickCards={pickCard} setSelectedCard={cardSelect} />
 						</GridRow>
 					) : null}
 				</Grid>
