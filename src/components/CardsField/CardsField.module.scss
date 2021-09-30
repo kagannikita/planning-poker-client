@@ -6,3 +6,8 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 }
+
+.cardsDisabled {
+	pointer-events: none;
+	opacity: 0.5;
+}

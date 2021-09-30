@@ -6,10 +6,11 @@ import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 import ModalKickPlayerByVote from '../ModalKickPlayerByVote'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
+import { checkVoted, getMembersVote } from 'src/functions/checkVote'
 
 interface MemberLayoutProps {
 	socketData: IUseLobbyDataSocket
-	you: string
+	yourId: string
 }
 
 export interface IVoteKickState {
@@ -19,21 +20,21 @@ export interface IVoteKickState {
 	kickedName: string
 }
 
-const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
-	const getMembersVote = (id: string) => {
-		if (socketData.VotesQuanity.kickPlayer.get(id)) {
-			return socketData.VotesQuanity.kickPlayer.get(id)!.length
-		}
-		return 0
-	}
-	const checkVoted = (id: string) => {
-		const votedPlayer = socketData.VotesQuanity.kickPlayer.get(id)
-		if (votedPlayer) {
-			const findPlayer = votedPlayer.find((player) => player === you)
-			return !!findPlayer
-		}
-		return false
-	}
+const MemberLayout = ({ socketData, yourId }: MemberLayoutProps): JSX.Element => {
+	// const getMembersVote = (id: string) => {
+	// 	if (socketData.VotesQuanity.kickPlayer.get(id)) {
+	// 		return socketData.VotesQuanity.kickPlayer.get(id)!.length
+	// 	}
+	// 	return 0
+	// }
+	// const checkVoted = (id: string) => {
+	// 	const votedPlayer = socketData.VotesQuanity.kickPlayer.get(id)
+	// 	if (votedPlayer) {
+	// 		const findPlayer = votedPlayer.find((player) => player === yourId)
+	// 		return !!findPlayer
+	// 	}
+	// 	return false
+	// }
 
 	const exitLobbyHandler = () => socketData.redirectTo('', false, true)
 
@@ -77,10 +78,10 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 					if (member.role === 'dealer') return
 					return (
 						<MemberItem
-							isYou={member.id === you}
+							isYou={member.id === yourId}
 							votedQuantity={socketData.VotesQuanity.kickPlayer}
-							checkVoted={checkVoted(member.id)}
-							playersVoted={getMembersVote(member.id)}
+							checkVoted={checkVoted(member.id, yourId, socketData)}
+							playersVoted={getMembersVote(member.id, socketData)}
 							playersQuanity={socketData.lobbyData?.players}
 							setVoteKickPlayer={socketData.setVotesQuanity}
 							centered={true}
