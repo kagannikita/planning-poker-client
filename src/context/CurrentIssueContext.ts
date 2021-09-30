@@ -11,5 +11,5 @@ export const CurrentIssueContext = createContext<IssueContext>({
 		id: '',
 		name: '',
 	},
-	setCurrentIssue: (data: CurrentIssue) => {},
+	setCurrentIssue: (data: CurrentIssue) => data,
 })
