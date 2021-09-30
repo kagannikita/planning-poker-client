@@ -1,12 +1,15 @@
 export enum GameState {
-  init = 'init',
-  paused = 'paused',
-  started = 'started'
-} 
+	init = 'init',
+	paused = 'paused',
+	started = 'started',
+	roundFinished = 'round-finished',
+	roundRepeat = 'round-repeat',
+}
 
 export interface GameData {
-  status: GameState,
-  currIssueId: string,
-  issueScore: number,
-  timer: number
+	status: GameState
+	playersScore: Map<string, number>
+	currIssueId: string
+	issueScore: number
+	timer: number
 }

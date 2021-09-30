@@ -50,4 +50,5 @@ export interface ICardSettings {
 	image: File
 	settings: IGameSettings
 	id?: string
+	cardValue?: string
 }

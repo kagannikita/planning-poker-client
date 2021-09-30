@@ -35,7 +35,7 @@ const MemberLayout = ({ socketData, you }: MemberLayoutProps): JSX.Element => {
 		return false
 	}
 
-	const exitLobbyHandler = () => socketData.redirectTo('/', false, true)
+	const exitLobbyHandler = () => socketData.redirectTo('', false, true)
 
 	return (
 		<>

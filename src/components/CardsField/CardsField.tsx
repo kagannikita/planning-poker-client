@@ -43,7 +43,7 @@ const CardsField: React.FC<CardsFieldProps> = ({
 				return (
 					<Card
 						index={index}
-						key={Math.random() * 1000}
+						key={Math.random()}
 						image={image}
 						cardIsOpen={cardIsOpen}
 						cardIsSelected={cardIsSelected}

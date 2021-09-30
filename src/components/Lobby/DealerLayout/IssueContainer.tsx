@@ -1,5 +1,5 @@
-import React, { FC, useContext, useState } from 'react'
-import { Button, Container, Header as HeaderTitle, Input } from 'semantic-ui-react'
+import React, { FC, useState } from 'react'
+import { Button, Container, Header as HeaderTitle } from 'semantic-ui-react'
 import Issue, { IssueProps } from '../Issue'
 import IssueCreate from '../IssueCardCreate'
 import s from '../lobby.module.scss'
