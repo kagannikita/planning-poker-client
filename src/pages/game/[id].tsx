@@ -46,16 +46,24 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	})
 
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
-	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
-
-	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
-
-	const { GameData, emitPauseGame, emitStartGame, setGameData, setScore } = useGameDataSocket(socket, props.lobbyId)
+  
+	const dataSocket = useLobbyDataSocket(
+		socket,
+		props.lobbyId, playerId)
 
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
 		id: dataSocket.lobbyData?.issues[0]?.id || '',
-		name: dataSocket.lobbyData?.issues[0]?.name || '',
-	})
+		name: dataSocket.lobbyData?.issues[0]?.name || ''
+	});
+
+	const player = dataSocket.lobbyData?.players
+		.find((player) => player.id === playerId) as IPlayer
+
+const { GameData, emitPauseGame, emitStartGame, setGameData, setScore } = useGameDataSocket(socket, props.lobbyId)
+
+		console.log('game page ', GameData);
+		
+
 
 	const getMembersVote = (id: string) => {
 		if (dataSocket.VotesQuanity.kickPlayer.get(id)) {
@@ -71,16 +79,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		}
 		return false
 	}
-	console.log(CurrentIssue)
 
-	const startRoundHandler = () => {
-		// send CurrentIssue
-		console.log(CurrentIssue)
-		setGameData({ ...GameData, currIssueId: CurrentIssue.id })
-
-		emitStartGame()
+	
+	const startRoundHandler = async () => {
+		emitStartGame(CurrentIssue.id)
 		setBtnDisabled(!BtnDisabled)
-		console.log('start round', GameData)
 	}
 
 	const pauseRoundHandler = () => {
@@ -142,19 +145,22 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						<Grid.Column>
 							{player?.role === Role.dealer && (
 								<>
-									<Button color="blue" disabled={BtnDisabled} onClick={startRoundHandler}>
+									<Button
+										color="blue"
+										disabled={GameData?.status !== GameState.roundFinished && BtnDisabled}
+										onClick={startRoundHandler}>
 										Run Round
 									</Button>
 									<Button color="blue" disabled={!BtnDisabled} onClick={pauseRoundHandler}>
 										Pause Round
 									</Button>
 								</>
-							)}
-							{player?.role === Role.dealer && GameData.status === GameState.roundFinished && (
+							{
+								player?.role === Role.dealer && GameData?.status === GameState.roundFinished &&
 								<Button color="blue" onClick={nextRoundHandler}>
 									Next Round
 								</Button>
-							)}
+							}
 						</Grid.Column>
 					</GridRow>
 					<Grid columns="1">
@@ -175,8 +181,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
-						<Grid.Column>
-							<Timer time={GameData.timer} />
+						<Grid.Column >
+							<Timer time={GameData?.timer} />
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">

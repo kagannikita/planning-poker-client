@@ -28,6 +28,8 @@ export interface ModalState {
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
 	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData, createIssuesFromFile, redirectTo } = socketData
 
+	const [gameLoading, setGameLoading] = useState(false);
+
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
@@ -171,6 +173,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 
 	const startGameHandler = async () => {
 		if (validateSettings()) {
+			setGameLoading(!gameLoading)
 			await api.createSettings(lobbyData.settings.id, gameSettings)
 			const data = await cardSettings()
 			for (const card of data) {
@@ -203,7 +206,10 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="left">
-						<Button positive onClick={startGameHandler} className={s.startBtn}>
+						<Button positive 
+						loading={gameLoading}
+						disabled={gameLoading}
+						onClick={startGameHandler} className={s.startBtn}>
 							Start Game
 						</Button>
 					</Grid.Column>
