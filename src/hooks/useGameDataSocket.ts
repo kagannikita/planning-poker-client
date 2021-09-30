@@ -6,7 +6,7 @@ export interface IGameDataSocket {
   setGameData: React.Dispatch<SetStateAction<GameDataType>>
   emitStartGame: (issueId: string) => void
 	emitPauseGame: () => void
-	setScore: (body: { score: number; playerId: string; currIssueId: string }) => void
+	setScore: (body: { score: string; playerId: string }) => void
 }
 
 export const useGameDataSocket = (
@@ -71,7 +71,7 @@ export const useGameDataSocket = (
 		socketRef.emit('game:pause', { gameData: GameData, lobbyId })
 	}
 
-	const setScore = (body: { score: number; playerId: string; currIssueId: string }) => {
+	const setScore = (body: { score: string; playerId: string }) => {
 		socketRef.emit('game:set-score', { ...body })
 	}
 

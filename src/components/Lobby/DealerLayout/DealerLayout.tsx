@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Container, Grid, Header as HeaderTitle } from 'semantic-ui-react'
-import { IGameSettings, IPlayer, Role } from '../../../interfaces/LobbyTypes'
+import { IPlayer, Role } from '../../../interfaces/LobbyTypes'
 import { ISettings } from '../../../interfaces/SettingsTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
@@ -10,7 +10,6 @@ import ModalKickPlayerByDealer from '../ModalKickPlayerByDealer'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
 import GameSettings from '../../GameSettings/GameSettings'
 import SettingsAPI from '../../../api/SettingsApi'
-import router from 'next/router'
 import { API } from '../../../interfaces/ApiEnum'
 import ModalMessage from '../../ModalMessage/ModalMessage'
 import { descOfCards } from '../../GameSettings/DeckOfCards'
@@ -112,7 +111,10 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 			const cardFormData = new FormData()
 			cardFormData.set('name', card.name)
 			// cardFormData.set('image', fileCover, 'cover.png')
-			cardFormData.set('image', "http://res.cloudinary.com/plaining-poker/image/upload/v1632916481/wve1jvulhqqiooln4juc.jpg"	)
+			cardFormData.set(
+				'image',
+				'http://res.cloudinary.com/plaining-poker/image/upload/v1632916481/wve1jvulhqqiooln4juc.jpg',
+			)
 			cardFormData.set('is_cover', 'true')
 			cardFormData.set('settings', lobbyData.settings.id)
 			return cardFormData
@@ -159,7 +161,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 	// 		await api.createSettings(lobbyData.settings.id, gameSettings)
 	// 		const data = await cardSettings()
 	// 		console.log( 'cards data', data);
-			
+
 	// 		data.forEach(async (formdata) => {
 	// 			await api.createCard(formdata)
 	// 		})
@@ -174,15 +176,14 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 			setGameLoading(!gameLoading)
 			await api.createSettings(lobbyData.settings.id, gameSettings)
 			const data = await cardSettings()
-			cardSettings().then(data => data.forEach(card => {
-				api.createCard(card)
-				.then((data) => console.log('card', data));
-			})).then(() => redirectTo(API.GAME, true, false))
+			for (const card of data) {
+				await api.createCard(card)
+			}
+			redirectTo(API.GAME, true, false)
 		} else {
 			return
 		}
 	}
-
 
 	return (
 		<>

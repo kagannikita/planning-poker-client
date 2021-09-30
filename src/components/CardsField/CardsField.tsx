@@ -16,6 +16,7 @@ type CardsFieldProps = {
 	deleteCard?: (index: number) => void
 	setCardValue?: (value: string, cardIndex: number) => void
 	setDefaultCover?: (index: number) => void
+	setSelectedCard?: (cardName: string) => void
 }
 
 const CardsField: React.FC<CardsFieldProps> = ({
@@ -25,12 +26,16 @@ const CardsField: React.FC<CardsFieldProps> = ({
 	deleteCard,
 	setCardValue,
 	setDefaultCover,
+	setSelectedCard,
 }: CardsFieldProps) => {
 	const [indexOfSelectedCard, setIndexOfSelectedCard] = useState<number>(0)
 
 	const selectCard = (index: number) => {
 		if (setDefaultCover) {
 			setDefaultCover(index)
+		}
+		if (setSelectedCard) {
+			setSelectedCard(cards[index].name!)
 		}
 		setIndexOfSelectedCard(index)
 	}
