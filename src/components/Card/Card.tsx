@@ -62,10 +62,12 @@ const Card: React.FC<CardProps> = ({
 								setEditorStyle(editorStyle.filter((item) => item !== cls.visible))
 							}}
 						/>
-						<div className={cls.cardControl}>
-							<button className={cls.cardBtn} onClick={() => setEditorStyle([...editorStyle, cls.visible])} />
-							<button className={cls.cardBtn} onClick={() => (deleteCard ? deleteCard(index) : null)} />
-						</div>
+						{deleteCard ? (
+							<div className={cls.cardControl}>
+								<button className={cls.cardBtn} onClick={() => setEditorStyle([...editorStyle, cls.visible])} />
+								<button className={cls.cardBtn} onClick={() => (deleteCard ? deleteCard(index) : null)} />
+							</div>
+						) : null}
 					</div>
 					<div className={cls.card__main}>
 						{scoreTypeShort !== 'default' && cardTitle !== 'unknown' ? (
