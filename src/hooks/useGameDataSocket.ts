@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { GameData, GameState } from '../interfaces/GameTypes'
+import { SetStateAction, useEffect, useState } from 'react'
+import { GameDataType, GameState } from '../interfaces/GameTypes'
 
 export interface IGameDataSocket {
-	GameData: GameData
-	setGameData: Dispatch<SetStateAction<GameData>>
-	emitStartGame: () => void
+	GameData: GameDataType
+  setGameData: React.Dispatch<SetStateAction<GameDataType>>
+  emitStartGame: (issueId: string) => void
 	emitPauseGame: () => void
 	setScore: (body: { score: string; playerId: string }) => void
 }
@@ -14,47 +14,57 @@ export const useGameDataSocket = (
 	lobbyId: string,
 	// playerId: string
 ): IGameDataSocket => {
-	const [GameData, setGameData] = useState<GameData>({
+
+	const [GameData, setGameData] = useState<GameDataType>({
 		currIssueId: '',
-		timer: 10,
+		timer: 11,
 		playersScore: new Map<string, number>(),
 		issueScore: 0,
 		status: GameState.init,
 	})
 
 	useEffect(() => {
-		socketRef.on('game:started', ({ gameData }: { gameData: GameData }) => {
+		socketRef.on('game:started', ({ gameData }: { gameData: GameDataType }) => {
 			console.log('gamestarted timer ', gameData.timer)
-			console.log('gamestarted ', gameData)
 
 			setGameData({
-				...gameData,
-				playersScore: new Map(JSON.parse(gameData.playersScore as unknown as string)),
+				currIssueId: gameData.currIssueId,
+				timer: gameData.timer,
+				issueScore: gameData.issueScore,
+				status: gameData.status,
+				playersScore: gameData.playersScore
 			})
 		})
 
-		socketRef.on('game:paused', ({ gameData }: { gameData: GameData }) => {
+		socketRef.on('game:paused', ({ gameData }: { gameData: GameDataType }) => {
 			console.log('game paused ', gameData)
-			setGameData({
-				...gameData,
-			})
+			setGameData(gameData)
 		})
 
-		socketRef.on('game:round-finished', ({ gameData }: { gameData: GameData }) => {
+		socketRef.on('game:round-finished', ({ gameData }: { gameData: GameDataType }) => {
 			setGameData({
 				...gameData,
 				playersScore: new Map(JSON.parse(gameData.playersScore as unknown as string)),
 			})
-			console.log('game:round-finished', new Map(JSON.parse(gameData.playersScore as unknown as string)))
+			console.log('game:round-finished', GameData)
 		})
 
 		socketRef.on('game:score-setted', () => {
 			console.log('scored')
 		})
-	}, [lobbyId, socketRef])
+	}, [lobbyId, socketRef, setGameData])
 
-	const emitStartGame = () => {
-		socketRef.emit('game:start', { gameData: GameData, lobbyId })
+
+
+	const emitStartGame = (issueId: string) => {
+		setGameData((state: GameDataType) => {
+			state = {...GameData, currIssueId: issueId}
+
+			socketRef.emit('game:start', { gameData: state, lobbyId })
+			return state
+		})
+
+		console.log(GameData);
 	}
 
 	const emitPauseGame = () => {

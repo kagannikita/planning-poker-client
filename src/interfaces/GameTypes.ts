@@ -6,7 +6,7 @@ export enum GameState {
 	roundRepeat = 'round-repeat',
 }
 
-export interface GameData {
+export interface GameDataType {
 	status: GameState
 	playersScore: Map<string, number>
 	currIssueId: string
