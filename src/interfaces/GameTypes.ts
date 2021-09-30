@@ -8,7 +8,7 @@ export enum GameState {
 
 export interface GameDataType {
 	status: GameState
-	playersScore: Map<string, number>
+	playersScore: Map<string, string>
 	currIssueId: string
 	issueScore: number
 	timer: number

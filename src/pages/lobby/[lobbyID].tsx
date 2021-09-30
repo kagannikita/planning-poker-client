@@ -44,7 +44,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 					{player?.role === Role.dealer ? (
 						<DealerLayout dealerPlayer={player} socketData={dataSocket as any} {...props} />
 					) : (
-								<MemberLayout socketData={dataSocket as any} you={playerId} />
+								<MemberLayout socketData={dataSocket as any} yourId={playerId} />
 					)}
 				</Container>
 			)}
