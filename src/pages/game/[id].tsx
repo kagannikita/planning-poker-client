@@ -50,7 +50,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 
-	const { GameData, emitPauseGame, emitStartGame, setGameData } = useGameDataSocket(socket, props.lobbyId)
+	const { GameData, emitPauseGame, emitStartGame, setGameData, setScore } = useGameDataSocket(socket, props.lobbyId)
 
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
 		id: dataSocket.lobbyData?.issues[0]?.id || '',
@@ -106,7 +106,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		}
 	})
 
-	console.log(arrayOfCards)
+	const setSelectedCard = (cardName: string) => {
+		setScore({ score: cardName, playerId: playerId })
+	}
 
 	return (
 		<>
@@ -213,11 +215,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							})}
 						</Grid.Column>
 					</Grid>
-					{dataSocket.lobbyData?.settings.cards !== undefined && (
+					{dataSocket.lobbyData?.settings.cards !== undefined ? (
 						<GridRow centered>
-							<CardsField cards={arrayOfCards} pickCards={true} />
+							<CardsField cards={arrayOfCards} pickCards={true} setSelectedCard={setSelectedCard} />
 						</GridRow>
-					)}
+					) : null}
 				</Grid>
 			</Container>
 			{player?.role === Role.dealer && (
