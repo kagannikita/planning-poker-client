@@ -1,22 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
-import { IPlayer, Role } from '../../interfaces/LobbyTypes'
+import { ICardFromServer, IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { useRouter } from 'next/router'
 import { CurrentIssueContext } from '../../context/CurrentIssueContext'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useGameDataSocket, useLobbyDataSocket } from '../../hooks'
 import IssueContainer from '../../components/Lobby/DealerLayout/IssueContainer'
-import MemberItem from 'src/components/Lobby/MemberItem'
-import { API } from 'src/interfaces/ApiEnum'
-import { ModalState } from 'src/components/Lobby/DealerLayout/DealerLayout'
-import ModalKickPlayerByDealer from 'src/components/Lobby/ModalKickPlayerByDealer'
-import ModalKickPlayerByVote from 'src/components/Lobby/ModalKickPlayerByVote'
-import { GameState } from 'src/interfaces/GameTypes'
-import Timer from 'src/components/Timer/Timer'
+import MemberItem from '../../components/Lobby/MemberItem'
+import { API } from '../../interfaces/ApiEnum'
+import { ModalState } from '../../components/Lobby/DealerLayout/DealerLayout'
+import ModalKickPlayerByDealer from '../../components/Lobby/ModalKickPlayerByDealer'
+import ModalKickPlayerByVote from '../../components/Lobby/ModalKickPlayerByVote'
+import { GameState } from '../../interfaces/GameTypes'
+import Timer from '../../components/Timer/Timer'
 import io from 'socket.io-client'
-import CardsField from 'src/components/CardsField/CardsField'
-import MemberGameStatus from "../../components/MemberGameStatus/MemberGameStatus";
+import CardsField from '../../components/CardsField/CardsField'
+import MemberGameStatus from '../../components/MemberGameStatus/MemberGameStatus'
+import cls from './gamePage.module.scss'
+import { VoteType } from '../../interfaces/VoteType'
 
 export interface CurrentIssue {
 	id: string
@@ -28,8 +30,8 @@ type kickSettingsType = React.Dispatch<React.SetStateAction<ModalState>> | undef
 
 const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
-	const [playerId, setplayerId] = useState('');
-	const [BtnDisabled, setBtnDisabled] = useState(false);
+	const [playerId, setplayerId] = useState('')
+	const [BtnDisabled, setBtnDisabled] = useState(false)
 
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
@@ -43,21 +45,17 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		id: '',
 	})
 
-
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
-	const dataSocket = useLobbyDataSocket(
-		socket,
-		props.lobbyId, playerId)
+	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
 
-	const player = dataSocket.lobbyData?.players
-		.find((player) => player.id === playerId) as IPlayer
+	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 
 	const { GameData, emitPauseGame, emitStartGame, setGameData } = useGameDataSocket(socket, props.lobbyId)
 
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
 		id: dataSocket.lobbyData?.issues[0]?.id || '',
-		name: dataSocket.lobbyData?.issues[0]?.name || ''
-	});
+		name: dataSocket.lobbyData?.issues[0]?.name || '',
+	})
 
 	const getMembersVote = (id: string) => {
 		if (dataSocket.VotesQuanity.kickPlayer.get(id)) {
@@ -82,7 +80,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 		emitStartGame()
 		setBtnDisabled(!BtnDisabled)
-		console.log('start round', GameData);
+		console.log('start round', GameData)
 	}
 
 	const pauseRoundHandler = () => {
@@ -90,18 +88,25 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setBtnDisabled(!BtnDisabled)
 	}
 
-
 	const nextRoundHandler = () => {
 		// send
 	}
 
 	// func for dealer
-	const closeGameHandler = () =>
-		dataSocket.redirectTo('', true, true)
+	const closeGameHandler = () => dataSocket.redirectTo('', true, true)
 
 	// func for player
-	const exitGameHandler = () =>
-		dataSocket.redirectTo('', false, true)
+	const exitGameHandler = () => dataSocket.redirectTo('', false, true)
+
+	const arrayOfCards = dataSocket.lobbyData?.settings.cards.map((card) => {
+		return {
+			image: card.image,
+			name: card.name,
+			scoreTypeShort: dataSocket.lobbyData?.settings.score_type_short,
+		}
+	})
+
+	console.log(arrayOfCards)
 
 	return (
 		<>
@@ -113,58 +118,41 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					<Grid.Row>
 						<Grid.Column>
 							<HeaderTitle as="h3">Scram master</HeaderTitle>
-							{
-								dataSocket.lobbyData?.players.map(member => {
-									if (member.role === Role.player) return
-									if (member.role === Role.spectator) return
-									return <MemberItem
-										key={member.id}
-										isYou={member.id === playerId}
-										{...member}
-									/>
-								})
-							}
+							{dataSocket.lobbyData?.players.map((member) => {
+								if (member.role === Role.player) return
+								if (member.role === Role.spectator) return
+								return <MemberItem key={member.id} isYou={member.id === playerId} {...member} />
+							})}
 						</Grid.Column>
 						<Grid.Column verticalAlign="bottom" width="10">
-							{
-								player?.role === Role.dealer ? (
-									<Button negative floated="right" onClick={closeGameHandler}>
-										Close game
-									</Button>
-								) : (
-									<Button negative floated="right" onClick={exitGameHandler}>
-										Exit game
-									</Button>
-								)
-							}
-
+							{player?.role === Role.dealer ? (
+								<Button negative floated="right" onClick={closeGameHandler}>
+									Close game
+								</Button>
+							) : (
+								<Button negative floated="right" onClick={exitGameHandler}>
+									Exit game
+								</Button>
+							)}
 						</Grid.Column>
 					</Grid.Row>
-					<GridRow centered >
+					<GridRow centered>
 						<Grid.Column>
-							{
-								(player?.role === Role.dealer) &&
+							{player?.role === Role.dealer && (
 								<>
-									<Button
-										color="blue"
-										disabled={BtnDisabled}
-										onClick={startRoundHandler}>
+									<Button color="blue" disabled={BtnDisabled} onClick={startRoundHandler}>
 										Run Round
 									</Button>
-									<Button
-										color="blue"
-										disabled={!BtnDisabled}
-										onClick={pauseRoundHandler}>
+									<Button color="blue" disabled={!BtnDisabled} onClick={pauseRoundHandler}>
 										Pause Round
 									</Button>
 								</>
-							}
-							{
-								player?.role === Role.dealer && GameData.status === GameState.roundFinished &&
+							)}
+							{player?.role === Role.dealer && GameData.status === GameState.roundFinished && (
 								<Button color="blue" onClick={nextRoundHandler}>
 									Next Round
 								</Button>
-							}
+							)}
 						</Grid.Column>
 					</GridRow>
 					<Grid columns="1">
@@ -179,12 +167,13 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									updateIssue={dataSocket.updateIssue}
 									createIssuesFromFile={function (): void {
 										throw new Error('Function not implemented.')
-									}} />
+									}}
+								/>
 							</CurrentIssueContext.Provider>
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
-						<Grid.Column >
+						<Grid.Column>
 							<Timer time={GameData.timer} />
 						</Grid.Column>
 					</Grid>
@@ -224,7 +213,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							})}
 						</Grid.Column>
 					</Grid>
-					<GridRow centered>{/*<CardsField cards={} />*/}</GridRow>
+					{dataSocket.lobbyData?.settings.cards !== undefined && (
+						<GridRow centered>
+							<CardsField cards={arrayOfCards} pickCards={true} />
+						</GridRow>
+					)}
 				</Grid>
 			</Container>
 			{player?.role === Role.dealer && (

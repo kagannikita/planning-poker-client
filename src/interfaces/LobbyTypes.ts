@@ -41,14 +41,22 @@ export interface IGameSettingsToUpload {
 
 export interface IGameSettings extends IGameSettingsToUpload {
 	id: string
-	cards: ICardSettings[]
+	cards: ICardFromServer[]
 }
 
 export interface ICardSettings {
 	name: string
-	// is_cover: boolean,
 	image: File
+	scoreTypeShort?: string
 	settings: IGameSettings
 	id?: string
 	cardValue?: string
+}
+
+export interface ICardFromServer {
+	created: string
+	id: string
+	image: string
+	name: string
+	updated: string
 }
