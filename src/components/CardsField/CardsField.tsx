@@ -31,7 +31,7 @@ const CardsField: React.FC<CardsFieldProps> = ({
 	setSelectedCard,
 	gameData,
 }: CardsFieldProps) => {
-	const [indexOfSelectedCard, setIndexOfSelectedCard] = useState<number>(0)
+	const [indexOfSelectedCard, setIndexOfSelectedCard] = useState<number | null>(null)
 
 	const selectCard = (index: number) => {
 		if (setDefaultCover) {

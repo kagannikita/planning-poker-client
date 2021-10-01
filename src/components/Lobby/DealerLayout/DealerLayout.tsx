@@ -51,8 +51,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		deckOfCards: 'fibonacci',
 	})
 
-	const [defaultCover, setDefaultCover] = useState<string>(`https://
-	res.cloudinary.com/plaining-poker/image/upload/v1631879184/dibpHF_vba7zs.jpg`)
+	const [defaultCover, setDefaultCover] = useState<string>(``)
 
 	const [cards, setCards] = useState([
 		{
@@ -135,6 +134,14 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 			setModalMessageState({
 				...modalMessageState,
 				message: 'Issues can not be empty, add at least one issue',
+				modalIsOpen: true,
+			})
+		}
+		if (defaultCover === '') {
+			isValid = false
+			setModalMessageState({
+				...modalMessageState,
+				message: 'Cover can not be empty, pick some cover',
 				modalIsOpen: true,
 			})
 		}
