@@ -93,7 +93,13 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings }) =>
 				/>
 			</div>
 			<div className="form__item">
-				<Timer time={settings.time} settings={settings} setSettings={setSettings} isDisabled={false} />
+				<Timer
+					time={settings.time}
+					timerNeeded={settings.timerIsOn}
+					settings={settings}
+					setSettings={setSettings}
+					isDisabled={false}
+				/>
 			</div>
 		</form>
 	)

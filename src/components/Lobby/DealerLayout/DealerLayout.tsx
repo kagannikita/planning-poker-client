@@ -28,7 +28,7 @@ export interface ModalState {
 const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Element => {
 	const { createIssue, removeIssue, updateIssue, kickPlayer, lobbyData, createIssuesFromFile, redirectTo } = socketData
 
-	const [gameLoading, setGameLoading] = useState(false);
+	const [gameLoading, setGameLoading] = useState(false)
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
@@ -98,23 +98,12 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		timer: settings.time,
 	}
 
-	const getCoverFromUrl = (src: string) => {
-		return fetch(src)
-			.then((res) => res.arrayBuffer())
-			.then((buf) => new File([buf], 'cover.png', { type: 'image/png' }))
-	}
-
 	const cardSettings = async () => {
-		const fileCover = await getCoverFromUrl(cards[0].image)
-
 		return cards.map((card) => {
 			const cardFormData = new FormData()
 			cardFormData.set('name', card.name)
 			// cardFormData.set('image', fileCover, 'cover.png')
-			cardFormData.set(
-				'image',
-				'http://res.cloudinary.com/plaining-poker/image/upload/v1632916481/wve1jvulhqqiooln4juc.jpg',
-			)
+			cardFormData.set('image', defaultCover)
 			cardFormData.set('is_cover', 'true')
 			cardFormData.set('settings', lobbyData.settings.id)
 			return cardFormData
@@ -206,10 +195,13 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="left">
-						<Button positive 
-						loading={gameLoading}
-						disabled={gameLoading}
-						onClick={startGameHandler} className={s.startBtn}>
+						<Button
+							positive
+							loading={gameLoading}
+							disabled={gameLoading}
+							onClick={startGameHandler}
+							className={s.startBtn}
+						>
 							Start Game
 						</Button>
 					</Grid.Column>

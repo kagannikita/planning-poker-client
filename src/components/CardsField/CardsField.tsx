@@ -2,7 +2,7 @@ import cls from './CardsField.module.scss'
 
 import React, { useState } from 'react'
 import Card from '../Card/Card'
-import { GameDataType, GameState } from 'src/interfaces/GameTypes'
+import { GameDataType, GameState } from '../../interfaces/GameTypes'
 
 type CardsFieldProps = {
 	cards: {
@@ -18,7 +18,7 @@ type CardsFieldProps = {
 	setCardValue?: (value: string, cardIndex: number) => void
 	setDefaultCover?: (index: number) => void
 	setSelectedCard?: (cardName: string) => void
-	gameData?:GameDataType
+	gameData?: GameDataType
 }
 
 const CardsField: React.FC<CardsFieldProps> = ({
@@ -29,7 +29,7 @@ const CardsField: React.FC<CardsFieldProps> = ({
 	setCardValue,
 	setDefaultCover,
 	setSelectedCard,
-	gameData
+	gameData,
 }: CardsFieldProps) => {
 	const [indexOfSelectedCard, setIndexOfSelectedCard] = useState<number>(0)
 
@@ -43,15 +43,12 @@ const CardsField: React.FC<CardsFieldProps> = ({
 		setIndexOfSelectedCard(index)
 	}
 
-	const style = () => {
-		if (gameData && gameData?.status !== GameState.started){
-			return `${cls.cardsField} ${cls.cardsDisabled}`
-		} else {
-			return cls.cardsField
-		}
-	}
 	return (
-		<div className={style()} >
+		<div
+			className={
+				gameData && gameData?.status !== GameState.started ? `${cls.cardsField} ${cls.cardsDisabled}` : cls.cardsField
+			}
+		>
 			{cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
 				let cardIsSelected = false
 				if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
