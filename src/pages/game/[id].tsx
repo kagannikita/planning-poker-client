@@ -22,6 +22,7 @@ import { VoteType } from '../../interfaces/VoteType'
 import { checkVoted, getMembersVote } from '../../functions/checkVote'
 import { getRoundResult } from '../../functions/getRoundResult'
 import GameResultField from '../../components/GameResultField/GameResultField'
+import ModalMessage from '../../components/ModalMessage/ModalMessage'
 
 export interface CurrentIssue {
 	id: string
@@ -65,6 +66,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	console.log('game page ', GameData)
 
+	const [modalMessageState, setModalMessageState] = useState({
+		modalIsOpen: false,
+		message: 'Something wrong',
+	})
+
 	const startRoundHandler = async () => {
 		emitStartGame(CurrentIssue.id)
 		setBtnDisabled(!BtnDisabled)
@@ -76,6 +82,18 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	}
 
 	const nextRoundHandler = () => {
+		if (
+			GameData.status === GameState.roundFinished &&
+			getRoundResult(GameData, dataSocket).arrayOfResultCards.length !== 1
+		) {
+			setModalMessageState({
+				...modalMessageState,
+				message: 'You cannot continue until you reach a unanimous decision. Repeat the round',
+				modalIsOpen: true,
+			})
+			return
+		}
+
 		// send
 	}
 
@@ -242,6 +260,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					) : null}
 				</Grid>
 			</Container>
+			<ModalMessage modalMessageState={modalMessageState} setModalMessageState={setModalMessageState} />
 			{player?.role === Role.dealer && (
 				<ModalKickPlayerByDealer
 					isOpen={modalkickPlayer.modalIsOpen}
