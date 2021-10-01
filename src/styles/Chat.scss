@@ -5,7 +5,7 @@
 }
 
 .ui.comments .comment.yourMessage {
-	// float: right;
+	float: right;
 	display: flex;
 	flex-direction: row-reverse;
 
@@ -20,11 +20,23 @@
 	left: 5px;
 }
 
+.ui.comments .comment .avatar {
+	display: block;
+	width: 3.5em !important;
+	height: auto;
+	float: left;
+	margin: 0.2em 0 0;
+}
+
 .ui.comments .comment.yourMessage > .avatar ~ * {
 	margin: 0 0.5em 0 2.5rem;
 	display: flex;
 	flex-wrap: wrap;
-	flex-direction: row-reverse;
+	flex-direction: column;
+}
+
+.ui.comments .comment.yourMessage .author {
+	margin-left: 43px;
 }
 
 .chat {
@@ -38,4 +50,20 @@
 .chat__content {
 	display: flex;
 	flex-direction: column;
+}
+
+.custom-context-menu {
+	position: fixed;
+	z-index: 10;
+	background: orange;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.option {
+	cursor: pointer;
+	padding: 15px 30px;
+}
+
+.option:hover {
+	background: yellow;
 }

@@ -9,23 +9,24 @@ import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useRouter } from 'next/router'
 import { useLobbyDataSocket } from '../../hooks'
 import Loader from '../../components/loader/loader'
-import { API } from 'src/interfaces/ApiEnum'
 import io from 'socket.io-client'
+import Chat from '../../components/Chat/Chat'
+import { API } from '../../interfaces/ApiEnum'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
 	const [Loading, setLoading] = useState(true)
 	const [playerId, setPlayerId] = useState<string>('')
-	
+
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
 		if (id === null) router.push('/404')
-		
+
 		setPlayerId(id as string)
 	}, [playerId])
-	
+
 	const sockets = useMemo(() => io(API.MAIN_API), [playerId])
-	const dataSocket = useLobbyDataSocket(sockets, props.lobbyId, playerId )
+	const dataSocket = useLobbyDataSocket(sockets, props.lobbyId, playerId)
 	const player = dataSocket?.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 	useEffect(() => {
 		setLoading(false)
@@ -36,7 +37,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
-			{/* <Chat /> */}
+			<Chat />
 			{Loading ? (
 				<Loader loaderText="loading" />
 			) : (
@@ -44,7 +45,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 					{player?.role === Role.dealer ? (
 						<DealerLayout dealerPlayer={player} socketData={dataSocket as any} {...props} />
 					) : (
-								<MemberLayout socketData={dataSocket as any} yourId={playerId} />
+						<MemberLayout socketData={dataSocket as any} yourId={playerId} />
 					)}
 				</Container>
 			)}
