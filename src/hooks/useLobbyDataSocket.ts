@@ -15,7 +15,7 @@ export interface IUseLobbyDataSocket {
 	redirectTo: (pathname: string, isDealer: boolean, exit: boolean) => void
 	createIssue: ({ name, priority }: IssueType) => void
 	removeIssue: (id: string) => void
-	updateIssue: ({ id, name, priority }: IssueType) => void
+	updateIssue: (issue: IssueType) => void
 	renameLobbyNameHandler: (name: string) => void
 	createIssuesFromFile: () => void
 }
@@ -41,14 +41,10 @@ export const useLobbyDataSocket = (
 		socketRef.emit('join', { player_id: playerId, lobby_id: lobbyId })
 
 		socketRef.on('lobby:get', ({ data, player_id, }: { data: ILobby; player_id: string }) => {
-			console.log(data, player_id)
-
 			setLobbyData(data)
 		})
 
 		socketRef.on('vote:data', ({ kickPlayer }: { kickPlayer: any}) => {
-			console.log(kickPlayer)
-
 			setVotesQuanity({
 				...VotesQuanity,
 				kickPlayer: new Map(JSON.parse(kickPlayer)),
@@ -58,14 +54,11 @@ export const useLobbyDataSocket = (
 		//// redirects
 
 		socketRef.on('player:deleted', () => {
-			console.log('deleted')
-
 			router.push(`http://localhost:3000/`)
 			sessionStorage.clear()
 		})
 
 		socketRef.on('redirect:get', (body: { pathname: string; lobbyId: string }) => {
-			console.log(body)
 			router.push(`http://localhost:3000/` + body.pathname + body.lobbyId)
 		})
 
@@ -80,14 +73,13 @@ export const useLobbyDataSocket = (
 			if (socketRef === null) return
 			socketRef.disconnect()
 		}
-	}, [playerId, lobbyId])
+	}, [playerId, lobbyId, setVotesQuanity, socketRef])
 
-	const redirectTo = (pathname: string, isDealer: boolean, exit: boolean = false) => {
+	const redirectTo = (pathname: string, isDealer: boolean, exit = false) => {
 		socketRef.emit('redirect', { pathname, lobbyId, playerId, isDealer, exit })
 	}
 
 	const kickPlayer = (player_id: string) => {
-		console.log(player_id)
 
 		socketRef.emit('player:delete', { player_id, lobby_id: lobbyId })
 	}
@@ -99,7 +91,6 @@ export const useLobbyDataSocket = (
 	}
 
 	const createIssue = ({ name, priority, score = '-' }: IssueType) => {
-		console.log('create issue ', name, priority, lobbyId, score)
 
 		socketRef.emit('issue:added', {
 			name,
@@ -111,10 +102,9 @@ export const useLobbyDataSocket = (
 		socketRef.emit('issue:file-added', lobbyId)
 	}
 
-	const updateIssue = ({ name, link }: IssueType) => {
+	const updateIssue = (issue: IssueType) => {
 		socketRef.emit('issue:update', {
-			name,
-			link,
+			...issue,
 			lobby_id: lobbyId,
 		})
 	}

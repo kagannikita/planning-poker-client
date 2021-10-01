@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
-import { ICardFromServer, IPlayer, Role } from '../../interfaces/LobbyTypes'
+import {  IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { useRouter } from 'next/router'
 import { CurrentIssueContext } from '../../context/CurrentIssueContext'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -19,9 +19,9 @@ import CardsField from '../../components/CardsField/CardsField'
 import MemberGameStatus from '../../components/MemberGameStatus/MemberGameStatus'
 import cls from './gamePage.module.scss'
 import { VoteType } from '../../interfaces/VoteType'
-import { checkVoted, getMembersVote } from 'src/functions/checkVote'
+import { checkVoted, getMembersVote } from '../../functions/checkVote'
 
-export interface CurrentIssue {
+export interface CurrentIssueType {
 	id: string
 	name: string
 }
@@ -35,11 +35,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const [playerId, setplayerId] = useState('')
 	const [BtnDisabled, setBtnDisabled] = useState(false)
 
-	useEffect(() => {
-		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
-		if (!id) router.push('/404')
-		setplayerId(id as string)
-	}, [playerId])
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
@@ -53,16 +48,36 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		socket,
 		props.lobbyId, playerId)
 
-	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
-		id: dataSocket.lobbyData?.issues[0]?.id || '',
-		name: dataSocket.lobbyData?.issues[0]?.name || ''
+	
+	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssueType>({
+		id: '',
+		name:'',
 	});
 
-	const { GameData, playersScore, emitPauseGame, emitStartGame, setGameData, setScore } = useGameDataSocket(socket, props.lobbyId )
+	useEffect(() => {
+		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
+		if (!id) router.push('/404')
+		setplayerId(id as string)
+	}, [playerId, setCurrentIssue, router])
+
+
+
+	const { 
+		GameData, 
+		playersScore, 
+		emitPauseGame, 
+		emitStartGame, 
+		setGameData, 
+		setScore } = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer )
+
+	if (GameData.status !== GameState.roundFinished && 
+			dataSocket?.lobbyData?.settings?.timer && 
+			GameData.timer === 0)
+		setGameData((state) => state = { ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
+
 	const player = dataSocket.lobbyData?.players
 		.find((player) => player.id === playerId) as IPlayer
 
-	console.log('game page ', GameData);
 	
 	const startRoundHandler = async () => {
 		emitStartGame(CurrentIssue.id)
@@ -76,6 +91,15 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const nextRoundHandler = () => {
 		// send
+		const issue = dataSocket?.lobbyData?.issues.find(iss => {
+			if (iss.id === CurrentIssue.id) {
+				return {...iss, score: '10'}
+			}
+			return
+		})
+		if(issue)
+			dataSocket.updateIssue(issue)
+		emitStartGame(CurrentIssue.id)
 	}
 
 	// func for dealer
@@ -105,8 +129,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const resultCards = playersScore.map(str => {
 		return {
 			name: `${str}`,
-			scoreTypeShort: dataSocket?.lobbyData?.settings?.score_type_short,
-			image: dataSocket?.lobbyData?.settings?.cards[0].image
+			scoreTypeShort: dataSocket?.lobbyData.settings.score_type_short,
+			image: dataSocket?.lobbyData.settings.cards[0].image
 		}  
 	})
 	return (
@@ -138,7 +162,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						</Grid.Column>
 					</Grid.Row>
 					<GridRow centered>
-						<Grid.Column>
 							{player?.role === Role.dealer && (
 								<>
 									<Button
@@ -158,29 +181,29 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									Next Round
 								</Button>
 							}
-						</Grid.Column>
 					</GridRow>
 					<Grid columns="1">
 						<Grid.Column>
-							<CurrentIssueContext.Provider value={{ CurrentIssue, setCurrentIssue }}>
-								<IssueContainer
-									type="game"
-									issues={dataSocket.lobbyData?.issues}
-									lobbyID={router.query.id as string}
-									createIssue={dataSocket.createIssue}
-									removeIssue={dataSocket.removeIssue}
-									updateIssue={dataSocket.updateIssue}
-									createIssuesFromFile={function (): void {
-										throw new Error('Function not implemented.')
-									}}
-								/>
-							</CurrentIssueContext.Provider>
+							{/* <CurrentIssueContext.Provider value={{ CurrentIssue, setCurrentIssue }}> */}
+							<IssueContainer
+								type="game"
+								issues={dataSocket.lobbyData?.issues}
+								lobbyID={router.query.id as string}
+								createIssue={dataSocket.createIssue}
+								removeIssue={dataSocket.removeIssue}
+								updateIssue={dataSocket.updateIssue}
+								setCurrentIssue={setCurrentIssue}
+								createIssuesFromFile={function (): void {
+									throw new Error('Function not implemented.')
+								}}
+							/>
+							{/* </CurrentIssueContext.Provider> */}
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column>
 							<Timer
-								time={GameData?.timer}
+								time={GameData.timer}
 								settings={{
 									timerIsOn: dataSocket.lobbyData?.settings.timer_needed,
 								}}
@@ -232,10 +255,10 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					{dataSocket.lobbyData?.settings.cards !== undefined ? (
 						<GridRow centered>
 							<CardsField 
-							cards={arrayOfCards} 
-							pickCards={pickCard} 
-							setSelectedCard={setSelectedCard}
-							gameData={GameData}
+								cards={arrayOfCards} 
+								pickCards={pickCard} 
+								setSelectedCard={setSelectedCard}
+								gameData={GameData}
 							 />
 						</GridRow>
 					) : null}

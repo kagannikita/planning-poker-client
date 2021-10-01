@@ -22,9 +22,20 @@
 	border: 1px solid rgba($color: teal, $alpha: 1) !important;
 }
 
-.itemActive {
-	background-color: rgba($color: $secondary, $alpha: 0.2) !important;
+.lowPriority {
+	background-color: rgba($color: rgb(184, 235, 184), $alpha: 0.7) !important;
 }
+
+.averagePriority {
+	background-color: rgba($color: rgb(221, 221, 165), $alpha: 0.7) !important;
+}
+.highPriority {
+	background-color: rgba($color: rgb(226, 157, 157), $alpha: 0.7) !important;
+}
+.itemActive {
+	border: 1px solid teal !important;
+}
+
 
 .itemCreateDescription {
 	// height: 100%;

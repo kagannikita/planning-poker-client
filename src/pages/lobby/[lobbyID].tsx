@@ -11,6 +11,7 @@ import { useLobbyDataSocket } from '../../hooks'
 import Loader from '../../components/loader/loader'
 import { API } from 'src/interfaces/ApiEnum'
 import io from 'socket.io-client'
+import Chat from 'src/components/Chat/Chat'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
@@ -44,7 +45,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 					{player?.role === Role.dealer ? (
 						<DealerLayout dealerPlayer={player} socketData={dataSocket as any} {...props} />
 					) : (
-								<MemberLayout socketData={dataSocket as any} yourId={playerId} />
+						<MemberLayout socketData={dataSocket as any} yourId={playerId} />
 					)}
 				</Container>
 			)}

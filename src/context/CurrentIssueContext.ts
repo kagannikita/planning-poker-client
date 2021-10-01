@@ -1,9 +1,9 @@
 import { createContext } from 'react'
-import { CurrentIssue } from '../pages/game/[id]'
+import { CurrentIssueType } from '../pages/game/[id]'
 
 interface IssueContext {
-	CurrentIssue: CurrentIssue
-	setCurrentIssue: (data: CurrentIssue) => void
+	CurrentIssue: CurrentIssueType
+	setCurrentIssue: (data: CurrentIssueType) => void
 }
 
 export const CurrentIssueContext = createContext<IssueContext>({
@@ -11,5 +11,5 @@ export const CurrentIssueContext = createContext<IssueContext>({
 		id: '',
 		name: '',
 	},
-	setCurrentIssue: (data: CurrentIssue) => data,
+	setCurrentIssue: (data: CurrentIssueType) => data,
 })
