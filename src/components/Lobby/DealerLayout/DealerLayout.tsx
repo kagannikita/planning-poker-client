@@ -98,23 +98,12 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		timer: settings.time,
 	}
 
-	const getCoverFromUrl = (src: string) => {
-		return fetch(src)
-			.then((res) => res.arrayBuffer())
-			.then((buf) => new File([buf], 'cover.png', { type: 'image/png' }))
-	}
-
 	const cardSettings = async () => {
-		const fileCover = await getCoverFromUrl(cards[0].image)
-
 		return cards.map((card) => {
 			const cardFormData = new FormData()
 			cardFormData.set('name', card.name)
 			// cardFormData.set('image', fileCover, 'cover.png')
-			cardFormData.set(
-				'image',
-				'http://res.cloudinary.com/plaining-poker/image/upload/v1632916481/wve1jvulhqqiooln4juc.jpg',
-			)
+			cardFormData.set('image', defaultCover)
 			cardFormData.set('is_cover', 'true')
 			cardFormData.set('settings', lobbyData.settings.id)
 			return cardFormData
