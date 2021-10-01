@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
-import { ICardFromServer, IPlayer, Role } from '../../interfaces/LobbyTypes'
+import { Button, Container, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
+import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { useRouter } from 'next/router'
 import { CurrentIssueContext } from '../../context/CurrentIssueContext'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -20,6 +20,8 @@ import MemberGameStatus from '../../components/MemberGameStatus/MemberGameStatus
 import cls from './gamePage.module.scss'
 import { VoteType } from '../../interfaces/VoteType'
 import { checkVoted, getMembersVote } from '../../functions/checkVote'
+import { getRoundResult } from '../../functions/getRoundResult'
+import GameResultField from '../../components/GameResultField/GameResultField'
 
 export interface CurrentIssue {
 	id: string
@@ -28,7 +30,6 @@ export interface CurrentIssue {
 
 type voteKickSettingsType = React.Dispatch<React.SetStateAction<VoteType>> | undefined
 type kickSettingsType = React.Dispatch<React.SetStateAction<ModalState>> | undefined
-type setScoreType = ((cardName: string) => void) | undefined
 
 const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
@@ -98,7 +99,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const [pickCard, setPickCard] = useState<boolean>(false)
 
-	if (GameData?.status === GameState.started && pickCard === false) {
+	if (GameData?.status === GameState.started && !pickCard) {
 		setPickCard(true)
 	}
 
@@ -109,6 +110,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 			image: dataSocket?.lobbyData?.settings?.cards[0].image,
 		}
 	})
+
 	return (
 		<>
 			<Container>
@@ -219,9 +221,16 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						</Grid.Column>
 					</Grid>
 					<GridRow centered>
-						<CardsField cardIsOpen={GameData.status === GameState.roundFinished} cards={resultCards} />
+						{GameData.status === GameState.roundFinished ? (
+							<GameResultField
+								cards={getRoundResult(GameData, dataSocket).arrayOfResultCards}
+								values={getRoundResult(GameData, dataSocket).arrayOfResultValues}
+							/>
+						) : (
+							<CardsField cardIsOpen={false} cards={resultCards} />
+						)}
 					</GridRow>
-					{dataSocket.lobbyData?.settings.cards !== undefined ? (
+					{dataSocket.lobbyData?.settings.cards ? (
 						<GridRow centered>
 							<CardsField
 								cards={arrayOfCards}
