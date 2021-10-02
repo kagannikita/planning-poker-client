@@ -2,16 +2,16 @@ import { GameDataType } from '../interfaces/GameTypes'
 import { IUseLobbyDataSocket } from '../hooks/useLobbyDataSocket'
 
 type resultsType = {
-	arrayOfResultCards: { name: string; scoreTypeShort: string; image: string }[]
-	arrayOfResultValues: number[]
+	cards: { name: string; scoreTypeShort: string; image: string }[]
+	values: number[]
 }
 
 export const getRoundResult = (GameData: GameDataType, dataSocket: IUseLobbyDataSocket) => {
 	const arrayOfFinalCards: [string, number][] = []
 
 	const results: resultsType = {
-		arrayOfResultCards: [],
-		arrayOfResultValues: [],
+		cards: [],
+		values: [],
 	}
 
 	for (const key in GameData?.issueScore) {
@@ -28,8 +28,8 @@ export const getRoundResult = (GameData: GameDataType, dataSocket: IUseLobbyData
 			image: dataSocket?.lobbyData?.settings?.cards[0].image,
 			scoreTypeShort: dataSocket?.lobbyData?.settings?.score_type_short,
 		}
-		results.arrayOfResultCards.push(card)
-		results.arrayOfResultValues.push(item[1])
+		results.cards.push(card)
+		results.values.push(item[1])
 	})
 
 	return results

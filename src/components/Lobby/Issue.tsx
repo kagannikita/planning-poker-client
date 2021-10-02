@@ -10,9 +10,11 @@ import { CurrentIssueType } from 'src/pages/game/[id]'
 export interface IssueProps extends IssueType {
 	type: 'lobby' | 'game'
 	isCurrent: boolean
+	CurrentIssueId?: {
+		id: string;
+	}
 	setModalChange: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
 	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
-	setCurrentIssue?: React.Dispatch<React.SetStateAction<CurrentIssueType>>
 }
 
 const 	Issue = ({ 
@@ -22,20 +24,16 @@ const 	Issue = ({
 	type, 
 	link, 
 	score, 
+	CurrentIssueId,
 	setModalChange, 
 	setModalDelete,
-	setCurrentIssue,
 	lobby,
 	isCurrent
 }: IssueProps) => {
 
 	const clickOnCurrIssue = () => {
-		if(!setCurrentIssue) return
-		setCurrentIssue({
-			id,
-			name,
-		})
-		
+		if (!CurrentIssueId) return
+		CurrentIssueId.id = id
 	}
 
 	const deleteHandler = () => {
@@ -58,7 +56,7 @@ const 	Issue = ({
 	}
 
 	const styles = () => {
-		if (type === 'game' && isCurrent) {
+		if (type === 'game' && isCurrent ) {
 		return	`${s.itemActive} ${s.item} ${s[`${priority}Priority`]}`
 		} else {
 			return	`${s.item} ${s[`${priority}Priority`]}`
@@ -76,10 +74,10 @@ const 	Issue = ({
 				<Card.Meta>
 					<b>{type === 'game' && isCurrent && 'Current: '}</b>
 				</Card.Meta>
-				<Card.Meta>{priority}</Card.Meta>
-				{type === 'game' && <Card.Meta>{score}</Card.Meta>}
+				<Card.Meta>Priority: {priority}</Card.Meta>
+				{type === 'game' && <Card.Meta><b>Score: {score}</b></Card.Meta>}
 				<Card.Meta>
-					<span about="issue link">{link} </span>
+					<span about="issue link">Link: {link} </span>
 				</Card.Meta>
 				<Card.Description textAlign="right">
 					{type === 'lobby' && (
