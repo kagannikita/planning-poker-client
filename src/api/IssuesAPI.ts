@@ -39,11 +39,7 @@ export class IssuesAPI implements IIssuesAPI {
 		return new Promise((resolve, reject) => {
 			axios
 				.put(`${API.MAIN_API}${API.ISSUES}${dataIssue.id}`, {
-					id: dataIssue.id,
-					name: dataIssue.name,
-					score: dataIssue.score,
-					link: dataIssue.link,
-					priority: dataIssue.priority,
+					...dataIssue
 				})
 				.then((res) => resolve(res.data))
 				.catch((err) => reject(err))

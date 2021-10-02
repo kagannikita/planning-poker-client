@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Button, Container, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
-import { IPlayer, Role } from '../../interfaces/LobbyTypes'
+import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
+import {  IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { useRouter } from 'next/router'
 import { CurrentIssueContext } from '../../context/CurrentIssueContext'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -24,7 +24,7 @@ import { getRoundResult } from '../../functions/getRoundResult'
 import GameResultField from '../../components/GameResultField/GameResultField'
 import ModalMessage from '../../components/ModalMessage/ModalMessage'
 
-export interface CurrentIssue {
+export interface CurrentIssueType {
 	id: string
 	name: string
 }
@@ -37,11 +37,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const [playerId, setplayerId] = useState('')
 	const [BtnDisabled, setBtnDisabled] = useState(false)
 
-	useEffect(() => {
-		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
-		if (!id) router.push('/404')
-		setplayerId(id as string)
-	}, [playerId])
 
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
@@ -52,25 +47,41 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
 
 	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
+	
+	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssueType>({
+		id: '',
+		name:'',
+	});
 
-	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssue>({
-		id: dataSocket.lobbyData?.issues[0]?.id || '',
-		name: dataSocket.lobbyData?.issues[0]?.name || '',
-	})
+	useEffect(() => {
+		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
+		if (!id) router.push('/404')
+		setplayerId(id as string)
+	}, [playerId, setCurrentIssue, router])
 
-	const { GameData, playersScore, emitPauseGame, emitStartGame, setGameData, setScore } = useGameDataSocket(
-		socket,
-		props.lobbyId,
-	)
-	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 
-	console.log('game page ', GameData)
 
+	const { 
+		GameData, 
+		playersScore, 
+		emitPauseGame, 
+		emitStartGame, 
+		setGameData, 
+		setScore } = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer )
+
+	if (GameData.status !== GameState.roundFinished && 
+			dataSocket?.lobbyData?.settings?.timer && 
+			GameData.timer === 0)
+		setGameData((state) => state = { ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
+
+	const player = dataSocket.lobbyData?.players
+		.find((player) => player.id === playerId) as IPlayer
+		
 	const [modalMessageState, setModalMessageState] = useState({
 		modalIsOpen: false,
 		message: 'Something wrong',
 	})
-
+	
 	const startRoundHandler = async () => {
 		emitStartGame(CurrentIssue.id)
 		setBtnDisabled(!BtnDisabled)
@@ -95,6 +106,15 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		}
 
 		// send
+		const issue = dataSocket?.lobbyData?.issues.find(iss => {
+			if (iss.id === CurrentIssue.id) {
+				return {...iss, score: '10'}
+			}
+			return
+		})
+		if(issue)
+			dataSocket.updateIssue(issue)
+		emitStartGame(CurrentIssue.id)
 	}
 
 	// func for dealer
@@ -124,9 +144,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const resultCards = playersScore.map((str) => {
 		return {
 			name: `${str}`,
-			scoreTypeShort: dataSocket?.lobbyData?.settings?.score_type_short,
-			image: dataSocket?.lobbyData?.settings?.cards[0].image,
-		}
+			scoreTypeShort: dataSocket?.lobbyData.settings.score_type_short,
+			image: dataSocket?.lobbyData.settings.cards[0].image
+		}  
 	})
 
 	return (
@@ -158,7 +178,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						</Grid.Column>
 					</Grid.Row>
 					<GridRow centered>
-						<Grid.Column>
 							{player?.role === Role.dealer && (
 								<>
 									<Button
@@ -178,23 +197,23 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									Next Round
 								</Button>
 							)}
-						</Grid.Column>
 					</GridRow>
 					<Grid columns="1">
 						<Grid.Column>
-							<CurrentIssueContext.Provider value={{ CurrentIssue, setCurrentIssue }}>
-								<IssueContainer
-									type="game"
-									issues={dataSocket.lobbyData?.issues}
-									lobbyID={router.query.id as string}
-									createIssue={dataSocket.createIssue}
-									removeIssue={dataSocket.removeIssue}
-									updateIssue={dataSocket.updateIssue}
-									createIssuesFromFile={function (): void {
-										throw new Error('Function not implemented.')
-									}}
-								/>
-							</CurrentIssueContext.Provider>
+							{/* <CurrentIssueContext.Provider value={{ CurrentIssue, setCurrentIssue }}> */}
+							<IssueContainer
+								type="game"
+								issues={dataSocket.lobbyData?.issues}
+								lobbyID={router.query.id as string}
+								createIssue={dataSocket.createIssue}
+								removeIssue={dataSocket.removeIssue}
+								updateIssue={dataSocket.updateIssue}
+								setCurrentIssue={setCurrentIssue}
+								createIssuesFromFile={function (): void {
+									throw new Error('Function not implemented.')
+								}}
+							/>
+							{/* </CurrentIssueContext.Provider> */}
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
@@ -250,12 +269,12 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					</GridRow>
 					{dataSocket.lobbyData?.settings.cards ? (
 						<GridRow centered>
-							<CardsField
-								cards={arrayOfCards}
-								pickCards={pickCard}
+							<CardsField 
+								cards={arrayOfCards} 
+								pickCards={pickCard} 
 								setSelectedCard={setSelectedCard}
 								gameData={GameData}
-							/>
+							 />
 						</GridRow>
 					) : null}
 				</Grid>

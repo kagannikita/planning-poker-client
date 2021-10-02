@@ -4,7 +4,7 @@ import s from './Chat.module.scss'
 import ChatInput from './ChatInput'
 import ChatMessage, { ChatMessageProps } from './ChatMessage'
 
-const Chat: FC = () => {
+const Chat = () => {
 	const messages: ChatMessageProps[] = [
 		{ author: 'Jessica', message: 'Hello World', isYou: false },
 		{ author: 'Jimmy', message: 'Hello World', isYou: false },
@@ -14,7 +14,7 @@ const Chat: FC = () => {
 	]
 
 	return (
-		<Comment.Group minimal className={s.chatBlock}>
+		<Comment.Group minimal >
 			<Header as="h3" dividing>
 				Chat
 			</Header>

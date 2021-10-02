@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { Button, Container, Header as HeaderTitle } from 'semantic-ui-react'
 import Issue, { IssueProps } from '../Issue'
 import IssueCreate from '../IssueCardCreate'
@@ -10,6 +10,8 @@ import { ModalState } from './DealerLayout'
 import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
 import * as XLSX from 'xlsx'
 import { IssuesAPI } from '../../../api/IssuesAPI'
+import { CurrentIssueType } from 'src/pages/game/[id]'
+// import { CurrentIssueContext } from 'src/context/CurrentIssueContext'
 
 interface IssueContainerProps {
 	type: 'lobby' | 'game'
@@ -19,6 +21,7 @@ interface IssueContainerProps {
 	removeIssue: (id: string) => void
 	updateIssue: ({ id, name, priority }: IssueType) => void
 	createIssuesFromFile: () => void
+	setCurrentIssue?: React.Dispatch<React.SetStateAction<CurrentIssueType>>
 }
 
 export interface IModalCreateIssue extends ModalState {
@@ -27,7 +30,15 @@ export interface IModalCreateIssue extends ModalState {
 	lobby: string
 }
 
-const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssue, createIssue, createIssuesFromFile, issues, lobbyID }) => {
+const IssueContainer: FC<IssueContainerProps> = ({ 
+	type, 
+	removeIssue, 
+	updateIssue, 
+	createIssue,
+	 createIssuesFromFile,
+	setCurrentIssue,
+	issues, 
+	lobbyID }) => {
 	const [ModalDelete, setModalDelete] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
@@ -50,6 +61,9 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 		lobby: lobbyID,
 	})
 
+	// const { CurrentIssue, setCurrentIssue } = useContext(CurrentIssueContext)
+	let isCurrent = false
+	
 	const uploadExcel = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const promise = new Promise((resolve, reject) => {
 			const fileReader = new FileReader()
@@ -79,15 +93,32 @@ const IssueContainer: FC<IssueContainerProps> = ({ type, removeIssue, updateIssu
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
 				{issues &&
-					issues.map((issue, i) => (
-						<Issue
-							key={issue.name + i}
-							type={type}
-							setModalChange={setModalChange}
-							setModalDelete={setModalDelete}
-							{...issue}
-						/>
-					))}
+					issues.map((issue, i) => {
+						if (issue.score === '-' && isCurrent === false) {
+							isCurrent = true
+
+							return <Issue
+								key={issue.id}
+								type={type}
+								isCurrent
+								setModalChange={setModalChange}
+								setModalDelete={setModalDelete}
+								setCurrentIssue={setCurrentIssue ? setCurrentIssue : undefined}
+								{...issue} />
+						} else {
+							return <Issue
+								key={issue.id}
+								type={type}
+								isCurrent={false}
+								setModalChange={setModalChange}
+								setModalDelete={setModalDelete}
+								setCurrentIssue={setCurrentIssue ? setCurrentIssue : undefined}
+								{...issue}
+							/>
+						}
+
+					}
+					)}
 
 				<IssueCreate lobbyId={lobbyID} setModalCreate={setModalCreate} />
 			</Container>

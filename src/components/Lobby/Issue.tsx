@@ -5,21 +5,37 @@ import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 import s from './lobby.module.scss'
 import { IssueType } from '../../interfaces/IssueType'
 import { CurrentIssueContext } from '../../context/CurrentIssueContext'
+import { CurrentIssueType } from 'src/pages/game/[id]'
 
 export interface IssueProps extends IssueType {
 	type: 'lobby' | 'game'
+	isCurrent: boolean
 	setModalChange: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
 	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
+	setCurrentIssue?: React.Dispatch<React.SetStateAction<CurrentIssueType>>
 }
 
-const 	Issue = ({ name, priority, id, type, link, score, setModalChange, setModalDelete, lobby }: IssueProps) => {
-	const { CurrentIssue, setCurrentIssue } = useContext(CurrentIssueContext)
+const 	Issue = ({ 
+	name, 
+	priority, 
+	id, 
+	type, 
+	link, 
+	score, 
+	setModalChange, 
+	setModalDelete,
+	setCurrentIssue,
+	lobby,
+	isCurrent
+}: IssueProps) => {
 
 	const clickOnCurrIssue = () => {
+		if(!setCurrentIssue) return
 		setCurrentIssue({
 			id,
 			name,
 		})
+		
 	}
 
 	const deleteHandler = () => {
@@ -41,28 +57,24 @@ const 	Issue = ({ name, priority, id, type, link, score, setModalChange, setModa
 		})
 	}
 
-	// const styleCard = () => {
-	// 	if(type === 'game' && CurrentIssue.id === id) {
-	// 		console.log('log3');
-	// 		return s.itemAcitve
-	// 	} else if (type === 'lobby') {
-	// 		return s.item;
-	// 	} else {
-	// 		console.log('log2');
-	// 		return ''
-	// 	}
-	// }
+	const styles = () => {
+		if (type === 'game' && isCurrent) {
+		return	`${s.itemActive} ${s.item} ${s[`${priority}Priority`]}`
+		} else {
+			return	`${s.item} ${s[`${priority}Priority`]}`
+		}
+	}
 
 	return (
 		<Card
 			centered
-			className={CurrentIssue.id === id && type === 'game' ? `${s.itemActive} ${s.item}` : s.item }
+			className={styles()}
 			onClick={type === 'game' ? clickOnCurrIssue : undefined}
 		>
 			<Card.Content>
 				<Card.Header>{name}</Card.Header>
 				<Card.Meta>
-					<b>{CurrentIssue.id === id && 'Current: '}</b>
+					<b>{type === 'game' && isCurrent && 'Current: '}</b>
 				</Card.Meta>
 				<Card.Meta>{priority}</Card.Meta>
 				{type === 'game' && <Card.Meta>{score}</Card.Meta>}
@@ -78,8 +90,7 @@ const 	Issue = ({ name, priority, id, type, link, score, setModalChange, setModa
 					<Button
 						basic
 						color="red"
-						circular={type === 'game'}
-						icon={type === 'game' ? 'delete' : 'remove'}
+						icon={'remove'}
 						onClick={deleteHandler}
 						size="mini"
 					/>
