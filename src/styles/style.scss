@@ -29,3 +29,7 @@ body {
 	overflow: auto !important;
 	margin-bottom: 50px !important;
 }
+
+.ui.card.memberCard {
+	flex-grow: 1;
+}

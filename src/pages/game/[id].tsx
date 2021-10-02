@@ -47,7 +47,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
 
 	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
-	
+
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssueType>({
 		id: '',
 		name:'',
@@ -61,27 +61,27 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 
 
-	const { 
-		GameData, 
-		playersScore, 
-		emitPauseGame, 
-		emitStartGame, 
-		setGameData, 
+	const {
+		GameData,
+		playersScore,
+		emitPauseGame,
+		emitStartGame,
+		setGameData,
 		setScore } = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer )
 
-	if (GameData.status !== GameState.roundFinished && 
-			dataSocket?.lobbyData?.settings?.timer && 
+	if (GameData.status !== GameState.roundFinished &&
+			dataSocket?.lobbyData?.settings?.timer &&
 			GameData.timer === 0)
 		setGameData((state) => state = { ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
 	const player = dataSocket.lobbyData?.players
 		.find((player) => player.id === playerId) as IPlayer
-		
+
 	const [modalMessageState, setModalMessageState] = useState({
 		modalIsOpen: false,
 		message: 'Something wrong',
 	})
-	
+
 	const startRoundHandler = async () => {
 		emitStartGame(CurrentIssue.id)
 		setBtnDisabled(!BtnDisabled)
@@ -146,8 +146,13 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 			name: `${str}`,
 			scoreTypeShort: dataSocket?.lobbyData.settings.score_type_short,
 			image: dataSocket?.lobbyData.settings.cards[0].image
-		}  
+		}
 	})
+
+	const getValue = (memberID: string): string => {
+		const value = Array.from(GameData.playersScore).find((item) => item[0] === memberID);
+		return value ? value[1] : ''
+	}
 
 	return (
 		<>
@@ -178,25 +183,25 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						</Grid.Column>
 					</Grid.Row>
 					<GridRow centered>
-							{player?.role === Role.dealer && (
-								<>
-									<Button
-										color="blue"
-										disabled={GameData?.status !== GameState.roundFinished && BtnDisabled}
-										onClick={startRoundHandler}
-									>
+						{player?.role === Role.dealer && (
+							<>
+								<Button
+									color="blue"
+									disabled={GameData?.status !== GameState.roundFinished && BtnDisabled}
+									onClick={startRoundHandler}
+								>
 										Run Round
-									</Button>
-									<Button color="blue" disabled={!BtnDisabled} onClick={pauseRoundHandler}>
-										Pause Round
-									</Button>
-								</>
-							)}
-							{player?.role === Role.dealer && GameData?.status === GameState.roundFinished && (
-								<Button color="blue" onClick={nextRoundHandler}>
-									Next Round
 								</Button>
-							)}
+								<Button color="blue" disabled={!BtnDisabled} onClick={pauseRoundHandler}>
+										Pause Round
+								</Button>
+							</>
+						)}
+						{player?.role === Role.dealer && GameData?.status === GameState.roundFinished && (
+							<Button color="blue" onClick={nextRoundHandler}>
+									Next Round
+							</Button>
+						)}
 					</GridRow>
 					<Grid columns="1">
 						<Grid.Column>
@@ -228,7 +233,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								let voteKickSettings: voteKickSettingsType = dataSocket.setVotesQuanity
 								let kickSettings: kickSettingsType = setModalKickPlayer
 
-								if (member.role === Role.dealer) return
+								if (member.role === Role.dealer && !dataSocket?.lobbyData?.settings.is_dealer_play) return
 								if (member.role === Role.spectator) return
 
 								if (player?.role === Role.dealer) {
@@ -241,7 +246,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								}
 								return (
 									<div className={cls.playerCard} key={member.id}>
-										<MemberGameStatus />
+										<MemberGameStatus gameStatus={GameData.status} cardValue={getValue(member.id)}/>
 										<MemberItem
 											{...member}
 											isYou={member.id === playerId}
@@ -269,9 +274,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					</GridRow>
 					{dataSocket.lobbyData?.settings.cards ? (
 						<GridRow centered>
-							<CardsField 
-								cards={arrayOfCards} 
-								pickCards={pickCard} 
+							<CardsField
+								cards={arrayOfCards}
+								pickCards={pickCard}
 								setSelectedCard={setSelectedCard}
 								gameData={GameData}
 							 />
