@@ -103,6 +103,8 @@ export const useLobbyDataSocket = (
 	}
 
 	const updateIssue = (issue: IssueType) => {
+		console.log(issue, 'aaaaaaaaaaaaa');
+		
 		socketRef.emit('issue:update', {
 			...issue,
 			lobby_id: lobbyId,

@@ -21,7 +21,9 @@ interface IssueContainerProps {
 	removeIssue: (id: string) => void
 	updateIssue: ({ id, name, priority }: IssueType) => void
 	createIssuesFromFile: () => void
-	setCurrentIssue?: React.Dispatch<React.SetStateAction<CurrentIssueType>>
+	CurrentIssueId?: {
+		id: string;
+	}
 }
 
 export interface IModalCreateIssue extends ModalState {
@@ -35,8 +37,8 @@ const IssueContainer: FC<IssueContainerProps> = ({
 	removeIssue, 
 	updateIssue, 
 	createIssue,
-	 createIssuesFromFile,
-	setCurrentIssue,
+	createIssuesFromFile,
+	CurrentIssueId,
 	issues, 
 	lobbyID }) => {
 	const [ModalDelete, setModalDelete] = useState<ModalState>({
@@ -94,16 +96,17 @@ const IssueContainer: FC<IssueContainerProps> = ({
 			<Container className={s.itemsContainer}>
 				{issues &&
 					issues.map((issue, i) => {
-						if (issue.score === '-' && isCurrent === false) {
+						if (issue.score === '-' && !isCurrent ) {
+							console.log(CurrentIssueId);
+							CurrentIssueId?.id === issue.id
 							isCurrent = true
-
 							return <Issue
 								key={issue.id}
 								type={type}
 								isCurrent
 								setModalChange={setModalChange}
 								setModalDelete={setModalDelete}
-								setCurrentIssue={setCurrentIssue ? setCurrentIssue : undefined}
+								CurrentIssueId={CurrentIssueId}
 								{...issue} />
 						} else {
 							return <Issue
@@ -112,7 +115,7 @@ const IssueContainer: FC<IssueContainerProps> = ({
 								isCurrent={false}
 								setModalChange={setModalChange}
 								setModalDelete={setModalDelete}
-								setCurrentIssue={setCurrentIssue ? setCurrentIssue : undefined}
+								CurrentIssueId={CurrentIssueId}
 								{...issue}
 							/>
 						}
