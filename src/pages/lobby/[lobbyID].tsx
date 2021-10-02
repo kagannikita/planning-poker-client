@@ -37,7 +37,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
-			<Chat />
+			{/* <Chat /> */}
 			{Loading ? (
 				<Loader loaderText="loading" />
 			) : (
