@@ -12,6 +12,8 @@ import Loader from '../../components/loader/loader'
 import io from 'socket.io-client'
 import Chat from '../../components/Chat/Chat'
 import { API } from '../../interfaces/ApiEnum'
+import { getMessagesByLobbyId } from '../../api/ChatAPI'
+import { ChatMessageProps } from '../../components/Chat/ChatMessage'
 
 const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
@@ -37,7 +39,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
-			{/* <Chat /> */}
+			<Chat messages={props.messages} yourMember={playerId} />
 			{Loading ? (
 				<Loader loaderText="loading" />
 			) : (
@@ -58,6 +60,7 @@ interface LobbySSRProps {
 	lobbyId: string
 	// players: IPlayer[]
 	// issues: IssueType[]
+	messages: ChatMessageProps[]
 }
 
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ query }) => {
@@ -67,13 +70,14 @@ export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ qu
 	// 	.catch((err) => err)
 	// 	if (!lobby) return { notFound: true }
 	// const issues = await new IssuesAPI().getAllByLobbyId(query.lobbyID as string);
-
+	const messages = await getMessagesByLobbyId(query.lobbyID as string)
 	return {
 		props: {
 			// name: lobby.name,
 			lobbyId: query.lobbyID as string,
 			// players: lobby.players,
 			// issues
+			messages,
 		},
 	}
 }

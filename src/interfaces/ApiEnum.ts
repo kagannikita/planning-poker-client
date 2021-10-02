@@ -5,5 +5,6 @@ export enum API {
 	PLAYER = 'player/',
 	ISSUES = 'issue/',
 	SETTINGS = 'settings/',
-	CARDS = 'cards/'
+	CARDS = 'cards/',
+	CHAT = 'chat/',
 }
