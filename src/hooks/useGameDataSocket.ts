@@ -4,42 +4,36 @@ import { GameDataType, GameState } from '../interfaces/GameTypes'
 export interface IGameDataSocket {
 	GameData: GameDataType
 	playersScore: string[]
-  setGameData: React.Dispatch<SetStateAction<GameDataType>>
-  emitStartGame: (issueId: string) => void
+	setGameData: React.Dispatch<SetStateAction<GameDataType>>
+	emitStartGame: (issueId: string) => void
 	emitPauseGame: () => void
+	emitContinueGame: () => void
 	setScore: (body: { score: string; playerId: string }) => void
 }
 
 export const useGameDataSocket = (
 	socketRef: SocketIOClient.Socket,
 	lobbyId: string,
-	timerProp: number
+	timerProp: number,
 	// playerId: string
 ): IGameDataSocket => {
-
 	const [GameData, setGameData] = useState<GameDataType>({
 		currIssueId: '',
 		timer: 0,
 		playersScore: new Map<string, string>(),
-		issueScore: 0,
+		issueScore: {},
 		status: GameState.init,
 	})
-	const [playersScore, setPlayersScore] = useState<string[]>([]);
+	const [playersScore, setPlayersScore] = useState<string[]>([])
 
 	useEffect(() => {
-
-
 		socketRef.on('game:started', ({ gameData }: { gameData: GameDataType }) => {
-			setGameData((state) =>{
-				console.log('gamestarted timer ', gameData)
-				return state = {
+			setGameData({
 				...gameData,
-				playersScore: new Map(JSON.parse(gameData.playersScore as unknown as string))
-			}
-
+				playersScore: new Map(JSON.parse(gameData.playersScore as unknown as string)),
+			})
 		})
-			if (playersScore.length) setPlayersScore((arr) => arr = [])
-		})
+		// if (playersScore.length) setPlayersScore((arr) => arr = [])
 
 		socketRef.on('game:paused', ({ gameData }: { gameData: GameDataType }) => {
 			setGameData(gameData)
@@ -56,43 +50,32 @@ export const useGameDataSocket = (
 			setPlayersScore(scoreArr)
 			console.log('scored', scoreArr)
 		})
-
 	}, [lobbyId, socketRef, setGameData, setPlayersScore])
 
 	const emitStartGame = (issueId: string) => {
-		
-		if(GameData.status === GameState.roundRepeat || GameData.status === GameState.init) {
-			setGameData((state: GameDataType) => {
-				console.log('asdasd',GameData);
-				
-				state = {
-					currIssueId: issueId,
-					timer: timerProp,
-					playersScore: new Map<string, string>(),
-					issueScore: 0,
-					status: GameState.init,
-				}
-				
-				console.log('gamestart',GameData);
-				socketRef.emit('game:start', { gameData: state, lobbyId })
-				return state
-			})
-			return
-		} else if (GameData.status === GameState.paused) {
-			console.log(GameData, 'pause');
-			
-			setGameData((state: GameDataType) => {
-				state = {
-					...GameData,
-					status: GameState.started,
-				}
+		setGameData(() => {
+			const state = {
+				currIssueId: issueId,
+				timer: timerProp,
+				playersScore: new Map<string, string>(),
+				issueScore: {},
+				status: GameState.init,
+			}
+			socketRef.emit('game:start', { gameData: state, lobbyId })
+			return state
+		})
+	}
 
-				socketRef.emit('game:start', { gameData: state, lobbyId })
-				return state
-			})
-			return
-		}
+	const emitContinueGame = () => {
+		setGameData(() => {
+			const state = {
+				...GameData,
+				status: GameState.started,
+			}
 
+			socketRef.emit('game:start', { gameData: state, lobbyId })
+			return state
+		})
 	}
 
 	const emitPauseGame = () => {
@@ -109,6 +92,7 @@ export const useGameDataSocket = (
 		setGameData,
 		emitStartGame,
 		emitPauseGame,
+		emitContinueGame,
 		setScore,
 	}
 }

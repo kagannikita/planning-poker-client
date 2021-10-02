@@ -5,37 +5,34 @@ import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 import s from './lobby.module.scss'
 import { IssueType } from '../../interfaces/IssueType'
 import { CurrentIssueContext } from '../../context/CurrentIssueContext'
-import { CurrentIssueType } from 'src/pages/game/[id]'
+import { CurrentIssueType } from '../../pages/game/[id]'
 
 export interface IssueProps extends IssueType {
 	type: 'lobby' | 'game'
 	isCurrent: boolean
+	CurrentIssueId?: {
+		id: string
+	}
 	setModalChange: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
 	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
-	setCurrentIssue?: React.Dispatch<React.SetStateAction<CurrentIssueType>>
 }
 
-const 	Issue = ({ 
-	name, 
-	priority, 
-	id, 
-	type, 
-	link, 
-	score, 
-	setModalChange, 
+const Issue = ({
+	name,
+	priority,
+	id,
+	type,
+	link,
+	score,
+	CurrentIssueId,
+	setModalChange,
 	setModalDelete,
-	setCurrentIssue,
 	lobby,
-	isCurrent
+	isCurrent,
 }: IssueProps) => {
-
 	const clickOnCurrIssue = () => {
-		if(!setCurrentIssue) return
-		setCurrentIssue({
-			id,
-			name,
-		})
-		
+		if (!CurrentIssueId) return
+		CurrentIssueId.id = id
 	}
 
 	const deleteHandler = () => {
@@ -59,27 +56,27 @@ const 	Issue = ({
 
 	const styles = () => {
 		if (type === 'game' && isCurrent) {
-		return	`${s.itemActive} ${s.item} ${s[`${priority}Priority`]}`
+			return `${s.itemActive} ${s.item} ${s[`${priority}Priority`]}`
 		} else {
-			return	`${s.item} ${s[`${priority}Priority`]}`
+			return `${s.item} ${s[`${priority}Priority`]}`
 		}
 	}
 
 	return (
-		<Card
-			centered
-			className={styles()}
-			onClick={type === 'game' ? clickOnCurrIssue : undefined}
-		>
+		<Card centered className={styles()} onClick={type === 'game' ? clickOnCurrIssue : undefined}>
 			<Card.Content>
 				<Card.Header>{name}</Card.Header>
 				<Card.Meta>
 					<b>{type === 'game' && isCurrent && 'Current: '}</b>
 				</Card.Meta>
-				<Card.Meta>{priority}</Card.Meta>
-				{type === 'game' && <Card.Meta>{score}</Card.Meta>}
+				<Card.Meta>Priority: {priority}</Card.Meta>
+				{type === 'game' && (
+					<Card.Meta>
+						<b>Score: {score}</b>
+					</Card.Meta>
+				)}
 				<Card.Meta>
-					<span about="issue link">{link} </span>
+					<span about="issue link">Link: {link} </span>
 				</Card.Meta>
 				<Card.Description textAlign="right">
 					{type === 'lobby' && (
@@ -87,13 +84,7 @@ const 	Issue = ({
 							Change
 						</Button>
 					)}
-					<Button
-						basic
-						color="red"
-						icon={'remove'}
-						onClick={deleteHandler}
-						size="mini"
-					/>
+					<Button basic color="red" icon={'remove'} onClick={deleteHandler} size="mini" />
 				</Card.Description>
 			</Card.Content>
 		</Card>
