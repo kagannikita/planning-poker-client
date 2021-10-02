@@ -53,10 +53,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	console.log(dataSocket?.lobbyData);
 
 	const CurrentIssueId= {
-		id: dataSocket?.lobbyData?.issues[0].id,
+		id: dataSocket?.lobbyData?.issues.find(iss => iss.score === '-')?.id || '',
 	}
 
-	console.log('asdasd', CurrentIssueId);
 	
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
@@ -78,7 +77,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	if (GameData.status !== GameState.roundFinished && 
 			dataSocket?.lobbyData?.settings?.timer && 
 			GameData.timer === 0)
-		setGameData((state) => state = { ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
+		setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
 	const player = dataSocket.lobbyData?.players
 		.find((player) => player.id === playerId) as IPlayer
@@ -87,10 +86,13 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		modalIsOpen: false,
 		message: 'Something wrong',
 	})
+
 	
 	const startRoundHandler = async () => {
+		console.log('GameData', GameData);
 		if(GameData.status === GameState.init || 
 			GameData.status === GameState.roundRepeat) {
+		pauseRoundHandler()
 		emitStartGame(CurrentIssueId.id)
 		setBtnDisabled(true)
 	} else {
@@ -105,6 +107,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	}
 
 	const nextRoundHandler = async () => {
+		
 		const resultsCard = getRoundResult(GameData, dataSocket)
 		if (
 			GameData.status === GameState.roundFinished &&
@@ -113,32 +116,44 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 			return	setModalMessageState({
 				...modalMessageState,
 				message: `You cannot continue until you reach 
-									a unanimous decision. Repeat the round`,
+				a unanimous decision. Repeat the round`,
 				modalIsOpen: true,
 			})
 		}
-
+		
 		// send
 		const issue  = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
+			console.log('first issue ', iss, 'curr issue id ', CurrentIssueId.id);
 			if (iss.id === CurrentIssueId.id) {
+				
 				if (arr[i + 1]) {
+
 					CurrentIssueId.id = arr[i + 1].id
 					return iss
 				} else {
-					CurrentIssueId.id = ''
-					return
+					CurrentIssueId.id = 'finished'
+					
+					return iss
 				}
 			}
+			
 			return
 		})
-		if (issue) {
+		if(!issue) return
+
+		if (CurrentIssueId.id !== 'finished') {
 			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}`})
 			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}`})
-			startRoundHandler()
-			console.log(`issue `, issue);
-			
-			console.log(`CurrentIssueId `,CurrentIssueId);
-			
+			pauseRoundHandler()
+			await startRoundHandler()
+		} else {
+			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
+			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
+			setModalMessageState({
+				...modalMessageState,
+				message: `Game finished`,
+				modalIsOpen: true,
+			})
 		}
 	}
 

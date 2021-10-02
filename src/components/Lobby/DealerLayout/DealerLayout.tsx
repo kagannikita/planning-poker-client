@@ -190,7 +190,9 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 						<Button positive 
 							loading={gameLoading}
 							disabled={gameLoading}
-							onClick={startGameHandler} className={s.startBtn}>
+							onClick={startGameHandler}
+							color="blue"
+							>
 							Start Game
 						</Button>
 					</Grid.Column>

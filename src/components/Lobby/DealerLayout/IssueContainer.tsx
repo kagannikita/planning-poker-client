@@ -126,7 +126,7 @@ const IssueContainer: FC<IssueContainerProps> = ({
 				<IssueCreate lobbyId={lobbyID} setModalCreate={setModalCreate} />
 			</Container>
 			<div className={s.uploadIssues}>
-				<label htmlFor="upload-btn" className={`ui primary right labeled icon button ${s.startBtn}`}>
+				<label htmlFor="upload-btn" className={`ui right labeled icon button blue`}>
 					<i className="upload icon"></i>
 					Upload issues
 				</label>
