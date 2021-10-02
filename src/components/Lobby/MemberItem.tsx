@@ -1,12 +1,11 @@
-import React, { Dispatch, FC, SetStateAction, useEffect } from 'react'
-import { Button, Card, Image } from 'semantic-ui-react'
+import React, {Dispatch, FC, SetStateAction} from 'react'
+import {Button, Card, Image} from 'semantic-ui-react'
 
-import { IPlayer } from '../../interfaces/LobbyTypes'
-import { ModalState } from './DealerLayout/DealerLayout'
+import {IPlayer} from '../../interfaces/LobbyTypes'
+import {ModalState} from './DealerLayout/DealerLayout'
 import s from './lobby.module.scss'
-import { IVoteKickState } from './MemberLayout/MemberLayout'
-import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
-import { VoteType } from '../../interfaces/VoteType'
+import {LocalStorageEnum} from '../../interfaces/localStorageEnum'
+import {VoteType} from '../../interfaces/VoteType'
 
 const PLAYERS_FOR_VOTE = 3
 
@@ -39,20 +38,20 @@ const MemberItem: FC<MemberItemProps> = ({
 }): JSX.Element => {
 	const members = playersQuanity?.filter((player) => player.role === 'player').length
 
-	const styles = () => {
-		if (role !== 'dealer' && isYou) {
-			return `${s.item} ${s.itsYou}`
-		}
-		if (role == 'dealer' && isYou) {
-			return `${s.itsYou}`
-		}
-		return ''
-	}
+	// const styles = () => {
+	// 	if (role !== 'dealer' && isYou) {
+	// 		return `${s.item} ${s.itsYou}`
+	// 	}
+	// 	if (role === 'dealer' && isYou) {
+	// 		return `${s.itsYou}`
+	// 	}
+	// 	return ''
+	// }
 
 	// role !== 'dealer' ? s.item : ''
 
 	return (
-		<Card centered={centered} className={role !== 'dealer' ? s.item : ''}>
+		<Card centered={centered} className={`${s.item} memberCard`}>
 			<Card.Content className={s.lobbyInfo__userInfo}>
 				<Image
 					floated="right"

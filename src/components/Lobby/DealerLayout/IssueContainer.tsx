@@ -10,7 +10,7 @@ import { ModalState } from './DealerLayout'
 import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
 import * as XLSX from 'xlsx'
 import { IssuesAPI } from '../../../api/IssuesAPI'
-import { CurrentIssueType } from 'src/pages/game/[id]'
+import { CurrentIssueType } from '../../../pages/game/[id]'
 // import { CurrentIssueContext } from 'src/context/CurrentIssueContext'
 
 interface IssueContainerProps {
@@ -22,7 +22,7 @@ interface IssueContainerProps {
 	updateIssue: ({ id, name, priority }: IssueType) => void
 	createIssuesFromFile: () => void
 	CurrentIssueId?: {
-		id: string;
+		id: string
 	}
 }
 
@@ -32,15 +32,16 @@ export interface IModalCreateIssue extends ModalState {
 	lobby: string
 }
 
-const IssueContainer: FC<IssueContainerProps> = ({ 
-	type, 
-	removeIssue, 
-	updateIssue, 
+const IssueContainer: FC<IssueContainerProps> = ({
+	type,
+	removeIssue,
+	updateIssue,
 	createIssue,
 	createIssuesFromFile,
 	CurrentIssueId,
-	issues, 
-	lobbyID }) => {
+	issues,
+	lobbyID,
+}) => {
 	const [ModalDelete, setModalDelete] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
@@ -65,7 +66,7 @@ const IssueContainer: FC<IssueContainerProps> = ({
 
 	// const { CurrentIssue, setCurrentIssue } = useContext(CurrentIssueContext)
 	let isCurrent = false
-	
+
 	const uploadExcel = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const promise = new Promise((resolve, reject) => {
 			const fileReader = new FileReader()
@@ -96,32 +97,35 @@ const IssueContainer: FC<IssueContainerProps> = ({
 			<Container className={s.itemsContainer}>
 				{issues &&
 					issues.map((issue, i) => {
-						if (issue.score === '-' && !isCurrent ) {
-							console.log(CurrentIssueId);
+						if (issue.score === '-' && !isCurrent) {
+							console.log(CurrentIssueId)
 							CurrentIssueId?.id === issue.id
 							isCurrent = true
-							return <Issue
-								key={issue.id}
-								type={type}
-								isCurrent
-								setModalChange={setModalChange}
-								setModalDelete={setModalDelete}
-								CurrentIssueId={CurrentIssueId}
-								{...issue} />
+							return (
+								<Issue
+									key={issue.id}
+									type={type}
+									isCurrent
+									setModalChange={setModalChange}
+									setModalDelete={setModalDelete}
+									CurrentIssueId={CurrentIssueId}
+									{...issue}
+								/>
+							)
 						} else {
-							return <Issue
-								key={issue.id}
-								type={type}
-								isCurrent={false}
-								setModalChange={setModalChange}
-								setModalDelete={setModalDelete}
-								CurrentIssueId={CurrentIssueId}
-								{...issue}
-							/>
+							return (
+								<Issue
+									key={issue.id}
+									type={type}
+									isCurrent={false}
+									setModalChange={setModalChange}
+									setModalDelete={setModalDelete}
+									CurrentIssueId={CurrentIssueId}
+									{...issue}
+								/>
+							)
 						}
-
-					}
-					)}
+					})}
 
 				<IssueCreate lobbyId={lobbyID} setModalCreate={setModalCreate} />
 			</Container>
@@ -130,7 +134,14 @@ const IssueContainer: FC<IssueContainerProps> = ({
 					<i className="upload icon"></i>
 					Upload issues
 				</label>
-				<input type="file" accept=".xlsx, .csv" className={s.inputExcel} onChange={uploadExcel} id="upload-btn" hidden />
+				<input
+					type="file"
+					accept=".xlsx, .csv"
+					className={s.inputExcel}
+					onChange={uploadExcel}
+					id="upload-btn"
+					hidden
+				/>
 			</div>
 			<ModalDeleteIssue
 				issuesArr={issues}
