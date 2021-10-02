@@ -152,21 +152,6 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		redirectTo('', true, true)
 	}
 
-	// const startGameHandler = async () => {
-	// 	if (validateSettings()) {
-	// 		await api.createSettings(lobbyData.settings.id, gameSettings)
-	// 		const data = await cardSettings()
-	// 		console.log( 'cards data', data);
-
-	// 		data.forEach(async (formdata) => {
-	// 			await api.createCard(formdata)
-	// 		})
-	// 		// redirectTo(API.GAME, true, false)
-	// 	} else {
-	// 		return
-	// 	}
-	// }
-
 	const startGameHandler = async () => {
 		if (validateSettings()) {
 			setGameLoading(!gameLoading)
@@ -202,10 +187,13 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 				</Grid.Row>
 				<Grid.Row columns="2">
 					<Grid.Column floated="left">
-						<Button positive 
+						<Button
+							positive
 							loading={gameLoading}
 							disabled={gameLoading}
-							onClick={startGameHandler} className={s.startBtn}>
+							onClick={startGameHandler}
+							className={s.startBtn}
+						>
 							Start Game
 						</Button>
 					</Grid.Column>
