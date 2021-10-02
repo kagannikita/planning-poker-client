@@ -69,7 +69,7 @@ const ChatMessage: ({ members, message, yourMember }: ChatMessageProps) => JSX.E
 							Edit message
 						</div>
 					)}
-					{(yourMember === members[0].id || members[0].role === 'dealer') && (
+					{(yourMember === members[0].id || members[0].role !== 'dealer') && (
 						<div role="menuitem" tabIndex={0} className="option" onClick={() => deleteMessage('Delete')}>
 							Delete message
 						</div>
