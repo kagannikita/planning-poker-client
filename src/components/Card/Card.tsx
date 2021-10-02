@@ -35,6 +35,10 @@ const Card: React.FC<CardProps> = ({
 	if (cardIsSelected) cardStyle.push(cls.cardSelected)
 
 	const pickCard = () => {
+		if (cardStyle.includes(cls.flipped)) {
+			cardStyle.filter((item) => item !== cls.flipped)
+		}
+
 		if (pickCards) selectCard(index)
 	}
 

@@ -1,15 +1,14 @@
-import { MutableRefObject, useState } from "react";
-import { IMessage } from "src/interfaces/LobbyTypes";
+import { MutableRefObject, useState } from 'react'
+import { IMessage } from '../interfaces/LobbyTypes'
 
-interface IuseSocketChat {
-  messages: IMessage[]
-  sendMessage: ({ msgText, senderName }: { msgText: string; senderName: string }) => void
-  removeMessage: (id: string) => void
+interface IUseSocketChat {
+	messages: IMessage[]
 }
 
 export const useChat = (
 	socketRef: MutableRefObject<SocketIOClient.Socket>,
 	lobbyId: string,
+<<<<<<< HEAD
 	playerId: string
 ): IuseSocketChat => {
 	const [messages, setMessages] = useState<IMessage[]>([])
@@ -42,3 +41,12 @@ export const useChat = (
 		removeMessage
 	}
 }
+=======
+	playerId: string,
+): IUseSocketChat => {
+	const [messages, setMessages] = useState<IMessage[]>([])
+	return {
+		messages: [],
+	}
+}
+>>>>>>> 85a2ef5630c0242c92197eb653386257055082f4

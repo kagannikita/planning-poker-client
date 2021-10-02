@@ -6,14 +6,12 @@ import ChatMessage, { ChatMessageProps } from './ChatMessage'
 
 const Chat = () => {
 	const messages: ChatMessageProps[] = [
-		{ date: '03/09/21 14:00', author: 'Jessica', message: 'Hello World', isYou: false },
-		{ date: '03/09/21 14:20', author: 'Jimmy', message: 'Hello World', isYou: false },
-		{ date: '03/09/21 14:30', author: 'Brad', message: 'Hello World', isYou: true },
-		{ date: '03/09/21 14:40', author: 'Jessica', message: 'Hello World', isYou: false },
-		{ date: '03/09/21 14:40', author: 'Jessica', message: 'Hello World last', isYou: false },
+		{ author: 'Jessica', message: 'Hello World', isYou: false },
+		{ author: 'Jimmy', message: 'Hello World', isYou: false },
+		{ author: 'Brad', message: 'Hello World', isYou: true },
+		{ author: 'Jessica', message: 'Hello World', isYou: false },
+		{ author: 'Jessica', message: 'Hello World last', isYou: false },
 	]
-
-	// s.chatBlock
 
 	return (
 		<Comment.Group minimal >

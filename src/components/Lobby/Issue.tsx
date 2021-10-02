@@ -12,7 +12,7 @@ export interface IssueProps extends IssueType {
 	isCurrent: boolean
 	setModalChange: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
 	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
-	setCurrentIssue: React.Dispatch<React.SetStateAction<CurrentIssueType>>
+	setCurrentIssue?: React.Dispatch<React.SetStateAction<CurrentIssueType>>
 }
 
 const 	Issue = ({ 
@@ -30,6 +30,7 @@ const 	Issue = ({
 }: IssueProps) => {
 
 	const clickOnCurrIssue = () => {
+		if(!setCurrentIssue) return
 		setCurrentIssue({
 			id,
 			name,
@@ -62,7 +63,6 @@ const 	Issue = ({
 		} else {
 			return	`${s.item} ${s[`${priority}Priority`]}`
 		}
-
 	}
 
 	return (

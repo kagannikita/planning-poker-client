@@ -6,14 +6,10 @@ type TimerProps = {
 	settings?: ISettings
 	setSettings?: React.Dispatch<React.SetStateAction<ISettings>>
 	isDisabled?: boolean
+	timerNeeded?: boolean
 }
 
-const Timer: React.FC<TimerProps> = ({ time, isDisabled = true, settings, setSettings }: TimerProps) => {
-	const [clsTimer, setClsTimer] = useState(['form__timer'])
-
-	if (!settings?.timerIsOn && !clsTimer.includes('disabled')) setClsTimer([...clsTimer, 'disabled'])
-	if (settings?.timerIsOn && clsTimer.includes('disabled')) setClsTimer(clsTimer.filter((cls) => cls !== 'disabled'))
-
+const Timer: React.FC<TimerProps> = ({ time, isDisabled = true, settings, setSettings, timerNeeded }: TimerProps) => {
 	const minutes = Math.floor(time / 60)
 	const seconds = time - minutes * 60
 
@@ -39,7 +35,7 @@ const Timer: React.FC<TimerProps> = ({ time, isDisabled = true, settings, setSet
 			<label htmlFor="minutes" className="item-title">
 				Round time:
 			</label>
-			<div className={clsTimer.join(' ')}>
+			<div className={timerNeeded ? 'form__timer' : 'form__timer disabled'}>
 				<div className="timer__item">
 					<label htmlFor="minutes" className="timer__title">
 						minutes

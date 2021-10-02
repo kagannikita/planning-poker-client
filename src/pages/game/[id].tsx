@@ -20,6 +20,9 @@ import MemberGameStatus from '../../components/MemberGameStatus/MemberGameStatus
 import cls from './gamePage.module.scss'
 import { VoteType } from '../../interfaces/VoteType'
 import { checkVoted, getMembersVote } from '../../functions/checkVote'
+import { getRoundResult } from '../../functions/getRoundResult'
+import GameResultField from '../../components/GameResultField/GameResultField'
+import ModalMessage from '../../components/ModalMessage/ModalMessage'
 
 export interface CurrentIssueType {
 	id: string
@@ -28,7 +31,6 @@ export interface CurrentIssueType {
 
 type voteKickSettingsType = React.Dispatch<React.SetStateAction<VoteType>> | undefined
 type kickSettingsType = React.Dispatch<React.SetStateAction<ModalState>> | undefined
-type setScoreType = ((cardName: string) => void) | undefined
 
 const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
 	const router = useRouter()
@@ -44,10 +46,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
 
-	const dataSocket = useLobbyDataSocket(
-		socket,
-		props.lobbyId, playerId)
-
+	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
 	
 	const [CurrentIssue, setCurrentIssue] = useState<CurrentIssueType>({
 		id: '',
@@ -77,7 +76,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const player = dataSocket.lobbyData?.players
 		.find((player) => player.id === playerId) as IPlayer
-
+		
+	const [modalMessageState, setModalMessageState] = useState({
+		modalIsOpen: false,
+		message: 'Something wrong',
+	})
 	
 	const startRoundHandler = async () => {
 		emitStartGame(CurrentIssue.id)
@@ -90,6 +93,18 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	}
 
 	const nextRoundHandler = () => {
+		if (
+			GameData.status === GameState.roundFinished &&
+			getRoundResult(GameData, dataSocket).arrayOfResultCards.length !== 1
+		) {
+			setModalMessageState({
+				...modalMessageState,
+				message: 'You cannot continue until you reach a unanimous decision. Repeat the round',
+				modalIsOpen: true,
+			})
+			return
+		}
+
 		// send
 		const issue = dataSocket?.lobbyData?.issues.find(iss => {
 			if (iss.id === CurrentIssue.id) {
@@ -122,17 +137,18 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const [pickCard, setPickCard] = useState<boolean>(false)
 
-	if (GameData?.status === GameState.started && pickCard === false) {
+	if (GameData?.status === GameState.started && !pickCard) {
 		setPickCard(true)
 	}
 
-	const resultCards = playersScore.map(str => {
+	const resultCards = playersScore.map((str) => {
 		return {
 			name: `${str}`,
 			scoreTypeShort: dataSocket?.lobbyData.settings.score_type_short,
 			image: dataSocket?.lobbyData.settings.cards[0].image
 		}  
 	})
+
 	return (
 		<>
 			<Container>
@@ -167,7 +183,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									<Button
 										color="blue"
 										disabled={GameData?.status !== GameState.roundFinished && BtnDisabled}
-										onClick={startRoundHandler}>
+										onClick={startRoundHandler}
+									>
 										Run Round
 									</Button>
 									<Button color="blue" disabled={!BtnDisabled} onClick={pauseRoundHandler}>
@@ -175,12 +192,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									</Button>
 								</>
 							)}
-							{
-								player?.role === Role.dealer && GameData?.status === GameState.roundFinished &&
+							{player?.role === Role.dealer && GameData?.status === GameState.roundFinished && (
 								<Button color="blue" onClick={nextRoundHandler}>
 									Next Round
 								</Button>
-							}
+							)}
 					</GridRow>
 					<Grid columns="1">
 						<Grid.Column>
@@ -202,12 +218,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column>
-							<Timer
-								time={GameData.timer}
-								settings={{
-									timerIsOn: dataSocket.lobbyData?.settings.timer_needed,
-								}}
-							/>
+							<Timer time={GameData?.timer} timerNeeded={dataSocket.lobbyData?.settings.timer_needed} />
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
@@ -236,7 +247,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 											isYou={member.id === playerId}
 											votedQuantity={dataSocket.VotesQuanity.kickPlayer}
 											playersQuanity={dataSocket.lobbyData?.players}
-											checkVoted={checkVoted(member.id,playerId, dataSocket)}
+											checkVoted={checkVoted(member.id, playerId, dataSocket)}
 											playersVoted={getMembersVote(member.id, dataSocket)}
 											setVoteKickPlayer={voteKickSettings}
 											setKickPlayer={kickSettings}
@@ -247,12 +258,16 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						</Grid.Column>
 					</Grid>
 					<GridRow centered>
-						<CardsField
-							cardIsOpen={GameData.status === GameState.roundFinished}
-							cards={resultCards}
-						/>
+						{GameData.status === GameState.roundFinished ? (
+							<GameResultField
+								cards={getRoundResult(GameData, dataSocket).arrayOfResultCards}
+								values={getRoundResult(GameData, dataSocket).arrayOfResultValues}
+							/>
+						) : (
+							<CardsField cardIsOpen={false} cards={resultCards} />
+						)}
 					</GridRow>
-					{dataSocket.lobbyData?.settings.cards !== undefined ? (
+					{dataSocket.lobbyData?.settings.cards ? (
 						<GridRow centered>
 							<CardsField 
 								cards={arrayOfCards} 
@@ -264,6 +279,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					) : null}
 				</Grid>
 			</Container>
+			<ModalMessage modalMessageState={modalMessageState} setModalMessageState={setModalMessageState} />
 			{player?.role === Role.dealer && (
 				<ModalKickPlayerByDealer
 					isOpen={modalkickPlayer.modalIsOpen}

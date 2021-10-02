@@ -10,6 +10,6 @@ export interface GameDataType {
 	status: GameState
 	playersScore: Map<string, string>
 	currIssueId: string
-	issueScore: number
+	issueScore: { [key: string]: number }
 	timer: number
 }
