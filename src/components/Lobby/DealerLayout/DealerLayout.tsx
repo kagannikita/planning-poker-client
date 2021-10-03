@@ -47,7 +47,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		timerIsOn: true,
 		scoreType: 'story point',
 		scoreTypeShort: 'SP',
-		time: 150,
+		time: 10,
 		deckOfCards: 'fibonacci',
 	})
 
@@ -216,6 +216,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 			</Container>
 			<IssueContainer
 				type="lobby"
+				playerRole={Role.dealer}
 				lobbyID={socketData.lobbyData?.id as string}
 				issues={lobbyData?.issues}
 				createIssue={createIssue}

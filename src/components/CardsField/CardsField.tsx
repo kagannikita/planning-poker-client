@@ -42,14 +42,17 @@ const CardsField: React.FC<CardsFieldProps> = ({
 		}
 		setIndexOfSelectedCard(index)
 	}
-
+	console.log(cards);
+	
+	
 	return (
 		<div
 			className={
 				gameData && gameData?.status !== GameState.started ? `${cls.cardsField} ${cls.cardsDisabled}` : cls.cardsField
 			}
 		>
-			{cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
+			{
+			cards.length ? cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
 				let cardIsSelected = false
 				if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
 				return (
@@ -67,7 +70,8 @@ const CardsField: React.FC<CardsFieldProps> = ({
 						setCardValue={setCardValue}
 					/>
 				)
-			})}
+			}) : <><h2>No result cards</h2></>
+		}
 		</div>
 	)
 }

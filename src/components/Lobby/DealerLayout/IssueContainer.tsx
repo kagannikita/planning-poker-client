@@ -11,10 +11,11 @@ import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
 import * as XLSX from 'xlsx'
 import { IssuesAPI } from '../../../api/IssuesAPI'
 import { CurrentIssueType } from 'src/pages/game/[id]'
-// import { CurrentIssueContext } from 'src/context/CurrentIssueContext'
+import { Role } from 'src/interfaces/LobbyTypes'
 
 interface IssueContainerProps {
 	type: 'lobby' | 'game'
+	playerRole: Role
 	issues: IssueType[] | undefined
 	lobbyID: string
 	createIssue: ({ name, priority }: IssueType) => void
@@ -32,14 +33,15 @@ export interface IModalCreateIssue extends ModalState {
 	lobby: string
 }
 
-const IssueContainer: FC<IssueContainerProps> = ({ 
-	type, 
-	removeIssue, 
-	updateIssue, 
+const IssueContainer: FC<IssueContainerProps> = ({
+	type,
+	playerRole,
+	removeIssue,
+	updateIssue,
 	createIssue,
 	createIssuesFromFile,
 	CurrentIssueId,
-	issues, 
+	issues,
 	lobbyID }) => {
 	const [ModalDelete, setModalDelete] = useState<ModalState>({
 		modalIsOpen: false,
@@ -63,9 +65,8 @@ const IssueContainer: FC<IssueContainerProps> = ({
 		lobby: lobbyID,
 	})
 
-	// const { CurrentIssue, setCurrentIssue } = useContext(CurrentIssueContext)
-	let isCurrent = false
-	
+	const [isCurrentIdState, setIsCurrentIdState] = useState('');
+
 	const uploadExcel = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const promise = new Promise((resolve, reject) => {
 			const fileReader = new FileReader()
@@ -94,44 +95,47 @@ const IssueContainer: FC<IssueContainerProps> = ({
 				Issues:
 			</HeaderTitle>
 			<Container className={s.itemsContainer}>
-				{issues &&
-					issues.map((issue, i) => {
-						if (issue.score === '-' && !isCurrent ) {
-							console.log(CurrentIssueId);
-							CurrentIssueId?.id === issue.id
-							isCurrent = true
-							return <Issue
-								key={issue.id}
-								type={type}
-								isCurrent
-								setModalChange={setModalChange}
-								setModalDelete={setModalDelete}
-								CurrentIssueId={CurrentIssueId}
-								{...issue} />
+				{issues && issues?.map((issue) => {
+					if (issue.score === '-' && !isCurrentIdState && CurrentIssueId) {
+						CurrentIssueId.id = issue.id
+						setIsCurrentIdState(issue.id)
+						return <Issue
+							key={issue.id}
+							type={type}
+							isCurrentIdState={''}
+							playerRole={playerRole}
+							setIsCurrentIdState={setIsCurrentIdState}
+							setModalChange={setModalChange}
+							setModalDelete={setModalDelete}
+							CurrentIssueId={CurrentIssueId}
+							{...issue} />
 						} else {
 							return <Issue
 								key={issue.id}
 								type={type}
-								isCurrent={false}
+								isCurrentIdState={isCurrentIdState}
+								playerRole={playerRole}
+								setIsCurrentIdState={setIsCurrentIdState}
 								setModalChange={setModalChange}
 								setModalDelete={setModalDelete}
 								CurrentIssueId={CurrentIssueId}
 								{...issue}
 							/>
-						}
-
 					}
-					)}
+				}
+				)}
 
-				<IssueCreate lobbyId={lobbyID} setModalCreate={setModalCreate} />
+				{playerRole === Role.dealer && <IssueCreate lobbyId={lobbyID} setModalCreate={setModalCreate} />}
 			</Container>
-			<div className={s.uploadIssues}>
-				<label htmlFor="upload-btn" className={`ui right labeled icon button blue`}>
-					<i className="upload icon"></i>
-					Upload issues
-				</label>
-				<input type="file" accept=".xlsx, .csv" className={s.inputExcel} onChange={uploadExcel} id="upload-btn" hidden />
-			</div>
+			{playerRole === Role.dealer &&
+				<div className={s.uploadIssues}>
+					<label htmlFor="upload-btn" className={`ui right labeled icon button blue`}>
+						<i className="upload icon"></i>
+						Upload issues
+					</label>
+					<input type="file" accept=".xlsx, .csv" className={s.inputExcel} onChange={uploadExcel} id="upload-btn" hidden />
+				</div>}
+
 			<ModalDeleteIssue
 				issuesArr={issues}
 				state={ModalDelete}

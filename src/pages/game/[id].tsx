@@ -50,7 +50,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
 	
-	console.log(dataSocket?.lobbyData);
+	// console.log(dataSocket?.lobbyData);
 
 	const CurrentIssueId= {
 		id: dataSocket?.lobbyData?.issues.find(iss => iss.score === '-')?.id || '',
@@ -63,15 +63,15 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setplayerId(id as string)
 	}, [playerId, router])
 
-
-
 	const { 
 		GameData, 
-		playersScore, 
+		gameStatus,
+		voteResults,
 		emitPauseGame, 
 		emitStartGame,
 		emitContinueGame,
-		setGameData, 
+		setGameData,
+		emitResponseGameResults, 
 		setScore } = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer )
 
 	if (GameData.status !== GameState.roundFinished && 
@@ -89,9 +89,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	
 	const startRoundHandler = async () => {
-		console.log('GameData', GameData);
 		if(GameData.status === GameState.init || 
-			GameData.status === GameState.roundRepeat) {
+			GameData.status === GameState.roundFinished) {
 		pauseRoundHandler()
 		emitStartGame(CurrentIssueId.id)
 		setBtnDisabled(true)
@@ -107,8 +106,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	}
 
 	const nextRoundHandler = async () => {
-		
 		const resultsCard = getRoundResult(GameData, dataSocket)
+		
 		if (
 			GameData.status === GameState.roundFinished &&
 			resultsCard.cards.length > 1
@@ -123,22 +122,19 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		
 		// send
 		const issue  = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
-			console.log('first issue ', iss, 'curr issue id ', CurrentIssueId.id);
 			if (iss.id === CurrentIssueId.id) {
-				
 				if (arr[i + 1]) {
-
 					CurrentIssueId.id = arr[i + 1].id
 					return iss
 				} else {
 					CurrentIssueId.id = 'finished'
-					
 					return iss
 				}
 			}
 			
 			return
 		})
+
 		if(!issue) return
 
 		if (CurrentIssueId.id !== 'finished') {
@@ -149,6 +145,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		} else {
 			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
 			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
+			emitResponseGameResults()
 			setModalMessageState({
 				...modalMessageState,
 				message: `Game finished`,
@@ -177,15 +174,17 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 
 
-	if (GameData?.status === GameState.started && !pickCard) {
+	if (gameStatus === GameState.started && !pickCard) {
 		setPickCard(true)
 	}
-
-	const resultCards = playersScore.map((str) => {
+	
+	const resultCards = Array.from(GameData?.playersScore).map((str) => {
+		// console.log(str);
+		
 		return {
 			name: `${str}`,
-			scoreTypeShort: dataSocket?.lobbyData.settings.score_type_short,
-			image: dataSocket?.lobbyData.settings.cards[0].image
+			scoreTypeShort: dataSocket?.lobbyData?.settings.score_type_short,
+			image: dataSocket?.lobbyData?.settings.cards[0].image
 		}  
 	})
 
@@ -232,17 +231,19 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									</Button>
 								</>
 							)}
-							{player?.role === Role.dealer && GameData?.status === GameState.roundFinished && (
-								<Button color="blue" onClick={nextRoundHandler}>
+							{player?.role === Role.dealer && 
+							<Button color="blue" 
+							disabled={gameStatus !== GameState.roundFinished}
+								onClick={nextRoundHandler}>
 									Next Round
 								</Button>
-							)}
+							}
 					</GridRow>
 					<Grid columns="1">
 						<Grid.Column>
-							{/* <CurrentIssueContext.Provider value={{ CurrentIssue, setCurrentIssue }}> */}
 							<IssueContainer
 								type="game"
+								playerRole={player?.role}
 								issues={dataSocket?.lobbyData?.issues}
 								lobbyID={router.query.id as string}
 								createIssue={dataSocket.createIssue}
@@ -253,7 +254,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 									throw new Error('Function not implemented.')
 								}}
 							/>
-							{/* </CurrentIssueContext.Provider> */}
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">
@@ -298,7 +298,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						</Grid.Column>
 					</Grid>
 					<GridRow centered>
-						{GameData.status === GameState.roundFinished ? (
+						{gameStatus === GameState.roundFinished ? (
 							<GameResultField
 								cards={getRoundResult(GameData, dataSocket).cards}
 								values={getRoundResult(GameData, dataSocket).values}
@@ -308,15 +308,16 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						)}
 					</GridRow>
 					{dataSocket.lobbyData?.settings.cards ? (
-						<GridRow centered>
-							<CardsField 
-								cards={arrayOfCards} 
-								pickCards={pickCard} 
-								setSelectedCard={setSelectedCard}
-								gameData={GameData}
-							 />
-						</GridRow>
-					) : null}
+							<GridRow centered>
+								<CardsField
+									cards={arrayOfCards}
+									pickCards={pickCard}
+									setSelectedCard={setSelectedCard}
+									gameData={GameData}
+								/>
+							</GridRow>
+						) : null}
+					{/* player?.role === Role.dealer && dataSocket?.lobbyData?.settings.is_dealer_play */}
 				</Grid>
 			</Container>
 			<ModalMessage modalMessageState={modalMessageState} setModalMessageState={setModalMessageState} />
