@@ -4,7 +4,7 @@ import { IPlayer } from '../../interfaces/LobbyTypes'
 
 export interface ChatMessageProps {
 	id?: string
-	members: IPlayer[]
+	members: IPlayer[] | IPlayer
 	message: string
 	yourMember?: string
 }
@@ -61,12 +61,12 @@ const ChatMessage: ({ members, message, yourMember }: ChatMessageProps) => JSX.E
 			</Comment>
 			{isShown && (
 				<div style={{ top: position.y, left: position.x }} className="custom-context-menu" role="menubar">
-					{yourMember === members[0].id && (
+					{yourMember === (members as IPlayer[])[0].id && (
 						<div role="menuitem" tabIndex={-1} className="option" onClick={() => editMessage('Edit')}>
 							Edit message
 						</div>
 					)}
-					{(yourMember === members[0].id || members[0].role !== 'dealer') && (
+					{(yourMember === (members as IPlayer[])[0].id || (members as IPlayer[])[0].role !== 'dealer') && (
 						<div role="menuitem" tabIndex={0} className="option" onClick={() => deleteMessage('Delete')}>
 							Delete message
 						</div>
