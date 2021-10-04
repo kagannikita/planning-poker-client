@@ -1,147 +1,38 @@
-import { Header, Comment } from 'semantic-ui-react'
-import { Role } from 'src/interfaces/LobbyTypes'
+import { Header, Comment, Form, Button } from 'semantic-ui-react'
 import s from './Chat.module.scss'
-import ChatInput from './ChatInput'
 import ChatMessage, { ChatMessageProps } from './ChatMessage'
+import { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
+import io from 'socket.io-client'
+import { API } from '../../interfaces/ApiEnum'
+import { ILobby, IPlayer } from '../../interfaces/LobbyTypes'
 
 interface ChatProps {
 	messages: ChatMessageProps[]
 	yourMember: string
+	lobbyId: string
 }
-
-
-const Chat = ({ messages, yourMember }: ChatProps): JSX.Element => {
-	const msgs: ChatMessageProps[] = [
-		{
-			id: 'asd',
-			members: [{
-				id: '123123',
-				firstName: 'alex',
-				role: Role.player,
-				lastName: 'asdasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'sadasd',
-			yourMember: 'a'
-		},
-		{
-			id: yourMember,
-			members: [{
-				id: yourMember,
-				firstName: 'max',
-				role: Role.dealer,
-				lastName: 'aasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'hello world',
-			yourMember: yourMember,
-		},
-		{
-			id: 'asd',
-			members: [{
-				id: '123123',
-				firstName: 'alex',
-				role: Role.player,
-				lastName: 'asdasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'sadasd',
-			yourMember: 'a'
-		},
-		{
-			id: yourMember,
-			members: [{
-				id: yourMember,
-				firstName: 'max',
-				role: Role.dealer,
-				lastName: 'aasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'hello world',
-			yourMember: yourMember,
-		},
-		{
-			id: 'asd',
-			members: [{
-				id: '123123',
-				firstName: 'alex',
-				role: Role.player,
-				lastName: 'asdasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'sadasd',
-			yourMember: 'a'
-		},
-		{
-			id: yourMember,
-			members: [{
-				id: yourMember,
-				firstName: 'max',
-				role: Role.dealer,
-				lastName: 'aasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'hello world',
-			yourMember: yourMember,
-		},
-		{
-			id: 'asd',
-			members: [{
-				id: '123123',
-				firstName: 'alex',
-				role: Role.player,
-				lastName: 'asdasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'sadasd',
-			yourMember: 'a'
-		},
-		{
-			id: yourMember,
-			members: [{
-				id: yourMember,
-				firstName: 'max',
-				role: Role.dealer,
-				lastName: 'aasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'hello world',
-			yourMember: yourMember,
-		},
-		{
-			id: 'asd',
-			members: [{
-				id: '123123',
-				firstName: 'alex',
-				role: Role.player,
-				lastName: 'asdasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'sadasd',
-			yourMember: 'a'
-		},
-		{
-			id: yourMember,
-			members: [{
-				id: yourMember,
-				firstName: 'maaaaaaaax',
-				role: Role.dealer,
-				lastName: 'aasd',
-				image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwS70r6aZEg6-wofSf66x7MU7FiZSEFSOIQA&usqp=CAU'
-			}],
-			message: 'hello wasddddddddddddddddddddddddorld',
-			yourMember: yourMember,
-		},
-	]
-
+const Chat = ({ messages, yourMember, lobbyId }: ChatProps): JSX.Element => {
+	const inputRef = useRef() as MutableRefObject<HTMLInputElement>
+	const [message, setMessage] = useState<ChatMessageProps[]>([])
+	const socket = useMemo(() => io(API.MAIN_API), [yourMember])
+	useEffect(() => {
+		socket.on('message:get', ({ message, members }: { message: string; members: IPlayer[] }) => {
+			console.log('Data from get: ', message)
+			setMessage((prevState) => [...prevState, { message, members }])
+		})
+	}, [socket, message])
+	const sendMessage = () => {
+		const message = inputRef.current.value
+		socket.emit('chat:sendMsg', { message, yourMember, lobbyId })
+	}
 	return (
 		<Comment.Group minimal className={s.chatBlock}>
 			<Header as="h3" dividing>
 				Chat
 			</Header>
 			<div className="chat">
-				<div className="ui chat__content">
-					{msgs.map((mess) => {
+				<div className="chat__content">
+					{message.map((mess) => {
 						return (
 							<ChatMessage
 								key={mess.id}
@@ -154,7 +45,10 @@ const Chat = ({ messages, yourMember }: ChatProps): JSX.Element => {
 					})}
 				</div>
 			</div>
-			<ChatInput />
+			<Form reply>
+				<input type="text" className={s.textArea} ref={inputRef} name="messageArea" id="messageArea" />
+				<Button content="Send" htmlFor="messageArea" labelPosition="left" icon="chat" primary onClick={sendMessage} />
+			</Form>
 		</Comment.Group>
 	)
 }
