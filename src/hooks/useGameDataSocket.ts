@@ -42,7 +42,9 @@ export const useGameDataSocket = (
 			setVoteResults(()=>gameData.issueScore)
 		})
 
-		socketRef.on('game:started', async ({ gameData }: { gameData: GameDataType }) => {
+		socketRef.on('game:started', ({ gameData }: { gameData: GameDataType }) => {
+			if (GameData.status !== gameData.status) setGameStatus(() => gameData.status)
+			if (GameData.issueScore !== gameData.issueScore) setVoteResults(() => gameData.issueScore)
 			setGameData({
 				...gameData,
 				playersScore: new Map(JSON.parse(gameData.playersScore as unknown as string)),
@@ -50,19 +52,16 @@ export const useGameDataSocket = (
 		})
 
 		socketRef.on('game:paused', ({ gameData }: { gameData: GameDataType }) => {
-			setVoteResults(()=> gameData.issueScore)
-			setGameStatus(() => gameData.status)
+			if (GameData.status !== gameData.status) setGameStatus(() => gameData.status)
+			if (GameData.issueScore !== gameData.issueScore) setVoteResults(() => gameData.issueScore)
 			setGameData(gameData)
 		})
 
-		socketRef.on(`game:get-status`, (status: GameState) => {
-			setGameStatus(()=> status)
-		})
 
-		socketRef.on('game:response-round-results', (res: Map<string, number>) => {
-			setVoteResults(res);
-			console.log('game: response rund res ', res);
-		})
+		// socketRef.on('game:response-round-results', (res: Map<string, number>) => {
+		// 	setVoteResults(res);
+		// 	console.log('game: response rund res ', res);
+		// })
 		
 		socketRef.on('game:response-game-results', async () =>{
 			const issues = await new IssuesAPI().getAllByLobbyId(lobbyId)

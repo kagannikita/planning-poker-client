@@ -23,6 +23,7 @@ import { getRoundResult } from '../../functions/getRoundResult'
 import GameResultField from '../../components/GameResultField/GameResultField'
 import ModalMessage from '../../components/ModalMessage/ModalMessage'
 import { IssuesAPI } from '../../api/IssuesAPI'
+import GameResultTableContainer from 'src/components/GameResultTable/GameResultContainer'
 
 export interface CurrentIssueType {
 	id: string
@@ -54,7 +55,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		id: dataSocket?.lobbyData?.issues.find(iss => iss.score === '-')?.id || '',
 	}
 
-	
+	console.log('swag');
+
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
 		if (!id) router.push('/404')
@@ -72,10 +74,10 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		emitResponseGameResults, 
 		setScore } = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer )
 
-	if (GameData.status !== GameState.roundFinished && 
-			dataSocket?.lobbyData?.settings?.timer && 
-			GameData.timer === 0)
-		setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
+	// if (GameData.status !== GameState.roundFinished && 
+	// 		dataSocket?.lobbyData?.settings?.timer && 
+	// 		GameData.timer === 0)
+	// 	setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
 	const player = dataSocket.lobbyData?.players
 		.find((player) => player.id === playerId) as IPlayer
@@ -126,15 +128,15 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					return iss
 				} else {
 					CurrentIssueId.id = 'finished'
-					return iss
+					return 
 				}
 			}
 			
 			return
 		})
 
-		if(!issue) return
-
+		console.log(CurrentIssueId.id, issue);
+		
 		if (CurrentIssueId.id !== 'finished') {
 			pauseRoundHandler()
 			await startRoundHandler()
@@ -146,6 +148,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 				modalIsOpen: true,
 			})
 		}
+		if(!issue) return
 		await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
 		dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
 	}
@@ -217,7 +220,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							)}
 						</Grid.Column>
 					</Grid.Row>
+
 					<GridRow centered>
+
 							{player?.role === Role.dealer && (
 								<>
 									<Button
@@ -256,10 +261,12 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								}}
 							/>
 						</Grid.Column>
+
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column>
 							<Timer time={GameData?.timer} timerNeeded={dataSocket.lobbyData?.settings.timer_needed} />
+							<GameResultTableContainer issues={dataSocket?.lobbyData?.issues} />
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">

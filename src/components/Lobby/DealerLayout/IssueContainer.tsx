@@ -1,6 +1,6 @@
-import React, { FC, useContext, useState } from 'react'
-import { Button, Container, Header as HeaderTitle } from 'semantic-ui-react'
-import Issue, { IssueProps } from '../Issue'
+import React, { FC, useState } from 'react'
+import { Container, Header as HeaderTitle } from 'semantic-ui-react'
+import Issue from '../Issue'
 import IssueCreate from '../IssueCardCreate'
 import s from '../lobby.module.scss'
 import ModalChangeIssue from '../ModalChangeIssue'
@@ -9,9 +9,8 @@ import ModalDeleteIssue from '../ModalDeleteIssue'
 import { ModalState } from './DealerLayout'
 import { IssueType, IssueTypeAPI } from '../../../interfaces/IssueType'
 import * as XLSX from 'xlsx'
-import { IssuesAPI } from '../../../api/IssuesAPI'
-import { CurrentIssueType } from 'src/pages/game/[id]'
 import { Role } from 'src/interfaces/LobbyTypes'
+import { uploadExcel } from 'src/functions/uploadExcel'
 
 interface IssueContainerProps {
 	type: 'lobby' | 'game'
@@ -67,26 +66,8 @@ const IssueContainer: FC<IssueContainerProps> = ({
 
 	const [isCurrentIdState, setIsCurrentIdState] = useState('');
 
-	const uploadExcel = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const promise = new Promise((resolve, reject) => {
-			const fileReader = new FileReader()
-			fileReader.readAsArrayBuffer(e.target.files![0])
-			fileReader.onload = (e) => {
-				const bufferArray = e.target!.result
-				const wb = XLSX.read(bufferArray, { type: 'buffer' })
-				const wsname = wb.SheetNames[0]
-				const ws = wb.Sheets[wsname]
-				const data = XLSX.utils.sheet_to_json(ws)
-				resolve(data)
-			}
-			fileReader.onerror = (error) => {
-				reject(error)
-			}
-		})
-		promise.then(async (d) => {
-			await new IssuesAPI().createByTable(d as IssueTypeAPI[], lobbyID)
-			createIssuesFromFile()
-		})
+	const uploadExcelHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		uploadExcel(e, createIssuesFromFile, lobbyID)
 	}
 
 	return (
@@ -133,7 +114,7 @@ const IssueContainer: FC<IssueContainerProps> = ({
 						<i className="upload icon"></i>
 						Upload issues
 					</label>
-					<input type="file" accept=".xlsx, .csv" className={s.inputExcel} onChange={uploadExcel} id="upload-btn" hidden />
+					<input type="file" accept=".xlsx, .csv" className={s.inputExcel} onChange={uploadExcelHandler} id="upload-btn" hidden />
 				</div>}
 
 			<ModalDeleteIssue

@@ -101,7 +101,6 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		return cards.map((card) => {
 			const cardFormData = new FormData()
 			cardFormData.set('name', card.name)
-			// cardFormData.set('image', fileCover, 'cover.png')
 			cardFormData.set('image', defaultCover)
 			cardFormData.set('is_cover', 'true')
 			cardFormData.set('settings', lobbyData.settings.id)
