@@ -25,9 +25,8 @@ export const useLobbyDataSocket = (
 	lobbyId: string,
 	playerId: string,
 ): IUseLobbyDataSocket => {
-
 	const [lobbyData, setLobbyData] = useState<any>()
-	
+
 	const [VotesQuanity, setVotesQuanity] = useState<VoteType>({
 		modalIsOpen: false,
 		playerId: '',
@@ -35,16 +34,15 @@ export const useLobbyDataSocket = (
 		kickPlayer: new Map<string, string[]>(),
 		currentPlayer: '',
 	})
-	
-	
+
 	useEffect(() => {
 		socketRef.emit('join', { player_id: playerId, lobby_id: lobbyId })
 
-		socketRef.on('lobby:get', ({ data, player_id, }: { data: ILobby; player_id: string }) => {
+		socketRef.on('lobby:get', ({ data, player_id }: { data: ILobby; player_id: string }) => {
 			setLobbyData(data)
 		})
 
-		socketRef.on('vote:data', ({ kickPlayer }: { kickPlayer: any}) => {
+		socketRef.on('vote:data', ({ kickPlayer }: { kickPlayer: any }) => {
 			setVotesQuanity({
 				...VotesQuanity,
 				kickPlayer: new Map(JSON.parse(kickPlayer)),
@@ -80,7 +78,6 @@ export const useLobbyDataSocket = (
 	}
 
 	const kickPlayer = (player_id: string) => {
-
 		socketRef.emit('player:delete', { player_id, lobby_id: lobbyId })
 	}
 
@@ -91,7 +88,6 @@ export const useLobbyDataSocket = (
 	}
 
 	const createIssue = ({ name, priority, score = '-' }: IssueType) => {
-
 		socketRef.emit('issue:added', {
 			name,
 			lobby_id: lobbyId,
@@ -103,8 +99,8 @@ export const useLobbyDataSocket = (
 	}
 
 	const updateIssue = (issue: IssueType) => {
-		console.log(issue, 'aaaaaaaaaaaaa');
-		
+		console.log(issue, 'aaaaaaaaaaaaa')
+
 		socketRef.emit('issue:update', {
 			...issue,
 			lobby_id: lobbyId,

@@ -23,7 +23,7 @@ interface IssueContainerProps {
 	updateIssue: ({ id, name, priority }: IssueType) => void
 	createIssuesFromFile: () => void
 	CurrentIssueId?: {
-		id: string;
+		id: string
 	}
 }
 

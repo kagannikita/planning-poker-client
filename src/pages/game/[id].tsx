@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Container, Button, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
-import {  IPlayer, Role } from '../../interfaces/LobbyTypes'
+import { Button, Container, Grid, GridRow, Header as HeaderTitle } from 'semantic-ui-react'
+import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 import { useRouter } from 'next/router'
-import { CurrentIssueContext } from '../../context/CurrentIssueContext'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
 import { useGameDataSocket, useLobbyDataSocket } from '../../hooks'
@@ -23,8 +22,7 @@ import { checkVoted, getMembersVote } from '../../functions/checkVote'
 import { getRoundResult } from '../../functions/getRoundResult'
 import GameResultField from '../../components/GameResultField/GameResultField'
 import ModalMessage from '../../components/ModalMessage/ModalMessage'
-import { IssueType } from 'src/interfaces/IssueType'
-import { IssuesAPI } from 'src/api/IssuesAPI'
+import { IssuesAPI } from '../../api/IssuesAPI'
 
 export interface CurrentIssueType {
 	id: string
@@ -39,7 +37,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const [playerId, setplayerId] = useState('')
 	const [BtnDisabled, setBtnDisabled] = useState(false)
 	const [pickCard, setPickCard] = useState<boolean>(false)
-	
+
 	const [modalkickPlayer, setModalKickPlayer] = useState<ModalState>({
 		modalIsOpen: false,
 		name: '',
@@ -121,7 +119,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		}
 		
 		// send
-		const issue  = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
+		const issue = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
 			if (iss.id === CurrentIssueId.id) {
 				if (arr[i + 1]) {
 					CurrentIssueId.id = arr[i + 1].id
@@ -187,6 +185,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 			image: dataSocket?.lobbyData?.settings.cards[0].image
 		}  
 	})
+
+	const getValue = (memberID: string): string => {
+		const value = Array.from(GameData.playersScore).find((item) => item[0] === memberID)
+		return value ? value[1] : ''
+	}
 
 	return (
 		<>
@@ -268,7 +271,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								let voteKickSettings: voteKickSettingsType = dataSocket.setVotesQuanity
 								let kickSettings: kickSettingsType = setModalKickPlayer
 
-								if (member.role === Role.dealer) return
+								if (member.role === Role.dealer && !dataSocket?.lobbyData?.settings.is_dealer_play) return
 								if (member.role === Role.spectator) return
 
 								if (player?.role === Role.dealer) {
@@ -281,7 +284,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								}
 								return (
 									<div className={cls.playerCard} key={member.id}>
-										<MemberGameStatus />
+										<MemberGameStatus gameStatus={GameData.status} cardValue={getValue(member.id)} />
 										<MemberItem
 											{...member}
 											isYou={member.id === playerId}

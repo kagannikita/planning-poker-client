@@ -39,3 +39,6 @@ body {
 		background-color: $blue-sky-second !important;
 	}
 }
+.ui.card.memberCard {
+	flex-grow: 1;
+}

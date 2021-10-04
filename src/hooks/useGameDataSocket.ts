@@ -17,7 +17,7 @@ export interface IGameDataSocket {
 export const useGameDataSocket = (
 	socketRef: SocketIOClient.Socket,
 	lobbyId: string,
-	timerProp: number
+	timerProp: number,
 	// playerId: string
 ): IGameDataSocket => {
 
@@ -45,7 +45,7 @@ export const useGameDataSocket = (
 		socketRef.on('game:started', async ({ gameData }: { gameData: GameDataType }) => {
 			setGameData({
 				...gameData,
-				playersScore: new Map(JSON.parse(gameData.playersScore as unknown as string))
+				playersScore: new Map(JSON.parse(gameData.playersScore as unknown as string)),
 			})
 		})
 
@@ -71,17 +71,17 @@ export const useGameDataSocket = (
 	}, [lobbyId, socketRef, setGameData, setVoteResults, setGameStatus])
 
 	const emitStartGame = (issueId: string) => {
-			setGameData(() => {
-			const	state = {
-					currIssueId: issueId,
-					timer: timerProp,
-					playersScore: new Map<string, string>(),
-					issueScore: {},
-					status: GameState.init,
-				}
-				socketRef.emit('game:start', { gameData: state, lobbyId })
-				return state
-			})
+		setGameData(() => {
+			const state = {
+				currIssueId: issueId,
+				timer: timerProp,
+				playersScore: new Map<string, string>(),
+				issueScore: {},
+				status: GameState.init,
+			}
+			socketRef.emit('game:start', { gameData: state, lobbyId })
+			return state
+		})
 	}
 
 	const emitContinueGame = () => {
