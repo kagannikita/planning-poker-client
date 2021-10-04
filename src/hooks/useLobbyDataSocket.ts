@@ -1,13 +1,15 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useBeforeUnload } from '.'
-import { ILobby } from '../interfaces/LobbyTypes'
+import { ILobby, IPlayer } from '../interfaces/LobbyTypes'
 import { IssueType } from '../interfaces/IssueType'
 import router from 'next/router'
 import { LocalStorageEnum } from '../interfaces/localStorageEnum'
 import { VoteType } from '../interfaces/VoteType'
+import { ChatMessageProps } from '../components/Chat/ChatMessage'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
+	chatMessages: ChatMessageProps[]
 	VotesQuanity: VoteType
 	setVotesQuanity: Dispatch<SetStateAction<VoteType>>
 	kickPlayer: (player_id: string) => void
@@ -18,15 +20,17 @@ export interface IUseLobbyDataSocket {
 	updateIssue: (issue: IssueType) => void
 	renameLobbyNameHandler: (name: string) => void
 	createIssuesFromFile: () => void
+	sendMessage: ({ message, yourMember, lobbyId }: any) => void
 }
 
 export const useLobbyDataSocket = (
 	socketRef: SocketIOClient.Socket,
 	lobbyId: string,
 	playerId: string,
+	messages?: ChatMessageProps[],
 ): IUseLobbyDataSocket => {
 	const [lobbyData, setLobbyData] = useState<any>()
-
+	const [chatMessages, setChatMessages] = useState(messages)
 	const [VotesQuanity, setVotesQuanity] = useState<VoteType>({
 		modalIsOpen: false,
 		playerId: '',
@@ -66,7 +70,12 @@ export const useLobbyDataSocket = (
 			console.log('kick voted', data)
 			setVotesQuanity(data)
 		})
-
+		socketRef.on('message:get', ({ message, members }: { message: string; members: IPlayer[] }) => {
+			const newValue = { message: message, members: members }
+			console.log('before: ', chatMessages)
+			setChatMessages((prevState) => [...prevState!, newValue])
+			console.log(newValue)
+		})
 		return () => {
 			if (socketRef === null) return
 			socketRef.disconnect()
@@ -86,7 +95,9 @@ export const useLobbyDataSocket = (
 		const currentPlayer = sessionStorage.getItem(LocalStorageEnum.playerid) as string
 		socketRef.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName, currentPlayer })
 	}
-
+	const sendMessage = ({ message, yourMember, lobbyId }: any) => {
+		socketRef.emit('chat:sendMsg', { message, yourMember, lobbyId })
+	}
 	const createIssue = ({ name, priority, score = '-' }: IssueType) => {
 		socketRef.emit('issue:added', {
 			name,
@@ -126,10 +137,12 @@ export const useLobbyDataSocket = (
 
 	return <IUseLobbyDataSocket>{
 		lobbyData,
+		chatMessages,
 		VotesQuanity,
 		redirectTo,
 		setVotesQuanity,
 		kickPlayer,
+		sendMessage,
 		kickPlayerByVote,
 		createIssue,
 		createIssuesFromFile,

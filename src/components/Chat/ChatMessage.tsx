@@ -4,7 +4,7 @@ import { IPlayer } from '../../interfaces/LobbyTypes'
 
 export interface ChatMessageProps {
 	id?: string
-	members: IPlayer[]
+	members: IPlayer[] | IPlayer
 	message: string
 	yourMember?: string
 }
@@ -47,29 +47,33 @@ const ChatMessage: ({ members, message, yourMember }: ChatMessageProps) => JSX.E
 				onMouseOver={hideContextMenu}
 				secondary="true"
 				tabIndex={0}
-				className={yourMember === members[0].id ? 'yourMessage' : ''}
+				className={yourMember === (members as IPlayer[])[0].id ? 'yourMessage' : ''}
 			>
 				<Comment.Avatar
 					src={
-						members[0].image === null
-							? `https://ui-avatars.com/api/?name=${members[0].firstName}+${members[0].lastName}`
-							: members[0].image
+						(members as IPlayer[])[0].image === null
+							? `https://ui-avatars.com/api/?name=${(members as IPlayer[])[0].firstName}+${
+								(members as IPlayer[])[0].lastName
+							  }`
+							: (members as IPlayer[])[0].image
 					}
 				/>
 				<Comment.Content>
-					<Comment.Author as="a">{members[0].firstName + ' ' + members[0].lastName}</Comment.Author>
+					<Comment.Author as="a">
+						{(members as IPlayer[])[0].firstName + ' ' + (members as IPlayer[])[0].lastName}
+					</Comment.Author>
 					<Comment.Metadata />
 					<Comment.Text>{message}</Comment.Text>
 				</Comment.Content>
 			</Comment>
 			{isShown && (
 				<div style={{ top: position.y, left: position.x }} className="custom-context-menu" role="menubar">
-					{yourMember === members[0].id && (
+					{yourMember === (members as IPlayer[])[0].id && (
 						<div role="menuitem" tabIndex={-1} className="option" onClick={() => editMessage('Edit')}>
 							Edit message
 						</div>
 					)}
-					{(yourMember === members[0].id || members[0].role !== 'dealer') && (
+					{(yourMember === (members as IPlayer[])[0].id || (members as IPlayer[])[0].role !== 'dealer') && (
 						<div role="menuitem" tabIndex={0} className="option" onClick={() => deleteMessage('Delete')}>
 							Delete message
 						</div>
