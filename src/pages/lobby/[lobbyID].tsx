@@ -39,7 +39,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			<Head>
 				<title>Lobby Page</title>
 			</Head>
-			<Chat messages={props.messages} yourMember={playerId} />
+			<Chat messages={props.messages} yourMember={playerId} lobbyId={props.lobbyId} />
 			{Loading ? (
 				<Loader loaderText="loading" />
 			) : (

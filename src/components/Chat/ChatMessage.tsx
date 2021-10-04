@@ -3,10 +3,10 @@ import { Comment } from 'semantic-ui-react'
 import { IPlayer } from '../../interfaces/LobbyTypes'
 
 export interface ChatMessageProps {
-	id: string
+	id?: string
 	members: IPlayer[]
 	message: string
-	yourMember: string
+	yourMember?: string
 }
 
 const ChatMessage: ({ members, message, yourMember }: ChatMessageProps) => JSX.Element = ({
