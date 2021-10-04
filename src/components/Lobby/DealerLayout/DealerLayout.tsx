@@ -47,7 +47,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		timerIsOn: true,
 		scoreType: 'story point',
 		scoreTypeShort: 'SP',
-		time: 150,
+		time: 10,
 		deckOfCards: 'fibonacci',
 	})
 
@@ -101,7 +101,6 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 		return cards.map((card) => {
 			const cardFormData = new FormData()
 			cardFormData.set('name', card.name)
-			// cardFormData.set('image', fileCover, 'cover.png')
 			cardFormData.set('image', defaultCover)
 			cardFormData.set('is_cover', 'true')
 			cardFormData.set('settings', lobbyData.settings.id)
@@ -192,8 +191,8 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 							loading={gameLoading}
 							disabled={gameLoading}
 							onClick={startGameHandler}
-							className={s.startBtn}
-						>
+							color="blue"
+							>
 							Start Game
 						</Button>
 					</Grid.Column>
@@ -217,6 +216,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 			</Container>
 			<IssueContainer
 				type="lobby"
+				playerRole={Role.dealer}
 				lobbyID={socketData.lobbyData?.id as string}
 				issues={lobbyData?.issues}
 				createIssue={createIssue}

@@ -47,24 +47,17 @@ const ChatMessage: ({ members, message, yourMember }: ChatMessageProps) => JSX.E
 				onMouseOver={hideContextMenu}
 				secondary="true"
 				tabIndex={0}
-				className={yourMember === (members as IPlayer[])[0].id ? 'yourMessage' : ''}
+				className={yourMember === members[0].id ? 'yourMessage' : 'message'}
 			>
-				<Comment.Avatar
-					src={
-						(members as IPlayer[])[0].image === null
-							? `https://ui-avatars.com/api/?name=${(members as IPlayer[])[0].firstName}+${
-								(members as IPlayer[])[0].lastName
-							  }`
-							: (members as IPlayer[])[0].image
-					}
-				/>
-				<Comment.Content>
-					<Comment.Author as="a">
-						{(members as IPlayer[])[0].firstName + ' ' + (members as IPlayer[])[0].lastName}
-					</Comment.Author>
-					<Comment.Metadata />
-					<Comment.Text>{message}</Comment.Text>
-				</Comment.Content>
+				<img src={
+					members[0].image === null
+						? `https://ui-avatars.com/api/?name=${members[0].firstName}+${members[0].lastName}`
+						: members[0].image
+				} alt="chat image" className="message__avatar" />
+				<div className="message-content">
+					<h4 className="message-content__author">{members[0].firstName + ' ' + members[0].lastName}</h4>
+					<p className="message-content__message">{message}</p>
+				</div>
 			</Comment>
 			{isShown && (
 				<div style={{ top: position.y, left: position.x }} className="custom-context-menu" role="menubar">

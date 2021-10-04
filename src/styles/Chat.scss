@@ -1,42 +1,17 @@
 @import 'colors';
 
-.comments .comment.yourMessage {
+.ui.comments .comment.message,
+.ui.comments .comment.yourMessage {
+	padding: 5px;
+	margin: 0;
+}
+.ui.comments .comment.yourMessage {
 	background: $light-dark;
 }
 
+.ui.comments .comment.message,
 .ui.comments .comment.yourMessage {
-	float: right;
-	display: flex;
-	flex-direction: row-reverse;
-
-	& .content .metadata {
-		margin-left: 0;
-		margin-right: 0.5em;
-	}
-}
-
-.ui.minimal.comments .comment.yourMessage .actions {
-	right: 0;
-	left: 5px;
-}
-
-.ui.comments .comment .avatar {
-	display: block;
-	width: 3.5em !important;
-	height: auto;
-	float: left;
-	margin: 0.2em 0 0;
-}
-
-.ui.comments .comment.yourMessage > .avatar ~ * {
-	margin: 0 0.5em 0 2.5rem;
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: column;
-}
-
-.ui.comments .comment.yourMessage .author {
-	margin-left: 43px;
+	max-width: 262px;
 }
 
 .chat {
@@ -49,7 +24,58 @@
 .chat__content {
 	display: flex;
 	flex-direction: column;
+	background-color: rgb(222, 228, 233);
 }
+.ui.comments .comment:first-child {
+	padding-top: 5px;
+}
+.ui.comments .comment.message {
+	padding: 5px;
+}
+
+.yourMessage {
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: flex-start;
+	& .message-content {
+		& .message-content__author{
+			text-align: right;
+		}
+		& .message-content__message{
+			margin: 0px 10px 0 0;
+			max-width: 180px;
+			white-space: normal;
+			word-wrap: break-word;
+			word-break: break-all;
+			text-align: right;
+		}
+	}
+
+}
+.message {
+	display: flex;
+}
+.message__avatar {
+	border-radius: 50px;
+	width: fit-content;
+	max-width: 60px;
+	
+}
+.message-content {
+	box-sizing: border-box;
+	width: fit-content;
+}
+.message-content__author {
+	flex-grow: 0;
+	width: auto;
+	margin: 10px 10px 5px 10px !important;
+}
+.message-content__message {
+	margin: 0px 10px 5px 10px;
+	width: 100%;
+}
+
+
 
 .custom-context-menu {
 	position: fixed;
