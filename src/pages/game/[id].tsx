@@ -136,13 +136,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		if(!issue) return
 
 		if (CurrentIssueId.id !== 'finished') {
-			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}`})
-			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}`})
 			pauseRoundHandler()
 			await startRoundHandler()
 		} else {
-			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
-			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
 			emitResponseGameResults()
 			setModalMessageState({
 				...modalMessageState,
@@ -150,6 +146,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 				modalIsOpen: true,
 			})
 		}
+		await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
+		dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
 	}
 
 	// func for dealer
