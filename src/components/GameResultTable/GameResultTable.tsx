@@ -20,7 +20,7 @@ const GameResultTable: FC<GameResultTable> =  ({issues}): JSX.Element => {
     <Table.Body>
       {
           issues?.map(iss=>(
-            <Table.Row>
+            <Table.Row key={iss.id}>
               <Table.Cell>{iss.name}</Table.Cell>
               <Table.Cell>{iss.priority}</Table.Cell>
               <Table.Cell>{iss.score}</Table.Cell>
