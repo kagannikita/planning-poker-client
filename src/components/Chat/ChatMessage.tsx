@@ -3,10 +3,10 @@ import { Comment } from 'semantic-ui-react'
 import { IPlayer } from '../../interfaces/LobbyTypes'
 
 export interface ChatMessageProps {
-	id: string
-	members: IPlayer[]
+	id?: string
+	members: IPlayer[] | IPlayer
 	message: string
-	yourMember: string
+	yourMember?: string
 }
 
 const ChatMessage: ({ members, message, yourMember }: ChatMessageProps) => JSX.Element = ({
@@ -47,29 +47,26 @@ const ChatMessage: ({ members, message, yourMember }: ChatMessageProps) => JSX.E
 				onMouseOver={hideContextMenu}
 				secondary="true"
 				tabIndex={0}
-				className={yourMember === members[0].id ? 'yourMessage' : ''}
+				className={yourMember === members[0].id ? 'yourMessage' : 'message'}
 			>
-				<Comment.Avatar
-					src={
-						members[0].image === null
-							? `https://ui-avatars.com/api/?name=${members[0].firstName}+${members[0].lastName}`
-							: members[0].image
-					}
-				/>
-				<Comment.Content>
-					<Comment.Author as="a">{members[0].firstName + ' ' + members[0].lastName}</Comment.Author>
-					<Comment.Metadata />
-					<Comment.Text>{message}</Comment.Text>
-				</Comment.Content>
+				<img src={
+					members[0].image === null
+						? `https://ui-avatars.com/api/?name=${members[0].firstName}+${members[0].lastName}`
+						: members[0].image
+				} alt="chat image" className="message__avatar" />
+				<div className="message-content">
+					<h4 className="message-content__author">{members[0].firstName + ' ' + members[0].lastName}</h4>
+					<p className="message-content__message">{message}</p>
+				</div>
 			</Comment>
 			{isShown && (
 				<div style={{ top: position.y, left: position.x }} className="custom-context-menu" role="menubar">
-					{yourMember === members[0].id && (
+					{yourMember === (members as IPlayer[])[0].id && (
 						<div role="menuitem" tabIndex={-1} className="option" onClick={() => editMessage('Edit')}>
 							Edit message
 						</div>
 					)}
-					{(yourMember === members[0].id || members[0].role !== 'dealer') && (
+					{(yourMember === (members as IPlayer[])[0].id || (members as IPlayer[])[0].role !== 'dealer') && (
 						<div role="menuitem" tabIndex={0} className="option" onClick={() => deleteMessage('Delete')}>
 							Delete message
 						</div>

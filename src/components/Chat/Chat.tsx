@@ -1,14 +1,17 @@
-import { Header, Comment } from 'semantic-ui-react'
+import { Header, Comment, Form, Button } from 'semantic-ui-react'
 import s from './Chat.module.scss'
-import ChatInput from './ChatInput'
 import ChatMessage, { ChatMessageProps } from './ChatMessage'
+import { MutableRefObject, useRef, useState } from 'react'
+import { IUseLobbyDataSocket } from '../../hooks/useLobbyDataSocket'
 
 interface ChatProps {
 	messages: ChatMessageProps[]
 	yourMember: string
+	lobbyId: string
+	socketData: IUseLobbyDataSocket
 }
-
-const Chat = ({ messages, yourMember }: ChatProps): JSX.Element => {
+const Chat = ({ messages, yourMember, lobbyId, socketData }: ChatProps): JSX.Element => {
+	const inputRef = useRef() as MutableRefObject<HTMLTextAreaElement>
 	return (
 		<Comment.Group minimal className={s.chatBlock}>
 			<Header as="h3" dividing>
@@ -29,7 +32,20 @@ const Chat = ({ messages, yourMember }: ChatProps): JSX.Element => {
 					})}
 				</div>
 			</div>
-			<ChatInput />
+			<Form reply>
+				<textarea className={s.textArea} ref={inputRef} name="messageArea" id="messageArea" />
+				<Button
+					content="Send"
+					htmlFor="messageArea"
+					labelPosition="left"
+					icon="chat"
+					primary
+					onClick={() => {
+						socketData.sendMessage({ message: inputRef.current.value, yourMember, lobbyId })
+						inputRef.current.value = ''
+					}}
+				/>
+			</Form>
 		</Comment.Group>
 	)
 }

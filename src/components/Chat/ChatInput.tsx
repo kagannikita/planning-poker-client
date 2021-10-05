@@ -6,7 +6,7 @@ const ChatInput: FC = () => {
 	return (
 		<Form reply>
 			<textarea className={s.textArea} name="message area" id="messageArea" cols={30} rows={10} />
-			<Button content="Send" htmlFor="messageArea" labelPosition="left" icon="chat" primary />
+			<Button content="Send" color="blue" htmlFor="messageArea" labelPosition="left" icon="chat" primary />
 		</Form>
 	)
 }

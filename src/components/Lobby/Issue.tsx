@@ -5,16 +5,19 @@ import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 import s from './lobby.module.scss'
 import { IssueType } from '../../interfaces/IssueType'
 import { CurrentIssueContext } from '../../context/CurrentIssueContext'
-import { CurrentIssueType } from '../../pages/game/[id]'
+import { CurrentIssueType } from 'src/pages/game/[id]'
+import { Role } from 'src/interfaces/LobbyTypes'
 
 export interface IssueProps extends IssueType {
 	type: 'lobby' | 'game'
-	isCurrent: boolean
+	playerRole: Role
+	isCurrentIdState: string
 	CurrentIssueId?: {
 		id: string
 	}
 	setModalChange: React.Dispatch<React.SetStateAction<IModalCreateIssue>>
 	setModalDelete: React.Dispatch<React.SetStateAction<ModalState>>
+	setIsCurrentIdState: React.Dispatch<React.SetStateAction<string>>
 }
 
 const Issue = ({
@@ -27,11 +30,14 @@ const Issue = ({
 	CurrentIssueId,
 	setModalChange,
 	setModalDelete,
+	setIsCurrentIdState,
 	lobby,
-	isCurrent,
+	isCurrentIdState,
+	playerRole
 }: IssueProps) => {
 	const clickOnCurrIssue = () => {
 		if (!CurrentIssueId) return
+		// setIsCurrentIdState(id)
 		CurrentIssueId.id = id
 	}
 
@@ -55,19 +61,23 @@ const Issue = ({
 	}
 
 	const styles = () => {
-		if (type === 'game' && isCurrent) {
-			return `${s.itemActive} ${s.item} ${s[`${priority}Priority`]}`
+		if (type === 'game' && isCurrentIdState === id ) {
+		return	`${s.itemActive} ${s.item} ${s[`${priority}Priority`]}`
 		} else {
 			return `${s.item} ${s[`${priority}Priority`]}`
 		}
 	}
 
 	return (
-		<Card centered className={styles()} onClick={type === 'game' ? clickOnCurrIssue : undefined}>
+		<Card
+			centered
+			className={styles()}
+			onClick={type === 'game' && playerRole === Role.dealer ? clickOnCurrIssue : undefined}
+		>
 			<Card.Content>
 				<Card.Header>{name}</Card.Header>
 				<Card.Meta>
-					<b>{type === 'game' && isCurrent && 'Current: '}</b>
+					<b>{type === 'game' && isCurrentIdState === id && 'Current: '}</b>
 				</Card.Meta>
 				<Card.Meta>Priority: {priority}</Card.Meta>
 				{type === 'game' && (
@@ -84,7 +94,15 @@ const Issue = ({
 							Change
 						</Button>
 					)}
-					<Button basic color="red" icon={'remove'} onClick={deleteHandler} size="mini" />
+					{
+						playerRole ===Role.dealer &&
+					<Button
+						basic
+						color="red"
+						icon={'remove'}
+						onClick={deleteHandler}
+						size="mini"
+					/>}
 				</Card.Description>
 			</Card.Content>
 		</Card>

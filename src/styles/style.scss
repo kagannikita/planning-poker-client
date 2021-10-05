@@ -22,7 +22,7 @@ body {
 
 .main-container {
 	height: auto;
-	padding-bottom: 5rem;
+	// padding-bottom: 5rem;
 }
 
 .mainLogo {
@@ -30,6 +30,15 @@ body {
 	margin-bottom: 50px !important;
 }
 
+.ui.blue.button {
+	color: white;
+	background-color: $blue-sky !important;
+	transition: background-color 0.3s !important;
+	&:hover {
+			color: white;
+		background-color: $blue-sky-second !important;
+	}
+}
 .ui.card.memberCard {
 	flex-grow: 1;
 }
