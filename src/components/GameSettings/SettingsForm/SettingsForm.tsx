@@ -39,6 +39,20 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings }) =>
 				</div>
 			</div>
 			<div className="form__item">
+				<label htmlFor="addNewPlayers" className="item-title">
+					Add new players automatically if the game has already started:
+				</label>
+				<div className="ui toggle checkbox">
+					<input
+						id="addNewPlayers"
+						type="checkbox"
+						// defaultChecked={settings.masterAsPlayer}
+						// onChange={() => setSettings({ ...settings, masterAsPlayer: !settings.masterAsPlayer })}
+					/>
+					<label htmlFor="addNewPlayers"> </label>
+				</div>
+			</div>
+			<div className="form__item">
 				<label htmlFor="timerIsOn" className="item-title">
 					Is timer needed:
 				</label>
