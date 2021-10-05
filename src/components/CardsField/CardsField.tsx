@@ -42,7 +42,6 @@ const CardsField: React.FC<CardsFieldProps> = ({
 		}
 		setIndexOfSelectedCard(index)
 	}
-	console.log(cards);
 
 
 	return (
@@ -58,7 +57,7 @@ const CardsField: React.FC<CardsFieldProps> = ({
 				return (
 					<Card
 						index={index}
-						key={name + 1}
+						key={Math.random()}
 						image={image}
 						cardIsOpen={cardIsOpen}
 						cardIsSelected={cardIsSelected}

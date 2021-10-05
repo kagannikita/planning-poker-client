@@ -37,7 +37,10 @@ export const useGameDataSocket = (
 		socketRef.on('game:joined', ({ gameData }: { gameData: GameDataType })=> {
 			console.log('gameData: joined ', gameData);
 			
-			setGameData(() => gameData)
+			setGameData({
+				...gameData,
+				// playersScore: new Map(JSON.parse(gameData.playersScore as unknown as string)) || new Map(),
+			})
 			setGameStatus(()=> gameData.status)
 			setVoteResults(()=>gameData.issueScore)
 		})
@@ -58,13 +61,20 @@ export const useGameDataSocket = (
 		})
 
 
-		// socketRef.on('game:response-round-results', (res: Map<string, number>) => {
-		// 	setVoteResults(res);
-		// 	console.log('game: response rund res ', res);
-		// })
+		socketRef.on('game:response-round-results', (res: any) => {
+			setVoteResults(res);
+			setGameData((state)=>state={
+				...GameData,
+				issueScore: res
+			})
+			console.log('game: response rund res ', res, GameData);
+		})
 		
 		socketRef.on('game:response-game-results', async () =>{
-			const issues = await new IssuesAPI().getAllByLobbyId(lobbyId)
+			console.log('gameResult');
+			
+			setGameStatus(GameState.gameFinished)
+			setGameData({...GameData, status: GameState.gameFinished})
 		})
 
 	}, [lobbyId, socketRef, setGameData, setVoteResults, setGameStatus])
@@ -106,10 +116,14 @@ export const useGameDataSocket = (
 	}
 
 	const setScore = (body: { score: string; playerId: string }) => {
+		console.log('set scored');
+		
 		socketRef.emit('game:set-score', { ...body, lobbyId })
 	}
 
 	const emitResponseGameResults = () => {
+		console.log('emit response game Result');
+		
 		socketRef.emit('game:get-game-results', {lobbyId})
 	}
 
