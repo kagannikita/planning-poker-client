@@ -41,7 +41,7 @@ const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
 	const updateHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault()
 		if (props.ModalChange.name && props.ModalChange.link) {
-			console.log('update ', props.ModalChange)
+			// console.log('update ', props.ModalChange)
 			await new IssuesAPI().update(props.ModalChange as unknown as IssueType)
 			props.updateIssue(props.ModalChange as unknown as IssueType)
 			closeHandler()

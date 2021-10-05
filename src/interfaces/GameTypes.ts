@@ -3,7 +3,7 @@ export enum GameState {
 	paused = 'paused',
 	started = 'started',
 	roundFinished = 'round-finished',
-	roundRepeat = 'round-repeat',
+	gameFinished = 'game-finised'
 }
 // Map<string, number>
 export interface GameDataType {

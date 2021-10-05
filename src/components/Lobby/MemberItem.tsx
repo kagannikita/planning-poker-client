@@ -1,11 +1,11 @@
-import React, {Dispatch, FC, SetStateAction} from 'react'
-import {Button, Card, Image} from 'semantic-ui-react'
+import React, { Dispatch, FC, SetStateAction } from 'react'
+import { Button, Card, Image } from 'semantic-ui-react'
 
-import {IPlayer} from '../../interfaces/LobbyTypes'
-import {ModalState} from './DealerLayout/DealerLayout'
+import { IPlayer } from '../../interfaces/LobbyTypes'
+import { ModalState } from './DealerLayout/DealerLayout'
 import s from './lobby.module.scss'
-import {LocalStorageEnum} from '../../interfaces/localStorageEnum'
-import {VoteType} from '../../interfaces/VoteType'
+import { LocalStorageEnum } from '../../interfaces/localStorageEnum'
+import { VoteType } from '../../interfaces/VoteType'
 
 const PLAYERS_FOR_VOTE = 3
 
@@ -60,12 +60,12 @@ const MemberItem: FC<MemberItemProps> = ({
 					className={isYou ? s.itsYou : ''}
 					src={image || `https://ui-avatars.com/api/?name=${firstName}+${lastName}`}
 				/>
-
 				<Card.Header>{`${firstName} ${lastName}`} </Card.Header>
 				<Card.Meta>{position}</Card.Meta>
 				<Card.Meta>{role}</Card.Meta>
-				{/* <Card.Description as="div"> */}4
-				<div className='ui'>
+				{/* <Card.Description as="div"> */}
+				<br></br>
+				<div className="ui">
 					{setKickPlayer && (
 						<Button
 							icon="delete"
@@ -101,7 +101,7 @@ const MemberItem: FC<MemberItemProps> = ({
 								}
 							/>
 						))}
-						</div>
+				</div>
 				{/* </Card.Description> */}
 			</Card.Content>
 		</Card>

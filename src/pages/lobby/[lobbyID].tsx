@@ -30,7 +30,6 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 	const sockets = useMemo(() => io(API.MAIN_API), [playerId])
 	const dataSocket = useLobbyDataSocket(sockets, props.lobbyId, playerId, props.messages)
 	const player = dataSocket?.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
-	console.log(dataSocket.chatMessages)
 	useEffect(() => {
 		setLoading(false)
 	}, [player])
@@ -45,6 +44,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 				yourMember={playerId}
 				lobbyId={props.lobbyId}
 				socketData={dataSocket as any}
+				myRole={player?.role}
 			/>
 			{Loading ? (
 				<Loader loaderText="loading" />

@@ -1,13 +1,15 @@
 import { SetStateAction, useEffect, useState } from 'react'
-import { IssuesAPI } from 'src/api/IssuesAPI';
+
 import { GameDataType, GameState } from '../interfaces/GameTypes'
+import { IssuesAPI } from '../api/IssuesAPI'
+import { Role } from 'src/interfaces/LobbyTypes'
 
 export interface IGameDataSocket {
 	GameData: GameDataType
 	gameStatus: GameState
 	voteResults: {}
-  setGameData: React.Dispatch<SetStateAction<GameDataType>>
-  emitStartGame: (issueId: string) => void
+	setGameData: React.Dispatch<SetStateAction<GameDataType>>
+	emitStartGame: (issueId: string) => void
 	emitPauseGame: () => void
 	emitContinueGame: () => void
 	emitResponseGameResults: () => void
@@ -18,11 +20,10 @@ export const useGameDataSocket = (
 	socketRef: SocketIOClient.Socket,
 	lobbyId: string,
 	timerProp: number,
-	// playerId: string
+	playerRole?: Role
 ): IGameDataSocket => {
-
-	const [gameStatus, setGameStatus] = useState<GameState>(GameState.init);
-	const [voteResults, setVoteResults] = useState({});
+	const [gameStatus, setGameStatus] = useState<GameState>(GameState.init)
+	const [voteResults, setVoteResults] = useState({})
 	const [GameData, setGameData] = useState<GameDataType>({
 		currIssueId: '',
 		timer: 0,
@@ -32,14 +33,17 @@ export const useGameDataSocket = (
 	})
 
 	useEffect(() => {
+
+		// if (playerRole === Role.dealer) {
+		// 	socketRef.emit('game:init', GameData)
+		// }
+
 		socketRef.emit('game:join')
 
-		socketRef.on('game:joined', ({ gameData }: { gameData: GameDataType })=> {
-			console.log('gameData: joined ', gameData);
-			
+		socketRef.on('game:joined', ({ gameData }: { gameData: GameDataType }) => {
 			setGameData(() => gameData)
-			setGameStatus(()=> gameData.status)
-			setVoteResults(()=>gameData.issueScore)
+			setGameStatus(() => gameData.status)
+			setVoteResults(() => gameData.issueScore)
 		})
 
 		socketRef.on('game:started', ({ gameData }: { gameData: GameDataType }) => {
@@ -57,16 +61,19 @@ export const useGameDataSocket = (
 			setGameData(gameData)
 		})
 
-
-		// socketRef.on('game:response-round-results', (res: Map<string, number>) => {
-		// 	setVoteResults(res);
-		// 	console.log('game: response rund res ', res);
-		// })
+		socketRef.on('game:response-round-results', (res: any) => {
+			setVoteResults(res);
+			setGameData((state)=>state={
+				...GameData,
+				issueScore: res
+			})
+		})
 		
 		socketRef.on('game:response-game-results', async () =>{
-			const issues = await new IssuesAPI().getAllByLobbyId(lobbyId)
+			
+			setGameStatus(GameState.gameFinished)
+			setGameData({...GameData, status: GameState.gameFinished})
 		})
-
 	}, [lobbyId, socketRef, setGameData, setVoteResults, setGameStatus])
 
 	const emitStartGame = (issueId: string) => {
@@ -99,17 +106,21 @@ export const useGameDataSocket = (
 	const emitPauseGame = () => {
 		setGameStatus(() => GameState.paused)
 		setGameData({
-				...GameData,
-				status: GameState.paused,
-			})
+			...GameData,
+			status: GameState.paused,
+		})
 		socketRef.emit('game:pause', { gameData: GameData, lobbyId })
 	}
 
 	const setScore = (body: { score: string; playerId: string }) => {
+		console.log('set scored');
+		
 		socketRef.emit('game:set-score', { ...body, lobbyId })
 	}
 
 	const emitResponseGameResults = () => {
+		console.log('emit response game Result');
+		
 		socketRef.emit('game:get-game-results', {lobbyId})
 	}
 
