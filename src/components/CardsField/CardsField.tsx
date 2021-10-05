@@ -58,7 +58,7 @@ const CardsField: React.FC<CardsFieldProps> = ({
 				return (
 					<Card
 						index={index}
-						key={name}
+						key={name + 1}
 						image={image}
 						cardIsOpen={cardIsOpen}
 						cardIsSelected={cardIsSelected}
