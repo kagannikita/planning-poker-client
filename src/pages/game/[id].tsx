@@ -49,13 +49,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
 
-	// console.log(dataSocket?.lobbyData);
-
-	const CurrentIssueId = {
-		id: dataSocket?.lobbyData?.issues.find((iss) => iss.score === '-')?.id || '',
+	const CurrentIssueId= {
+		id: dataSocket?.lobbyData?.issues.find(iss => iss.score === '-')?.id || 'finished',
 	}
-
-	console.log('swag')
 
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
@@ -75,10 +71,10 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setScore,
 	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer)
 
-	// if (GameData.status !== GameState.roundFinished &&
-	// 		dataSocket?.lobbyData?.settings?.timer &&
-	// 		GameData.timer === 0)
-	// 	setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
+	if (GameData.status !== GameState.roundFinished &&
+			dataSocket?.lobbyData?.settings?.timer &&
+			GameData.timer === 0)
+		setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
 	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 
@@ -114,6 +110,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 				modalIsOpen: true,
 			})
 		}
+		console.log('curr id ',CurrentIssueId.id);
 
 		// send
 		const issue = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
@@ -123,29 +120,29 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					return iss
 				} else {
 					CurrentIssueId.id = 'finished'
-					return
+					return iss
 				}
 			}
 
 			return
 		})
 
-		console.log(CurrentIssueId.id, issue)
-
+		
+		console.log(CurrentIssueId.id, issue);
+		if (issue) {
+			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
+			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
+		}
+		
 		if (CurrentIssueId.id !== 'finished') {
-			pauseRoundHandler()
 			await startRoundHandler()
 		} else {
 			emitResponseGameResults()
 			setModalMessageState({
-				...modalMessageState,
 				message: `Game finished`,
 				modalIsOpen: true,
 			})
 		}
-		if (!issue) return
-		await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
-		dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
 	}
 
 	// func for dealer
@@ -170,7 +167,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setPickCard(true)
 	}
 
-	const resultCards = Array.from(GameData?.playersScore).map((str) => {
+	const resultCards = Array.from((GameData?.playersScore)).map((str) => {
 		// console.log(str);
 
 		return {
@@ -301,7 +298,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								values={getRoundResult(GameData, dataSocket).values}
 							/>
 						) : (
-							<CardsField cardIsOpen={false} cards={resultCards} />
+								<CardsField cardIsOpen={false} cards={resultCards} />
 						)}
 					</GridRow>
 					{dataSocket.lobbyData?.settings.cards ? (
