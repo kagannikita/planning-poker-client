@@ -40,9 +40,9 @@ const CardsField: React.FC<CardsFieldProps> = ({
 		if (setSelectedCard) {
 			setSelectedCard(cards[index].name!)
 		}
-		// setIndexOfSelectedCard(index)
+		setIndexOfSelectedCard(index)
 	}
-	// console.log(cards);
+	console.log(cards)
 
 	return (
 		<div
@@ -50,27 +50,31 @@ const CardsField: React.FC<CardsFieldProps> = ({
 				gameData && gameData?.status !== GameState.started ? `${cls.cardsField} ${cls.cardsDisabled}` : cls.cardsField
 			}
 		>
-			{
-				// cards.length ? cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
-				// 	let cardIsSelected = false
-				// 	if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
-				// 	return (
-				// 		<Card
-				// 			index={index}
-				// 			key={name}
-				// 			image={image}
-				// 			cardIsOpen={cardIsOpen}
-				// 			cardIsSelected={cardIsSelected}
-				// 			selectCard={selectCard}
-				// 			pickCards={pickCards}
-				// 			scoreTypeShort={scoreTypeShort}
-				// 			cardValue={name}
-				// 			deleteCard={deleteCard}
-				// 			setCardValue={setCardValue}
-				// 		/>
-				// 	)
-				// }) : <><h2>No result cards</h2></>
-			}
+			{cards.length ? (
+				cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
+					let cardIsSelected = false
+					if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
+					return (
+						<Card
+							index={index}
+							key={name + 1}
+							image={image}
+							cardIsOpen={cardIsOpen}
+							cardIsSelected={cardIsSelected}
+							selectCard={selectCard}
+							pickCards={pickCards}
+							scoreTypeShort={scoreTypeShort}
+							cardValue={name}
+							deleteCard={deleteCard}
+							setCardValue={setCardValue}
+						/>
+					)
+				})
+			) : (
+				<>
+					<h2>No result cards</h2>
+				</>
+			)}
 		</div>
 	)
 }

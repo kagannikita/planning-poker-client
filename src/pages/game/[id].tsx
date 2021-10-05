@@ -55,7 +55,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		id: dataSocket?.lobbyData?.issues.find((iss) => iss.score === '-')?.id || '',
 	}
 
-	// console.log('swag');
+	console.log('swag')
 
 	useEffect(() => {
 		const id = sessionStorage.getItem(LocalStorageEnum.playerid)
@@ -130,7 +130,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 			return
 		})
 
-		// console.log(CurrentIssueId.id, issue);
+		console.log(CurrentIssueId.id, issue)
 
 		if (CurrentIssueId.id !== 'finished') {
 			pauseRoundHandler()
@@ -294,7 +294,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							})}
 						</Grid.Column>
 					</Grid>
-					<GridRow centered>
+					<GridRow centered id="resultField">
 						{gameStatus === GameState.roundFinished ? (
 							<GameResultField
 								cards={getRoundResult(GameData, dataSocket).cards}
