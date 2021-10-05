@@ -23,7 +23,7 @@ import { getRoundResult } from '../../functions/getRoundResult'
 import GameResultField from '../../components/GameResultField/GameResultField'
 import ModalMessage from '../../components/ModalMessage/ModalMessage'
 import { IssuesAPI } from '../../api/IssuesAPI'
-import GameResultTableContainer from 'src/components/GameResultTable/GameResultContainer'
+import GameResultTableContainer from '../../components/GameResultTable/GameResultContainer'
 
 export interface CurrentIssueType {
 	id: string
@@ -68,31 +68,29 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		emitContinueGame,
 		setGameData,
 		emitResponseGameResults,
-		setScore } = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer )
+		setScore,
+	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer)
 
 	if (GameData.status !== GameState.roundFinished &&
 			dataSocket?.lobbyData?.settings?.timer &&
 			GameData.timer === 0)
 		setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
-	const player = dataSocket.lobbyData?.players
-		.find((player) => player.id === playerId) as IPlayer
+	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 
 	const [modalMessageState, setModalMessageState] = useState({
 		modalIsOpen: false,
 		message: 'Something wrong',
 	})
 
-
 	const startRoundHandler = async () => {
-		if(GameData.status === GameState.init ||
-			GameData.status === GameState.roundFinished) {
-		pauseRoundHandler()
-		emitStartGame(CurrentIssueId.id)
-		setBtnDisabled(true)
-	} else {
-		emitContinueGame()
-		setBtnDisabled(true)
+		if (GameData.status === GameState.init || GameData.status === GameState.roundFinished) {
+			pauseRoundHandler()
+			emitStartGame(CurrentIssueId.id)
+			setBtnDisabled(true)
+		} else {
+			emitContinueGame()
+			setBtnDisabled(true)
 		}
 	}
 
@@ -104,11 +102,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const nextRoundHandler = async () => {
 		const resultsCard = getRoundResult(GameData, dataSocket)
 
-		if (
-			GameData.status === GameState.roundFinished &&
-			resultsCard.cards.length > 1
-		) {
-			return	setModalMessageState({
+		if (GameData.status === GameState.roundFinished && resultsCard.cards.length > 1) {
+			return setModalMessageState({
 				...modalMessageState,
 				message: `You cannot continue until you reach 
 				a unanimous decision. Repeat the round`,
@@ -131,6 +126,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 			return
 		})
+
 		
 		console.log(CurrentIssueId.id, issue);
 		if (issue) {
@@ -167,8 +163,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setScore({ score: cardName, playerId: playerId })
 	}
 
-
-
 	if (gameStatus === GameState.started && !pickCard) {
 		setPickCard(true)
 	}
@@ -179,7 +173,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		return {
 			name: `${str}`,
 			scoreTypeShort: dataSocket?.lobbyData?.settings.score_type_short,
-			image: dataSocket?.lobbyData?.settings.cards[0].image
+			image: dataSocket?.lobbyData?.settings.cards[0].image,
 		}
 	})
 
@@ -218,28 +212,25 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					</Grid.Row>
 
 					<GridRow centered>
-
-							{player?.role === Role.dealer && (
-								<>
-									<Button
-										color="blue"
-										disabled={GameData?.status !== GameState.roundFinished && BtnDisabled}
-										onClick={startRoundHandler}
-									>
-										Run Round
-									</Button>
-									<Button color="blue" disabled={!BtnDisabled} onClick={pauseRoundHandler}>
-										Pause Round
-									</Button>
-								</>
-							)}
-							{player?.role === Role.dealer &&
-							<Button color="blue"
-							disabled={gameStatus !== GameState.roundFinished}
-								onClick={nextRoundHandler}>
-									Next Round
+						{player?.role === Role.dealer && (
+							<>
+								<Button
+									color="blue"
+									disabled={GameData?.status !== GameState.roundFinished && BtnDisabled}
+									onClick={startRoundHandler}
+								>
+									Run Round
 								</Button>
-							}
+								<Button color="blue" disabled={!BtnDisabled} onClick={pauseRoundHandler}>
+									Pause Round
+								</Button>
+							</>
+						)}
+						{player?.role === Role.dealer && (
+							<Button color="blue" disabled={gameStatus !== GameState.roundFinished} onClick={nextRoundHandler}>
+								Next Round
+							</Button>
+						)}
 					</GridRow>
 					<Grid columns="1">
 						<Grid.Column>
@@ -257,7 +248,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								}}
 							/>
 						</Grid.Column>
-
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column>
@@ -301,7 +291,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 							})}
 						</Grid.Column>
 					</Grid>
-					<GridRow centered id='resultField'>
+					<GridRow centered id="resultField">
 						{gameStatus === GameState.roundFinished ? (
 							<GameResultField
 								cards={getRoundResult(GameData, dataSocket).cards}
@@ -312,15 +302,15 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 						)}
 					</GridRow>
 					{dataSocket.lobbyData?.settings.cards ? (
-							<GridRow centered>
-								<CardsField
-									cards={arrayOfCards}
-									pickCards={pickCard}
-									setSelectedCard={setSelectedCard}
-									gameData={GameData}
-								/>
-							</GridRow>
-						) : null}
+						<GridRow centered>
+							<CardsField
+								cards={arrayOfCards}
+								pickCards={pickCard}
+								setSelectedCard={setSelectedCard}
+								gameData={GameData}
+							/>
+						</GridRow>
+					) : null}
 					{/* player?.role === Role.dealer && dataSocket?.lobbyData?.settings.is_dealer_play */}
 				</Grid>
 			</Container>

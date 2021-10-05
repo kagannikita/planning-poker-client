@@ -3,15 +3,25 @@ import s from './Chat.module.scss'
 import ChatMessage, { ChatMessageProps } from './ChatMessage'
 import { MutableRefObject, useRef, useState } from 'react'
 import { IUseLobbyDataSocket } from '../../hooks/useLobbyDataSocket'
+import { IPlayer } from '../../interfaces/LobbyTypes'
+
+export interface IChat {
+	id?: string
+	lobbyId?: string
+	members?: IPlayer[]
+	message: string
+}
 
 interface ChatProps {
-	messages: ChatMessageProps[]
+	messages: IChat[]
 	yourMember: string
+	myRole: string
 	lobbyId: string
 	socketData: IUseLobbyDataSocket
 }
-const Chat = ({ messages, yourMember, lobbyId, socketData }: ChatProps): JSX.Element => {
+const Chat = ({ messages, yourMember, lobbyId, myRole, socketData }: ChatProps): JSX.Element => {
 	const inputRef = useRef() as MutableRefObject<HTMLTextAreaElement>
+	const [currMsg, setCurrMsg] = useState<string>('')
 	return (
 		<Comment.Group minimal className={s.chatBlock}>
 			<Header as="h3" dividing>
@@ -24,25 +34,45 @@ const Chat = ({ messages, yourMember, lobbyId, socketData }: ChatProps): JSX.Ele
 							<ChatMessage
 								key={mess.id}
 								id={mess.id}
-								members={mess.members}
+								members={mess.members!}
 								message={mess.message}
 								yourMember={yourMember}
+								myRole={myRole}
+								putMessage={() => {
+									inputRef.current.value = mess.message
+									setCurrMsg(mess.id!)
+								}}
+								deleteMessage={() => {
+									socketData.deleteMessage({ chatId: mess.id, lobbyId: lobbyId })
+								}}
 							/>
 						)
 					})}
 				</div>
 			</div>
 			<Form reply>
-				<textarea className={s.textArea} ref={inputRef} name="messageArea" id="messageArea" />
+				<textarea
+					className={s.textArea}
+					ref={inputRef}
+					placeholder="Write message..."
+					name="messageArea"
+					id="messageArea"
+				/>
 				<Button
-					content="Send"
+					content={currMsg === '' ? 'Send' : 'Update'}
 					htmlFor="messageArea"
 					labelPosition="left"
 					icon="chat"
 					primary
 					onClick={() => {
-						socketData.sendMessage({ message: inputRef.current.value, yourMember, lobbyId })
+						if (inputRef.current.value === '') return
+						if (currMsg === '') {
+							socketData.sendMessage({ message: inputRef.current.value, yourMember: yourMember, lobbyId: lobbyId })
+						} else {
+							socketData.putMessage({ message: inputRef.current.value, chatId: currMsg, lobbyId: lobbyId })
+						}
 						inputRef.current.value = ''
+						setCurrMsg('')
 					}}
 				/>
 			</Form>

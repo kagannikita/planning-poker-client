@@ -38,10 +38,10 @@
 	flex-direction: row-reverse;
 	align-items: flex-start;
 	& .message-content {
-		& .message-content__author{
+		& .message-content__author {
 			text-align: right;
 		}
-		& .message-content__message{
+		& .message-content__message {
 			margin: 0px 10px 0 0;
 			max-width: 180px;
 			white-space: normal;
@@ -50,7 +50,6 @@
 			text-align: right;
 		}
 	}
-
 }
 .message {
 	display: flex;
@@ -59,7 +58,6 @@
 	border-radius: 50px;
 	width: fit-content;
 	max-width: 60px;
-	
 }
 .message-content {
 	box-sizing: border-box;
@@ -74,21 +72,12 @@
 	margin: 0px 10px 5px 10px;
 	width: 100%;
 }
-
-
-
-.custom-context-menu {
-	position: fixed;
-	z-index: 10;
-	background: orange;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.actions.yourMessage {
+	left: 0 !important;
+	right: auto !important;
+	flex-direction: row !important;
 }
-
-.option {
-	cursor: pointer;
-	padding: 15px 30px;
-}
-
-.option:hover {
-	background: yellow;
+.ui.comments .comment .actions.yourMessage a:last-child {
+	margin-left: 0;
+	margin-right: 0.75em;
 }

@@ -6,10 +6,11 @@ import router from 'next/router'
 import { LocalStorageEnum } from '../interfaces/localStorageEnum'
 import { VoteType } from '../interfaces/VoteType'
 import { ChatMessageProps } from '../components/Chat/ChatMessage'
+import { IChat } from '../components/Chat/Chat'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
-	chatMessages: ChatMessageProps[]
+	chatMessages: IChat[]
 	VotesQuanity: VoteType
 	setVotesQuanity: Dispatch<SetStateAction<VoteType>>
 	kickPlayer: (player_id: string) => void
@@ -21,16 +22,18 @@ export interface IUseLobbyDataSocket {
 	renameLobbyNameHandler: (name: string) => void
 	createIssuesFromFile: () => void
 	sendMessage: ({ message, yourMember, lobbyId }: any) => void
+	putMessage: ({ message, chatId, lobbyId }: any) => void
+	deleteMessage: ({ chatId, lobbyId }: any) => void
 }
 
 export const useLobbyDataSocket = (
 	socketRef: SocketIOClient.Socket,
 	lobbyId: string,
 	playerId: string,
-	messages?: ChatMessageProps[],
+	messages?: IChat[],
 ): IUseLobbyDataSocket => {
 	const [lobbyData, setLobbyData] = useState<any>()
-	const [chatMessages, setChatMessages] = useState(messages)
+	const [chatMessages, setChatMessages] = useState<IChat[]>(messages!)
 	const [VotesQuanity, setVotesQuanity] = useState<VoteType>({
 		modalIsOpen: false,
 		playerId: '',
@@ -67,15 +70,13 @@ export const useLobbyDataSocket = (
 		socketRef.on('kick:voted', (data: VoteType) => {
 			data.currentPlayer = playerId
 			data.kickPlayer = new Map(JSON.parse(data.kickPlayer as unknown as string))
-			console.log('kick voted', data)
+			// console.log('kick voted', data)
 			setVotesQuanity(data)
 		})
-		socketRef.on('message:get', ({ message, members }: { message: string; members: IPlayer[] }) => {
-			const newValue = { message: message, members: members }
-			console.log('before: ', chatMessages)
-			setChatMessages((prevState) => [...prevState!, newValue])
-			console.log(newValue)
+		socketRef.on('message:get', (data: IChat[]) => {
+			setChatMessages(data)
 		})
+
 		return () => {
 			if (socketRef === null) return
 			socketRef.disconnect()
@@ -91,13 +92,22 @@ export const useLobbyDataSocket = (
 	}
 
 	const kickPlayerByVote = (voteToKickPlayerId: string, playerName: string) => {
-		console.log('kickVote', voteToKickPlayerId, playerName)
+		// console.log('kickVote', voteToKickPlayerId, playerName)
 		const currentPlayer = sessionStorage.getItem(LocalStorageEnum.playerid) as string
 		socketRef.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName, currentPlayer })
 	}
 	const sendMessage = ({ message, yourMember, lobbyId }: any) => {
 		socketRef.emit('chat:sendMsg', { message, yourMember, lobbyId })
 	}
+
+	const putMessage = ({ message, chatId, lobbyId }: any) => {
+		socketRef.emit('chat:changeMsg', { message, playerId, lobbyId, chatId })
+	}
+
+	const deleteMessage = ({ chatId, lobbyId }: any) => {
+		socketRef.emit('chat:deleteMsg', { chatId, lobbyId })
+	}
+
 	const createIssue = ({ name, priority, score = '-' }: IssueType) => {
 		socketRef.emit('issue:added', {
 			name,
@@ -110,7 +120,7 @@ export const useLobbyDataSocket = (
 	}
 
 	const updateIssue = (issue: IssueType) => {
-		console.log(issue, 'aaaaaaaaaaaaa')
+		// console.log(issue, 'aaaaaaaaaaaaa')
 
 		socketRef.emit('issue:update', {
 			...issue,
@@ -143,6 +153,8 @@ export const useLobbyDataSocket = (
 		setVotesQuanity,
 		kickPlayer,
 		sendMessage,
+		putMessage,
+		deleteMessage,
 		kickPlayerByVote,
 		createIssue,
 		createIssuesFromFile,
