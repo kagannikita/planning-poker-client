@@ -43,8 +43,8 @@ const CardsField: React.FC<CardsFieldProps> = ({
 		setIndexOfSelectedCard(index)
 	}
 	console.log(cards);
-	
-	
+
+
 	return (
 		<div
 			className={

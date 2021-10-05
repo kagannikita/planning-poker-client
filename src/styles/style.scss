@@ -42,3 +42,9 @@ body {
 .ui.card.memberCard {
 	flex-grow: 1;
 }
+
+#resultField {
+	min-height: 14rem;
+	background-color: rgba(0,0,0,0.2);
+	border-radius: 15px;
+}
