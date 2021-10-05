@@ -35,7 +35,7 @@ body {
 	background-color: $blue-sky !important;
 	transition: background-color 0.3s !important;
 	&:hover {
-			color: white;
+		color: white;
 		background-color: $blue-sky-second !important;
 	}
 }
@@ -45,6 +45,11 @@ body {
 
 #resultField {
 	min-height: 14rem;
-	background-color: rgba(0,0,0,0.2);
+	background-color: rgba(0, 0, 0, 0.2);
 	border-radius: 15px;
+}
+
+#modalAboutContentBox {
+	display: flex;
+	flex-direction: column;
 }

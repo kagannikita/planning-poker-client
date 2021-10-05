@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import { LocalStorageEnum } from '../interfaces/localStorageEnum'
 import PlayerAPI from '../api/PlayerApi'
 import LobbyAPI from '../api/LobbyApi'
+import ModalAbout from '../components/ModalAbout/ModalAbout'
 
 export type TModalState = {
 	dimmer: 'blurring' | undefined
