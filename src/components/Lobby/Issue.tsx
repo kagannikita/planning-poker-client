@@ -53,7 +53,7 @@ const Issue = ({
 
 	const styles = () => {
 		if (type === 'game' && isCurrentIdState === id ) {
-		return	`${s.itemActive} ${s.item} ${s[`${priority}Priority`]}`
+			return	`${s.itemActive} ${s.item} ${s[`${priority}Priority`]}`
 		} else {
 			return `${s.item} ${s[`${priority}Priority`]}`
 		}

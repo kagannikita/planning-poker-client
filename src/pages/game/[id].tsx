@@ -307,7 +307,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								values={getRoundResult(GameData, dataSocket).values}
 							/>
 						) : (
-								<CardsField cardIsOpen={false} cards={resultCards} />
+							<CardsField cardIsOpen={false} cards={resultCards} />
 						)}
 					</GridRow>
 					{dataSocket.lobbyData?.settings.cards ? (

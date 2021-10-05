@@ -50,26 +50,26 @@ const CardsField: React.FC<CardsFieldProps> = ({
 			}
 		>
 			{
-			cards.length ? cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
-				let cardIsSelected = false
-				if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
-				return (
-					<Card
-						index={index}
-						key={Math.random()}
-						image={image}
-						cardIsOpen={cardIsOpen}
-						cardIsSelected={cardIsSelected}
-						selectCard={selectCard}
-						pickCards={pickCards}
-						scoreTypeShort={scoreTypeShort}
-						cardValue={name}
-						deleteCard={deleteCard}
-						setCardValue={setCardValue}
-					/>
-				)
-			}) : <><h2>No result cards</h2></>
-		}
+				cards.length ? cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
+					let cardIsSelected = false
+					if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
+					return (
+						<Card
+							index={index}
+							key={Math.random()}
+							image={image}
+							cardIsOpen={cardIsOpen}
+							cardIsSelected={cardIsSelected}
+							selectCard={selectCard}
+							pickCards={pickCards}
+							scoreTypeShort={scoreTypeShort}
+							cardValue={name}
+							deleteCard={deleteCard}
+							setCardValue={setCardValue}
+						/>
+					)
+				}) : <><h2>No result cards</h2></>
+			}
 
 		</div>
 	)
