@@ -2,6 +2,7 @@ import { SetStateAction, useEffect, useState } from 'react'
 
 import { GameDataType, GameState } from '../interfaces/GameTypes'
 import { IssuesAPI } from '../api/IssuesAPI'
+import { Role } from 'src/interfaces/LobbyTypes'
 
 export interface IGameDataSocket {
 	GameData: GameDataType
@@ -19,7 +20,7 @@ export const useGameDataSocket = (
 	socketRef: SocketIOClient.Socket,
 	lobbyId: string,
 	timerProp: number,
-	// playerId: string
+	playerRole?: Role
 ): IGameDataSocket => {
 	const [gameStatus, setGameStatus] = useState<GameState>(GameState.init)
 	const [voteResults, setVoteResults] = useState({})
@@ -32,11 +33,14 @@ export const useGameDataSocket = (
 	})
 
 	useEffect(() => {
+
+		// if (playerRole === Role.dealer) {
+		// 	socketRef.emit('game:init', GameData)
+		// }
+
 		socketRef.emit('game:join')
 
 		socketRef.on('game:joined', ({ gameData }: { gameData: GameDataType }) => {
-			// console.log('gameData: joined ', gameData);
-
 			setGameData(() => gameData)
 			setGameStatus(() => gameData.status)
 			setVoteResults(() => gameData.issueScore)
@@ -63,11 +67,9 @@ export const useGameDataSocket = (
 				...GameData,
 				issueScore: res
 			})
-			console.log('game: response rund res ', res, GameData);
 		})
 		
 		socketRef.on('game:response-game-results', async () =>{
-			console.log('gameResult');
 			
 			setGameStatus(GameState.gameFinished)
 			setGameData({...GameData, status: GameState.gameFinished})

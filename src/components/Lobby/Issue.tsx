@@ -1,11 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React from 'react'
 import { Button, Card } from 'semantic-ui-react'
 import { ModalState } from './DealerLayout/DealerLayout'
 import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 import s from './lobby.module.scss'
 import { IssueType } from '../../interfaces/IssueType'
-import { CurrentIssueContext } from '../../context/CurrentIssueContext'
-import { CurrentIssueType } from 'src/pages/game/[id]'
 import { Role } from 'src/interfaces/LobbyTypes'
 
 export interface IssueProps extends IssueType {
@@ -27,19 +25,12 @@ const Issue = ({
 	type,
 	link,
 	score,
-	CurrentIssueId,
 	setModalChange,
 	setModalDelete,
-	setIsCurrentIdState,
 	lobby,
 	isCurrentIdState,
 	playerRole
 }: IssueProps) => {
-	const clickOnCurrIssue = () => {
-		if (!CurrentIssueId) return
-		// setIsCurrentIdState(id)
-		CurrentIssueId.id = id
-	}
 
 	const deleteHandler = () => {
 		setModalDelete({
@@ -72,7 +63,6 @@ const Issue = ({
 		<Card
 			centered
 			className={styles()}
-			onClick={type === 'game' && playerRole === Role.dealer ? clickOnCurrIssue : undefined}
 		>
 			<Card.Content>
 				<Card.Header>{name}</Card.Header>

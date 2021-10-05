@@ -45,6 +45,11 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		id: '',
 	})
 
+	const [modalMessageState, setModalMessageState] = useState({
+		modalIsOpen: false,
+		message: 'Something wrong',
+	})
+
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
 
 	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
@@ -58,7 +63,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		if (!id) router.push('/404')
 		setplayerId(id as string)
 	}, [playerId, router])
-
+	
+	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
+	
 	const {
 		GameData,
 		gameStatus,
@@ -69,19 +76,25 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setGameData,
 		emitResponseGameResults,
 		setScore,
-	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer)
+	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer, player?.role)
 
-	if (GameData.status !== GameState.roundFinished &&
+	
+
+	if (GameData?.status !== GameState.roundFinished &&
 			dataSocket?.lobbyData?.settings?.timer &&
 			GameData.timer === 0)
 		setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
-	const player = dataSocket.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 
-	const [modalMessageState, setModalMessageState] = useState({
-		modalIsOpen: false,
-		message: 'Something wrong',
-	})
+	if (GameData?.status === GameState.gameFinished) {
+		console.log('gameFinished');
+		
+		// setModalMessageState({
+		// 	...modalMessageState
+		// 	message: `Game finished`,
+		// 	modalIsOpen: true,
+		// })
+	} 
 
 	const startRoundHandler = async () => {
 		if (GameData.status === GameState.init || GameData.status === GameState.roundFinished) {
@@ -137,11 +150,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		if (CurrentIssueId.id !== 'finished') {
 			await startRoundHandler()
 		} else {
+			console.log('next else ');
+			
 			emitResponseGameResults()
-			setModalMessageState({
-				message: `Game finished`,
-				modalIsOpen: true,
-			})
 		}
 	}
 
@@ -166,10 +177,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	if (gameStatus === GameState.started && !pickCard) {
 		setPickCard(true)
 	}
-
+	
 	const resultCards = Array.from((GameData?.playersScore)).map((str) => {
-		// console.log(str);
-
 		return {
 			name: `${str}`,
 			scoreTypeShort: dataSocket?.lobbyData?.settings.score_type_short,
@@ -252,7 +261,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					<Grid columns="1">
 						<Grid.Column>
 							<Timer time={GameData?.timer} timerNeeded={dataSocket.lobbyData?.settings.timer_needed} />
-							<GameResultTableContainer issues={dataSocket?.lobbyData?.issues} />
+							<GameResultTableContainer  issues={dataSocket?.lobbyData?.issues} />
 						</Grid.Column>
 					</Grid>
 					<Grid columns="1">

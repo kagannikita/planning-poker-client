@@ -63,7 +63,8 @@ const MemberItem: FC<MemberItemProps> = ({
 				<Card.Header>{`${firstName} ${lastName}`} </Card.Header>
 				<Card.Meta>{position}</Card.Meta>
 				<Card.Meta>{role}</Card.Meta>
-				{/* <Card.Description as="div"> */}4
+				{/* <Card.Description as="div"> */}
+				<br></br>
 				<div className="ui">
 					{setKickPlayer && (
 						<Button
