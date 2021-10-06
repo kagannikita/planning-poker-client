@@ -1,0 +1,171 @@
+import React, { useState } from 'react'
+import { Button, Form, Modal } from 'semantic-ui-react'
+import { ILobby, IPlayer, Role } from '../../interfaces/LobbyTypes'
+import Loader from '../loader/loader'
+import { setPlayerID } from '../../store/playerData'
+import { useDispatch } from 'react-redux'
+import PlayerAPI from '../../api/PlayerApi'
+import { TModalState } from '../../pages'
+
+interface ModalProps {
+	isClosed: boolean
+	setModalState: React.Dispatch<React.SetStateAction<TModalState>>
+	dimmer: 'blurring' | undefined
+	formName: string
+	createLobby: (lobbyName: string) => Promise<ILobby>
+	connectToLobby: (lobbyID: string, playerID: string) => Promise<void>
+	lobbyID: string
+	isLoading: boolean
+	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const ModalConnectToGame = ({
+	isClosed,
+	setModalState,
+	dimmer,
+	formName,
+	createLobby,
+	connectToLobby,
+	lobbyID,
+	isLoading,
+	setIsLoading,
+}: ModalProps): JSX.Element => {
+	const defaultAvatarUrl =
+		'https://res.cloudinary.com/plaining-poker/image/upload/v1631009714/free-icon-avatar-close-up-15235_x5s1vy.svg'
+	const [avatarPicUrl, setAvatarPicUrl] = useState<string>(defaultAvatarUrl)
+	const dispatch = useDispatch()
+
+	const onClose = (): void => {
+		setAvatarPicUrl(defaultAvatarUrl)
+		setModalState({
+			isClosed: !isClosed,
+			dimmer: undefined,
+			formName: '',
+		})
+	}
+
+	const getRole = (formData: FormData) => {
+		if (formName === 'Create new game') {
+			formData.append('role', Role.dealer)
+		} else {
+			const role = formData.get('role')
+			if (role === null) {
+				formData.set('role', Role.player)
+			} else {
+				formData.set('role', Role.spectator)
+			}
+		}
+		return formData
+	}
+
+	const setAvatar = (input: EventTarget & HTMLInputElement) => {
+		const reader = new FileReader()
+		reader.readAsDataURL(input.files![0])
+		reader.onload = () => {
+			setAvatarPicUrl(reader.result as string)
+		}
+	}
+
+	const writePlayer = async (player: FormData): Promise<IPlayer> => {
+		return new PlayerAPI().createPlayer(player)
+	}
+
+	const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		const formData = new FormData(e.target as HTMLFormElement)
+
+		setIsLoading(true)
+
+		writePlayer(getRole(formData)).then((player) => {
+			if (formName === 'Create new game') {
+				createLobby(`Lobby by ${player.firstName}`).then((lobby) => {
+					connectToLobby(lobby.id, player.id).then(() => {
+						setIsLoading(false)
+						onClose()
+					})
+					dispatch(setPlayerID(player.id))
+				})
+			} else if (lobbyID) {
+				connectToLobby(lobbyID, player.id).then(() => {
+					setIsLoading(false)
+					onClose()
+				})
+				dispatch(setPlayerID(player.id))
+			}
+		})
+	}
+
+	const symbol = ' ~ ! @ # $ % * () _ — + = | : ; " \' ` < > , . ? / ^'
+	const inputTitle = `can not be made of only numbers or consist of symbols ${symbol}.
+							The name\`s lengths is up to 30 symbols`
+
+	return (
+		<Modal size="tiny" dimmer={dimmer} open={!isClosed} onClose={onClose}>
+			<Modal.Header className="modal-title">
+				<h2 className="heading">{formName}</h2>
+				{formName === 'Create new game' ? null : (
+					<Form.Radio form="regForm" name="role" toggle label="Connect as Observer" />
+				)}
+			</Modal.Header>
+			<Form id="regForm" style={{ padding: '2rem' }} onSubmit={(e) => formSubmit(e)}>
+				<Modal.Content className="wrapper-content">
+					<Form.Field>
+						<label htmlFor="firstName">
+							First Name
+							<span style={{ color: 'red' }}> *</span>
+						</label>
+						<input
+							id="firstName"
+							placeholder="First Name"
+							name="firstName"
+							type="text"
+							required
+							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
+							maxLength={30}
+							title={`First Name ${inputTitle}`}
+						/>
+					</Form.Field>
+					{isLoading ? <Loader loaderText="Loading" /> : null}
+					<Form.Field>
+						<label htmlFor="lastName">Last Name</label>
+						<input
+							id="lastName"
+							placeholder="Last Name"
+							name="lastName"
+							type="text"
+							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
+							maxLength={30}
+							title={`Last Name ${inputTitle}`}
+						/>
+					</Form.Field>
+					<Form.Field>
+						<label htmlFor="position">Your job position</label>
+						<input
+							id="position"
+							placeholder="Senior software engineer"
+							name="position"
+							type="text"
+							pattern="^[a-zA-Zа-яА-Я0-9 ]{0,30}[a-zA-Zа-яА-Я]+[ 0-9]*$"
+							maxLength={30}
+							title={`Position ${inputTitle}`}
+						/>
+					</Form.Field>
+					<Form.Field className="avatar-field">
+						<label htmlFor="avatar">Photo:</label>
+						<div className="avatar" style={{ backgroundImage: `url(${avatarPicUrl})` }}>
+							<Form.Input id="avatar" name="image" type="file" accept="image/*" onChange={(e) => setAvatar(e.target)} />
+						</div>
+					</Form.Field>
+				</Modal.Content>
+				<Modal.Actions>
+					<Button negative onClick={onClose}>
+						Cancel
+					</Button>
+					<Button positive type="submit">
+						Confirm
+					</Button>
+				</Modal.Actions>
+			</Form>
+		</Modal>
+	)
+}
+ModalConnectToGame.getServerSideProps = () => {}

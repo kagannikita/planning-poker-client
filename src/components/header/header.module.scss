@@ -1,0 +1,67 @@
+@import '../../styles/colors.scss';
+
+.header {
+	position: relative;
+	width: 100%;
+	height: 70px;
+}
+
+.header__first_row {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	width: 100%;
+	height: 50px;
+	background-color: $primary-blue;
+}
+
+.header__second_row {
+	width: 100%;
+	height: 20px;
+	background-color: white;
+}
+
+.header__logo-link {
+	position: absolute;
+	top: 15px;
+	left: 64px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	& img {
+		width: inherit;
+		height: inherit;
+	}
+}
+
+.mainHeader {
+	position: absolute;
+	opacity: 0;
+	z-index: 0;
+	top: 0;
+	left: 0;
+	max-width: 1px;
+	max-height: 1px;
+	padding: 0;
+	margin: 0;
+}
+
+.navList {
+	margin-right: 50px;
+	list-style-type: none;
+	display: flex;
+}
+
+.headerBtn {
+	cursor: pointer;
+	border: none;
+	background: none;
+	color: #1ba0f8;
+	font-size: 1.5rem;
+	font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+
+	&:hover {
+		color: #4fb7ff;
+	}
+}

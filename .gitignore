@@ -1,0 +1,10 @@
+build/
+node_modules
+yarn.lock
+yarn.error.log
+package-lock.json
+.idea
+*.iml
+.next
+.env
+coverage/

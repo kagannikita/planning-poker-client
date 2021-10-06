@@ -1,0 +1,16 @@
+.nav {
+	background: white;
+	height: 2em;
+}
+
+.content {
+	opacity: 0;
+	transition: 0.5s;
+	height: min-content;
+	padding-bottom: 5rem;	
+	//height: calc(100vh - 4em);
+}
+
+.fadeIn {
+	opacity: 1;
+}

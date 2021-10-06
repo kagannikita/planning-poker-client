@@ -1,0 +1,110 @@
+@import '../../styles/colors.scss';
+
+.title {
+	margin: 2rem auto !important;
+}
+
+.itemsContainer {
+	display: flex !important;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	justify-content: flex-start !important;
+}
+
+.item {
+	overflow: hidden;
+	max-width: 253px !important;
+	align-self: stretch;
+	margin: 1rem !important;
+}
+
+.itsYou {
+	border: 1px solid rgba($color: teal, $alpha: 1) !important;
+}
+
+.lowPriority {
+	background-color: rgba($color: rgb(184, 235, 184), $alpha: 0.7) !important;
+}
+
+.averagePriority {
+	background-color: rgba($color: rgb(221, 221, 165), $alpha: 0.7) !important;
+}
+.highPriority {
+	background-color: rgba($color: rgb(226, 157, 157), $alpha: 0.7) !important;
+}
+.itemActive {
+	border: 1px solid teal !important;
+}
+
+
+.itemCreateDescription {
+	// height: 100%;
+	// padding-top: 3rem;
+}
+.uploadIssues {
+	display: block;
+	overflow: hidden;
+}
+
+.inputExcel {
+	display: none;
+}
+.lobbyInfo {
+	border-radius: 5px;
+	background-color: $secondary !important;
+}
+
+.lobbyInfo__userInfo {
+	box-shadow: 0 0 4px rgb(0 0 0) !important;
+}
+
+.copyBtn {
+	background-color: $secondary !important;
+
+	&:hover {
+		background-color: #126cb4 !important;
+	}
+}
+
+.startBtn {
+	background-color: #46b5ff !important;
+
+	&:hover {
+		background-color: #126cb4 !important;
+	}
+}
+
+.cancelBtn {
+	background-color: #000000 !important;
+
+	&:hover {
+		background-color: #570f0f !important;
+	}
+}
+
+.copyBtn,
+.cancelBtn,
+.startBtn {
+	transition: all .3s !important;
+	&:active {
+		box-shadow: inset 0 0 4px 2px rgba(0, 0, 0, 0.7) !important;
+	}
+}
+
+@media (max-width: 1000px) {
+	.itemsContainer {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.item {
+		max-width: 100% !important;
+		margin: 0.5rem !important;
+	}
+}
+
+@media (max-width: 768px) {
+	.item {
+		margin: 0 auto 1rem auto !important;
+	}
+}
