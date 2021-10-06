@@ -59,12 +59,12 @@ export const useLobbyDataSocket = (
 		//// redirects
 
 		socketRef.on('player:deleted', () => {
-			router.push(API.FRONT_LINK)
+			router.push(API.FRONT_API)
 			sessionStorage.clear()
 		})
 
 		socketRef.on('redirect:get', (body: { pathname: string; lobbyId: string }) => {
-			router.push(API.FRONT_LINK + body.pathname + body.lobbyId)
+			router.push(API.FRONT_API + body.pathname + body.lobbyId)
 		})
 
 		socketRef.on('kick:voted', (data: VoteType) => {
