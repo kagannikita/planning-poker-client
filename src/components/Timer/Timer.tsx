@@ -1,5 +1,5 @@
 import React from 'react'
-import {ISettings} from '../../interfaces/SettingsTypes'
+import { ISettings } from '../../interfaces/SettingsTypes'
 
 type TimerProps = {
 	time: number
@@ -58,6 +58,7 @@ const Timer: React.FC<TimerProps> = ({ time, isDisabled = true, settings, setSet
 						type="number"
 						className="timer__inp"
 						id="seconds"
+						data-testid="seconds"
 						disabled={isDisabled}
 						value={seconds}
 						onChange={(e) => setSeconds(e.target.value)}

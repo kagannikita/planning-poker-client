@@ -38,18 +38,6 @@ const MemberItem: FC<MemberItemProps> = ({
 }): JSX.Element => {
 	const members = playersQuanity?.filter((player) => player.role === 'player').length
 
-	// const styles = () => {
-	// 	if (role !== 'dealer' && isYou) {
-	// 		return `${s.item} ${s.itsYou}`
-	// 	}
-	// 	if (role === 'dealer' && isYou) {
-	// 		return `${s.itsYou}`
-	// 	}
-	// 	return ''
-	// }
-
-	// role !== 'dealer' ? s.item : ''
-
 	return (
 		<Card centered={centered} className={`${s.item} memberCard`}>
 			<Card.Content className={s.lobbyInfo__userInfo}>

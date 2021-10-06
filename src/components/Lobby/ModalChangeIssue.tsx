@@ -1,8 +1,8 @@
-import React, {FC, useState} from 'react'
-import {Button, Form, Modal} from 'semantic-ui-react'
-import {IssuesAPI} from '../../api/IssuesAPI'
-import {IssueType} from '../../interfaces/IssueType'
-import {IModalCreateIssue} from './DealerLayout/IssueContainer'
+import React, { FC, useState } from 'react'
+import { Button, Form, Modal } from 'semantic-ui-react'
+import { IssuesAPI } from '../../api/IssuesAPI'
+import { IssueType } from '../../interfaces/IssueType'
+import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 
 interface ModalChangeIssueProps {
 	ModalChange: IModalCreateIssue
@@ -41,7 +41,6 @@ const ModalChangeIssue: FC<ModalChangeIssueProps> = (props) => {
 	const updateHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault()
 		if (props.ModalChange.name && props.ModalChange.link) {
-			// console.log('update ', props.ModalChange)
 			await new IssuesAPI().update(props.ModalChange as unknown as IssueType)
 			props.updateIssue(props.ModalChange as unknown as IssueType)
 			closeHandler()

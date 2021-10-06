@@ -1,6 +1,5 @@
 import { IUseLobbyDataSocket } from "../hooks/useLobbyDataSocket"
 
-
 export const getMembersVote = (id: string, dataSocket: IUseLobbyDataSocket) => {
 	if (dataSocket.VotesQuanity.kickPlayer.get(id)) {
 		return dataSocket.VotesQuanity.kickPlayer.get(id)!.length

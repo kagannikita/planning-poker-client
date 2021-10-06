@@ -1,6 +1,6 @@
 import { Header, Comment, Form, Button } from 'semantic-ui-react'
 import s from './Chat.module.scss'
-import ChatMessage, { ChatMessageProps } from './ChatMessage'
+import ChatMessage from './ChatMessage'
 import { MutableRefObject, useRef, useState } from 'react'
 import { IUseLobbyDataSocket } from '../../hooks/useLobbyDataSocket'
 import { IPlayer } from '../../interfaces/LobbyTypes'
@@ -22,7 +22,6 @@ interface ChatProps {
 const Chat = ({ messages, yourMember, lobbyId, myRole, socketData }: ChatProps): JSX.Element => {
 	const inputRef = useRef() as MutableRefObject<HTMLTextAreaElement>
 	const [currMsg, setCurrMsg] = useState<string>('')
-	console.log(messages)
 	return (
 		<Comment.Group minimal className={s.chatBlock}>
 			<Header as="h3" dividing>
@@ -30,7 +29,7 @@ const Chat = ({ messages, yourMember, lobbyId, myRole, socketData }: ChatProps):
 			</Header>
 			<div className="chat">
 				<div className="chat__content">
-					{messages.map((mess) => {
+					{messages?.map((mess) => {
 						return (
 							<ChatMessage
 								key={mess.id}

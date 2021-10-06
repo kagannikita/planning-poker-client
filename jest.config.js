@@ -1,5 +1,6 @@
 module.exports={
     testEnvironment: 'jsdom',
+    moduleDirectories: ["node_modules", "src"],
     moduleNameMapper: {
         "^.+\\.(css|less|scss|svg|png|jpg)$": "identity-obj-proxy",
         "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
@@ -14,10 +15,6 @@ module.exports={
             'ts-jest': {
                 isolatedModules: true,
             },
-            "branches": 60,
-            "functions": 60,
-            "lines": 60,
-            "statements": 60
         }
     }
 }

@@ -15,9 +15,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 	return (
 		<Provider store={store}>
 			<TransitionLayout>
-				{/* <div style={{ position: 'relative' }}> */}
 				<Component {...pageProps} />
-				{/* </div> */}
 			</TransitionLayout>
 		</Provider>
 	)

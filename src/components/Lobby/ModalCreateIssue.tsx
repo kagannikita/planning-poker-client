@@ -1,8 +1,8 @@
-import React, {FC, useState} from 'react'
-import {Button, Form, Modal} from 'semantic-ui-react'
-import {IModalCreateIssue} from './DealerLayout/IssueContainer'
-import {IssueType} from '../../interfaces/IssueType'
-import {IssuesAPI} from '../../api/IssuesAPI'
+import React, { FC, useState } from 'react'
+import { Button, Form, Modal } from 'semantic-ui-react'
+import { IModalCreateIssue } from './DealerLayout/IssueContainer'
+import { IssueType } from '../../interfaces/IssueType'
+import { IssuesAPI } from '../../api/IssuesAPI'
 
 interface ModalCreateIssueProps {
 	ModalCreate: IModalCreateIssue

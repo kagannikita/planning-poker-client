@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Comment } from 'semantic-ui-react'
 import { IPlayer, Role } from '../../interfaces/LobbyTypes'
 

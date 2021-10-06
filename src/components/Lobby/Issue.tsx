@@ -62,6 +62,7 @@ const Issue = ({
 	return (
 		<Card
 			centered
+			data-testid='issue'
 			className={styles()}
 		>
 			<Card.Content>

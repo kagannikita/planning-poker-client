@@ -1,11 +1,12 @@
-import {Dispatch, SetStateAction, useEffect, useState} from 'react'
-import {useBeforeUnload} from '.'
-import {ILobby} from '../interfaces/LobbyTypes'
-import {IssueType} from '../interfaces/IssueType'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useBeforeUnload } from '.'
+import { ILobby } from '../interfaces/LobbyTypes'
+import { IssueType } from '../interfaces/IssueType'
 import router from 'next/router'
-import {LocalStorageEnum} from '../interfaces/localStorageEnum'
-import {VoteType} from '../interfaces/VoteType'
-import {IChat} from '../components/Chat/Chat'
+import { LocalStorageEnum } from '../interfaces/localStorageEnum'
+import { VoteType } from '../interfaces/VoteType'
+import { IChat } from '../components/Chat/Chat'
+import { API } from '../interfaces/ApiEnum'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
@@ -55,21 +56,18 @@ export const useLobbyDataSocket = (
 			})
 		})
 
-		//// redirects
-
 		socketRef.on('player:deleted', () => {
-			router.push(`http://localhost:3000/`)
+			router.push(API.FRONT_LINK)
 			sessionStorage.clear()
 		})
 
 		socketRef.on('redirect:get', (body: { pathname: string; lobbyId: string }) => {
-			router.push(`http://localhost:3000/` + body.pathname + body.lobbyId)
+			router.push(API.FRONT_LINK + body.pathname + body.lobbyId)
 		})
 
 		socketRef.on('kick:voted', (data: VoteType) => {
 			data.currentPlayer = playerId
 			data.kickPlayer = new Map(JSON.parse(data.kickPlayer as unknown as string))
-			// console.log('kick voted', data)
 			setVotesQuanity(data)
 		})
 
@@ -92,7 +90,6 @@ export const useLobbyDataSocket = (
 	}
 
 	const kickPlayerByVote = (voteToKickPlayerId: string, playerName: string) => {
-		// console.log('kickVote', voteToKickPlayerId, playerName)
 		const currentPlayer = sessionStorage.getItem(LocalStorageEnum.playerid) as string
 		socketRef.emit('vote-kick', { voteToKickPlayerId, lobby_id: lobbyId, playerName, currentPlayer })
 	}
@@ -108,7 +105,7 @@ export const useLobbyDataSocket = (
 		socketRef.emit('chat:deleteMsg', { chatId, lobbyId })
 	}
 
-	const createIssue = ({ name, priority, score = '-' }: IssueType) => {
+	const createIssue = ({ name }: IssueType) => {
 		socketRef.emit('issue:added', {
 			name,
 			lobby_id: lobbyId,
@@ -120,8 +117,6 @@ export const useLobbyDataSocket = (
 	}
 
 	const updateIssue = (issue: IssueType) => {
-		// console.log(issue, 'aaaaaaaaaaaaa')
-
 		socketRef.emit('issue:update', {
 			...issue,
 			lobby_id: lobbyId,

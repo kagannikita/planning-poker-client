@@ -24,6 +24,7 @@ import ModalMessage from '../../components/ModalMessage/ModalMessage'
 import { IssuesAPI } from '../../api/IssuesAPI'
 import GameResultTableContainer from '../../components/GameResultTable/GameResultContainer'
 import CardsField from '../../components/CardsField/CardsField'
+import Chat from 'src/components/Chat/Chat'
 
 export interface CurrentIssueType {
 	id: string
@@ -53,9 +54,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
 
 	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
-
-	const CurrentIssueId = {
-		id: dataSocket?.lobbyData?.issues.find((iss) => iss.score === '-')?.id || 'finished',
+	
+	const CurrentIssueId= {
+		id: dataSocket?.lobbyData?.issues.find(iss => iss.score === '-')?.id || 'finished',
 	}
 
 	useEffect(() => {
@@ -69,22 +70,22 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const {
 		GameData,
 		gameStatus,
-		voteResults,
 		emitPauseGame,
 		emitStartGame,
 		emitContinueGame,
 		setGameData,
 		emitResponseGameResults,
 		setScore,
-	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer, player?.role)
+	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer)
 
-	if (GameData?.status !== GameState.roundFinished && dataSocket?.lobbyData?.settings?.timer && GameData.timer === 0)
+	if (GameData?.status !== GameState.roundFinished &&
+			dataSocket?.lobbyData?.settings?.timer &&
+			GameData.timer === 0)
 		setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
 	if (GameData?.status === GameState.gameFinished) {
-
+		alert('Game finished! Now you can download results')
 		// setModalMessageState({
-		// 	...modalMessageState
 		// 	message: `Game finished`,
 		// 	modalIsOpen: true,
 		// })
@@ -108,16 +109,15 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const nextRoundHandler = async () => {
 		const resultsCard = getRoundResult(GameData, dataSocket)
-
-		if (GameData.status === GameState.roundFinished && resultsCard.cards.length > 1) {
+		
+		if (GameData.status === GameState.roundFinished && resultsCard.cards.length === 0 ||  resultsCard.cards.length > 1) {
 			return setModalMessageState({
 				...modalMessageState,
 				message: `You cannot continue until you reach 
 				a unanimous decision. Repeat the round`,
 				modalIsOpen: true,
 			})
-		}
-
+		} 
 		// send
 		const issue = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
 			if (iss.id === CurrentIssueId.id) {
@@ -132,8 +132,8 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 			return
 		})
-
-		if (issue) {
+		
+		if (issue && resultsCard.cards[0]) {
 			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
 			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
 		}
@@ -141,7 +141,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		if (CurrentIssueId.id !== 'finished') {
 			await startRoundHandler()
 		} else {
-
 			emitResponseGameResults()
 		}
 	}
@@ -242,9 +241,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								removeIssue={dataSocket.removeIssue}
 								updateIssue={dataSocket.updateIssue}
 								CurrentIssueId={CurrentIssueId}
-								createIssuesFromFile={function (): void {
-									throw new Error('Function not implemented.')
-								}}
+								createIssuesFromFile={dataSocket?.createIssuesFromFile}
 							/>
 						</Grid.Column>
 					</Grid>
@@ -334,6 +331,13 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					voteData={dataSocket.VotesQuanity}
 				/>
 			)}
+			<Chat
+				messages={dataSocket?.chatMessages}
+				yourMember={playerId}
+				lobbyId={props.lobbyId}
+				socketData={dataSocket}
+				myRole={player?.role}
+			/>
 		</>
 	)
 }
