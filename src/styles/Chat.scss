@@ -6,7 +6,7 @@
 	margin: 0;
 }
 .ui.comments .comment.yourMessage {
-	background: $light-dark;
+	background: var(--light-dark);
 }
 
 .ui.comments .comment.message,
@@ -69,7 +69,7 @@
 	margin: 10px 10px 5px 10px !important;
 }
 .message-content__message {
-	margin: 0px 10px 5px 10px;
+	margin: 0 10px 5px 10px;
 	width: 100%;
 }
 .actions.yourMessage {

@@ -16,7 +16,9 @@ const CopyLink = (): JSX.Element => {
 
 	return (
 		<>
-			<HeaderTitle as="h3">Lobby link:</HeaderTitle>
+			<HeaderTitle className="heading" as="h3">
+				Lobby link:
+			</HeaderTitle>
 			<div className="ui action input">
 				<input ref={input} type="text" placeholder="Lobby link" readOnly defaultValue={locationState} />
 				<button onClick={clickCopy} className={'ui teal right labeled icon button ' + cls.copyBtn}>

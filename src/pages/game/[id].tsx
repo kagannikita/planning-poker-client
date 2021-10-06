@@ -24,7 +24,7 @@ import ModalMessage from '../../components/ModalMessage/ModalMessage'
 import { IssuesAPI } from '../../api/IssuesAPI'
 import GameResultTableContainer from '../../components/GameResultTable/GameResultContainer'
 import CardsField from '../../components/CardsField/CardsField'
-import Chat from 'src/components/Chat/Chat'
+import Chat from '../../components/Chat/Chat'
 
 export interface CurrentIssueType {
 	id: string
@@ -54,9 +54,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
 
 	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
-	
-	const CurrentIssueId= {
-		id: dataSocket?.lobbyData?.issues.find(iss => iss.score === '-')?.id || 'finished',
+
+	const CurrentIssueId = {
+		id: dataSocket?.lobbyData?.issues.find((iss) => iss.score === '-')?.id || 'finished',
 	}
 
 	useEffect(() => {
@@ -78,9 +78,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setScore,
 	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer)
 
-	if (GameData?.status !== GameState.roundFinished &&
-			dataSocket?.lobbyData?.settings?.timer &&
-			GameData.timer === 0)
+	if (GameData?.status !== GameState.roundFinished && dataSocket?.lobbyData?.settings?.timer && GameData.timer === 0)
 		setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
 	if (GameData?.status === GameState.gameFinished) {
@@ -109,15 +107,18 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 	const nextRoundHandler = async () => {
 		const resultsCard = getRoundResult(GameData, dataSocket)
-		
-		if (GameData.status === GameState.roundFinished && resultsCard.cards.length === 0 ||  resultsCard.cards.length > 1) {
+
+		if (
+			(GameData.status === GameState.roundFinished && resultsCard.cards.length === 0) ||
+			resultsCard.cards.length > 1
+		) {
 			return setModalMessageState({
 				...modalMessageState,
 				message: `You cannot continue until you reach 
 				a unanimous decision. Repeat the round`,
 				modalIsOpen: true,
 			})
-		} 
+		}
 		// send
 		const issue = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
 			if (iss.id === CurrentIssueId.id) {
@@ -132,7 +133,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 			return
 		})
-		
+
 		if (issue && resultsCard.cards[0]) {
 			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
 			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
@@ -185,11 +186,15 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 			<Container>
 				<Grid columns="3">
 					<Grid.Row>
-						<HeaderTitle as="h1">Game Page</HeaderTitle>
+						<HeaderTitle as="h1" className="heading">
+							Game Page
+						</HeaderTitle>
 					</Grid.Row>
 					<Grid.Row>
 						<Grid.Column>
-							<HeaderTitle as="h3">Scram master</HeaderTitle>
+							<HeaderTitle as="h3" className="heading">
+								Scram master
+							</HeaderTitle>
 							{dataSocket.lobbyData?.players.map((member) => {
 								if (member.role === Role.player) return
 								if (member.role === Role.spectator) return
@@ -253,7 +258,9 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 					</Grid>
 					<Grid columns="1">
 						<Grid.Column stretched>
-							<HeaderTitle as="h2">Players:</HeaderTitle>
+							<HeaderTitle as="h2" className="heading">
+								Players:
+							</HeaderTitle>
 							{dataSocket.lobbyData?.players.map((member) => {
 								let voteKickSettings: voteKickSettingsType = dataSocket.setVotesQuanity
 								let kickSettings: kickSettingsType = setModalKickPlayer

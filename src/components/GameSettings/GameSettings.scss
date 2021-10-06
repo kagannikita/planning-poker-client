@@ -32,8 +32,12 @@
 	transition: 0.4s background-color ease;
 	&:hover {
 		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-		background-color: rgb(62, 149, 253);
+		background-color: var(--card-back);
 	}
+}
+
+.cards-settings__title {
+	color: var(--font-heading);
 }
 
 .cards-settings__inp {

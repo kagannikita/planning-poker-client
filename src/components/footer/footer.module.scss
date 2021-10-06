@@ -8,7 +8,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-around;
-	background: $primary-blue;
+	background: var(--primary-blue);
 	height: 70px;
 }
 
@@ -69,7 +69,6 @@
 	background-image: url('https://edwinkirabo.me/UI/Images/GitHub%20Icon.png');
 	background-size: cover;
 }
-
 
 @media screen and(max-width: 640px) {
 	.contact-list {

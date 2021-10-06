@@ -26,7 +26,7 @@
 }
 
 .timer__title {
-	color: rgba(0, 0, 0, 0.5);
+	color: var(--font-heading);
 }
 
 .timer__inp {
@@ -40,6 +40,8 @@
 	outline-color: #46b5ff;
 	outline-width: 1px;
 	cursor: pointer;
+	background-color: var(--main-color);
+	color: var(--font-heading);
 
 	&:focus {
 		box-shadow: inset 0 0 2px 3px rgba(50, 50, 50, 0.2);

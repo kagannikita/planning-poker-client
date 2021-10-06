@@ -1,29 +1,29 @@
 import cls from './MemberGameStatus.module.scss'
 
 import React from 'react'
-import {GameState} from "../../interfaces/GameTypes";
+import { GameState } from '../../interfaces/GameTypes'
 
 type MemberGameStatusProps = {
-	gameStatus: GameState,
+	gameStatus: GameState
 	cardValue: string
 }
 
-const MemberGameStatus: React.FC<MemberGameStatusProps> = ({gameStatus, cardValue}: MemberGameStatusProps) => {
-	let value = 'No answer';
+const MemberGameStatus: React.FC<MemberGameStatusProps> = ({ gameStatus, cardValue }: MemberGameStatusProps) => {
+	let value = 'No answer'
 	if (gameStatus === GameState.init) {
-		value = 'Waiting';
+		value = 'Waiting'
 	}
 	if (gameStatus === GameState.started) {
-		if(cardValue) {
-			value = 'Ready';
+		if (cardValue) {
+			value = 'Ready'
 		} else {
-			value = 'In progress';
+			value = 'In progress'
 		}
 	}
 	if (gameStatus === GameState.roundFinished && cardValue) {
-		value = cardValue;
+		value = cardValue
 	}
-	return <div className={cls.MemberGameStatus}>{value}</div>
+	return <div className={[cls.MemberGameStatus, 'heading'].join(' ')}>{value}</div>
 }
 
 export default MemberGameStatus

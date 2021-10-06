@@ -9,6 +9,17 @@ import Footer from '../footer/footer'
 export default function TransitionLayout({ children, title = 'Planning Poker' }: ILayout) {
 	const [displayChildren, setDisplayChildren] = useState(children)
 	const [transitionStage, setTransitionStage] = useState('fadeOut')
+	const [theme, setTheme] = useState('light')
+
+	const handleTheme = () => {
+		setTheme(theme === 'light' ? 'dark' : 'light')
+		localStorage.setItem('theme', theme)
+	}
+
+	useEffect(() => {
+		const localTheme = localStorage.getItem('theme')
+		if (typeof localTheme !== 'string') localStorage.setItem('theme', theme)
+	})
 
 	useEffect(() => {
 		setTransitionStage('fadeIn')
@@ -19,12 +30,12 @@ export default function TransitionLayout({ children, title = 'Planning Poker' }:
 	}, [children, setDisplayChildren, displayChildren])
 
 	return (
-		<>
+		<div className={theme}>
 			<Head>
 				<title>{title}</title>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 			</Head>
-			<HeaderBlock />
+			<HeaderBlock theme={theme} handleTheme={handleTheme} />
 			<main
 				onTransitionEnd={() => {
 					if (transitionStage === 'fadeOut') {
@@ -37,6 +48,6 @@ export default function TransitionLayout({ children, title = 'Planning Poker' }:
 				{displayChildren}
 			</main>
 			<Footer />
-		</>
+		</div>
 	)
 }
