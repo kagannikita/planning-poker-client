@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
-import { IPlayer } from '../../../interfaces/LobbyTypes'
+import React from 'react'
+import {Button, Container, Grid, Header as HeaderTitle} from 'semantic-ui-react'
+import {IPlayer} from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
 import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 import ModalKickPlayerByVote from '../ModalKickPlayerByVote'
-import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
-import { checkVoted, getMembersVote } from 'src/functions/checkVote'
+import {IUseLobbyDataSocket} from '../../../hooks/useLobbyDataSocket'
+import {checkVoted, getMembersVote} from '../../../functions/checkVote'
 
 interface MemberLayoutProps {
 	socketData: IUseLobbyDataSocket

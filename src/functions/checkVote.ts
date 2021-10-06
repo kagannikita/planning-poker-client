@@ -1,4 +1,4 @@
-import { IUseLobbyDataSocket } from "src/hooks/useLobbyDataSocket"
+import { IUseLobbyDataSocket } from "../hooks/useLobbyDataSocket"
 
 
 export const getMembersVote = (id: string, dataSocket: IUseLobbyDataSocket) => {

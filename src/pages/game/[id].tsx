@@ -82,7 +82,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		setGameData({ ...GameData, timer: dataSocket?.lobbyData?.settings?.timer })
 
 	if (GameData?.status === GameState.gameFinished) {
-		console.log('gameFinished')
 
 		// setModalMessageState({
 		// 	...modalMessageState
@@ -118,7 +117,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 				modalIsOpen: true,
 			})
 		}
-		console.log('curr id ', CurrentIssueId.id)
 
 		// send
 		const issue = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
@@ -135,7 +133,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 			return
 		})
 
-		console.log(CurrentIssueId.id, issue)
 		if (issue) {
 			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
 			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
@@ -144,7 +141,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		if (CurrentIssueId.id !== 'finished') {
 			await startRoundHandler()
 		} else {
-			console.log('next else ')
 
 			emitResponseGameResults()
 		}

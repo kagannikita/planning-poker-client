@@ -1,8 +1,7 @@
-import { SetStateAction, useEffect, useState } from 'react'
+import {SetStateAction, useEffect, useState} from 'react'
 
-import { GameDataType, GameState } from '../interfaces/GameTypes'
-import { IssuesAPI } from '../api/IssuesAPI'
-import { Role } from 'src/interfaces/LobbyTypes'
+import {GameDataType, GameState} from '../interfaces/GameTypes'
+import {Role} from '../interfaces/LobbyTypes'
 
 export interface IGameDataSocket {
 	GameData: GameDataType
@@ -68,9 +67,9 @@ export const useGameDataSocket = (
 				issueScore: res
 			})
 		})
-		
+
 		socketRef.on('game:response-game-results', async () =>{
-			
+
 			setGameStatus(GameState.gameFinished)
 			setGameData({...GameData, status: GameState.gameFinished})
 		})
@@ -114,13 +113,13 @@ export const useGameDataSocket = (
 
 	const setScore = (body: { score: string; playerId: string }) => {
 		console.log('set scored');
-		
+
 		socketRef.emit('game:set-score', { ...body, lobbyId })
 	}
 
 	const emitResponseGameResults = () => {
 		console.log('emit response game Result');
-		
+
 		socketRef.emit('game:get-game-results', {lobbyId})
 	}
 
