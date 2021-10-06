@@ -72,6 +72,7 @@ export const useLobbyDataSocket = (
 			// console.log('kick voted', data)
 			setVotesQuanity(data)
 		})
+
 		socketRef.on('message:get', (data: IChat[]) => {
 			setChatMessages(data)
 		})
