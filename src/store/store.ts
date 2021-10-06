@@ -2,17 +2,17 @@ import { playerSlice, PlayerState } from './playerData'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
 import { useMemo } from 'react'
-import { issuesSlice, IssuesState } from './IssuesSlice'
+// import { issuesSlice, IssuesState } from './IssuesSlice'
 
 export interface RootState {
-	issues: IssuesState
+	// issues: IssuesState
 	player: PlayerState
 }
 
 const initialState: RootState = {
-	issues: {
-		issues: [],
-	},
+	// issues: {
+	// 	issues: [],
+	// },
 	player: {
 		playerID: '',
 	},
@@ -37,7 +37,7 @@ let store: Store | undefined
 function initStore(preloadedState = initialState) {
 	const rootReducer = combineReducers({
 		player: playerSlice.reducer,
-		issues: issuesSlice.reducer,
+		// issues: issuesSlice.reducer,
 	})
 	return createStore(rootReducer, preloadedState, composeWithDevTools(applyMiddleware()))
 }

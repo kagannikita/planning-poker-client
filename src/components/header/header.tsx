@@ -7,9 +7,7 @@ export const HeaderBlock = () => {
 		<header className={s.header}>
 			<h1 className={s.mainHeader}>Planning Poker</h1>
 			<div className={s['header__first_row']} />
-			{/* <div className={s['header__second_row']} /> */}
 			<div className={s['header__logo-link']}>
-				{/*<Image src={headerLogo} alt="Header logo" />*/}
 				<Logo />
 			</div>
 		</header>

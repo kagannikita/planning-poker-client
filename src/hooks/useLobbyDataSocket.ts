@@ -7,6 +7,7 @@ import { LocalStorageEnum } from '../interfaces/localStorageEnum'
 import { VoteType } from '../interfaces/VoteType'
 import { ChatMessageProps } from '../components/Chat/ChatMessage'
 import { IChat } from '../components/Chat/Chat'
+import { API } from 'src/interfaces/ApiEnum'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
@@ -59,12 +60,12 @@ export const useLobbyDataSocket = (
 		//// redirects
 
 		socketRef.on('player:deleted', () => {
-			router.push(`http://localhost:3000/`)
+			router.push(API.FRONT_LINK)
 			sessionStorage.clear()
 		})
 
 		socketRef.on('redirect:get', (body: { pathname: string; lobbyId: string }) => {
-			router.push(`http://localhost:3000/` + body.pathname + body.lobbyId)
+			router.push(API.FRONT_LINK + body.pathname + body.lobbyId)
 		})
 
 		socketRef.on('kick:voted', (data: VoteType) => {
