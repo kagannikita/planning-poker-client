@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ISettings } from '../../interfaces/SettingsTypes'
 
 type TimerProps = {

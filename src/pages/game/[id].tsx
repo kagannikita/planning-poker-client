@@ -69,16 +69,13 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const {
 		GameData,
 		gameStatus,
-		voteResults,
 		emitPauseGame,
 		emitStartGame,
 		emitContinueGame,
 		setGameData,
 		emitResponseGameResults,
 		setScore,
-	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer, player?.role)
-
-	
+	} = useGameDataSocket(socket, props.lobbyId, dataSocket?.lobbyData?.settings?.timer)
 
 	if (GameData?.status !== GameState.roundFinished &&
 			dataSocket?.lobbyData?.settings?.timer &&
@@ -87,8 +84,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 
 	if (GameData?.status === GameState.gameFinished) {
-		console.log('gameFinished');
-		
+		alert('Game finished! Now you can download results')
 		// setModalMessageState({
 		// 	...modalMessageState
 		// 	message: `Game finished`,
@@ -123,8 +119,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 				modalIsOpen: true,
 			})
 		}
-		console.log('curr id ',CurrentIssueId.id);
-
 		// send
 		const issue = dataSocket?.lobbyData?.issues.find((iss, i, arr) => {
 			if (iss.id === CurrentIssueId.id) {
@@ -139,9 +133,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 
 			return
 		})
-
 		
-		console.log(CurrentIssueId.id, issue);
 		if (issue) {
 			await new IssuesAPI().update({ ...issue, score: `${resultsCard.cards[0].name}` })
 			dataSocket.updateIssue({ ...issue, score: `${resultsCard.cards[0].name}` })
@@ -150,8 +142,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 		if (CurrentIssueId.id !== 'finished') {
 			await startRoundHandler()
 		} else {
-			console.log('next else ');
-			
 			emitResponseGameResults()
 		}
 	}

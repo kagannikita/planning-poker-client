@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
-
 import { VoteType } from '../../interfaces/VoteType'
 
 interface ModalKickPlayerByVoteProps {

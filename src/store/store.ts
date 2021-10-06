@@ -20,20 +20,6 @@ const initialState: RootState = {
 
 let store: Store | undefined
 
-// export const store = configureStore({
-// 	reducer: {
-// 		player: playerSlice.reducer
-// 	},
-// 	middleware: (getDefaultMiddleware) =>
-// 		getDefaultMiddleware({
-// 			thunk: true,
-// 		}),
-// 	devTools: process.env.NODE_ENV !== 'production',
-// })
-
-// export const useAppDispatch = () => useDispatch<AppDispatch>();
-// export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
 function initStore(preloadedState = initialState) {
 	const rootReducer = combineReducers({
 		player: playerSlice.reducer,

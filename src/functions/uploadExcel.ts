@@ -1,5 +1,5 @@
-import { IssuesAPI } from "src/api/IssuesAPI"
-import { IssueTypeAPI } from "src/interfaces/IssueType"
+import { IssuesAPI } from "../api/IssuesAPI"
+import { IssueTypeAPI } from "../interfaces/IssueType"
 import * as XLSX from 'xlsx'
 
 export const uploadExcel = (

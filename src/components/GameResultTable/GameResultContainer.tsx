@@ -2,8 +2,7 @@ import React, { FC } from "react";
 import { Header } from "semantic-ui-react";
 import GameResultTable from "./GameResultTable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import { IssueType } from "src/interfaces/IssueType";
-import { GameState } from "src/interfaces/GameTypes";
+import { IssueType } from "../../interfaces/IssueType";
 
 interface GameResultTableContainerProps {
   issues: IssueType[]

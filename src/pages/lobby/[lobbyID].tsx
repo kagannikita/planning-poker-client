@@ -25,14 +25,14 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 		if (id === null) router.push('/404')
 
 		setPlayerId(id as string)
-	}, [playerId])
+	}, [playerId, router])
 
 	const sockets = useMemo(() => io(API.MAIN_API), [playerId])
 	const dataSocket = useLobbyDataSocket(sockets, props.lobbyId, playerId, props.messages)
 	const player = dataSocket?.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 	useEffect(() => {
 		setLoading(false)
-	}, [player])
+	}, [player, router])
 
 	return (
 		<>
@@ -43,7 +43,7 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 				messages={dataSocket.chatMessages}
 				yourMember={playerId}
 				lobbyId={props.lobbyId}
-				socketData={dataSocket as any}
+				socketData={dataSocket}
 				myRole={player?.role}
 			/>
 			{Loading ? (
@@ -51,9 +51,9 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 			) : (
 				<Container className="main-container">
 					{player?.role === Role.dealer ? (
-						<DealerLayout dealerPlayer={player} socketData={dataSocket as any} {...props} />
+						<DealerLayout dealerPlayer={player} socketData={dataSocket} {...props} />
 					) : (
-						<MemberLayout socketData={dataSocket as any} yourId={playerId} />
+						<MemberLayout socketData={dataSocket} yourId={playerId} />
 					)}
 				</Container>
 			)}
@@ -62,27 +62,15 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 }
 
 interface LobbySSRProps {
-	// name: string
 	lobbyId: string
-	// players: IPlayer[]
-	// issues: IssueType[]
 	messages: ChatMessageProps[]
 }
 
 export const getServerSideProps: GetServerSideProps<LobbySSRProps> = async ({ query }) => {
-	// const lobby = await new LobbyAPI()
-	// 	.getLobbyById(query.lobbyID as string)
-	// 	.then((data) => data)
-	// 	.catch((err) => err)
-	// 	if (!lobby) return { notFound: true }
-	// const issues = await new IssuesAPI().getAllByLobbyId(query.lobbyID as string);
 	const messages = await getMessagesByLobbyId(query.lobbyID as string)
 	return {
 		props: {
-			// name: lobby.name,
 			lobbyId: query.lobbyID as string,
-			// players: lobby.players,
-			// issues
 			messages,
 		},
 	}

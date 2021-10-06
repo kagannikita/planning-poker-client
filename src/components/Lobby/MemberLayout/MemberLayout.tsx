@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Container, Grid, Header as HeaderTitle, Button } from 'semantic-ui-react'
 import { IPlayer } from '../../../interfaces/LobbyTypes'
 import MemberItem from '../MemberItem'
@@ -6,7 +6,7 @@ import s from '../lobby.module.scss'
 import CopyLink from '../CopyLink'
 import ModalKickPlayerByVote from '../ModalKickPlayerByVote'
 import { IUseLobbyDataSocket } from '../../../hooks/useLobbyDataSocket'
-import { checkVoted, getMembersVote } from 'src/functions/checkVote'
+import { checkVoted, getMembersVote } from '../../../functions/checkVote'
 
 interface MemberLayoutProps {
 	socketData: IUseLobbyDataSocket
@@ -21,21 +21,6 @@ export interface IVoteKickState {
 }
 
 const MemberLayout = ({ socketData, yourId }: MemberLayoutProps): JSX.Element => {
-	// const getMembersVote = (id: string) => {
-	// 	if (socketData.VotesQuanity.kickPlayer.get(id)) {
-	// 		return socketData.VotesQuanity.kickPlayer.get(id)!.length
-	// 	}
-	// 	return 0
-	// }
-	// const checkVoted = (id: string) => {
-	// 	const votedPlayer = socketData.VotesQuanity.kickPlayer.get(id)
-	// 	if (votedPlayer) {
-	// 		const findPlayer = votedPlayer.find((player) => player === yourId)
-	// 		return !!findPlayer
-	// 	}
-	// 	return false
-	// }
-
 	const exitLobbyHandler = () => socketData.redirectTo('', false, true)
 
 	return (

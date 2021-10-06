@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Button, Form, Input, Modal, Select } from 'semantic-ui-react'
+import { Button, Form, Modal } from 'semantic-ui-react'
 import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 import { IssueType } from '../../interfaces/IssueType'
 import { IssuesAPI } from '../../api/IssuesAPI'

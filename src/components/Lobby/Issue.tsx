@@ -4,7 +4,7 @@ import { ModalState } from './DealerLayout/DealerLayout'
 import { IModalCreateIssue } from './DealerLayout/IssueContainer'
 import s from './lobby.module.scss'
 import { IssueType } from '../../interfaces/IssueType'
-import { Role } from 'src/interfaces/LobbyTypes'
+import { Role } from '../../interfaces/LobbyTypes'
 
 export interface IssueProps extends IssueType {
 	type: 'lobby' | 'game'
@@ -62,6 +62,7 @@ const Issue = ({
 	return (
 		<Card
 			centered
+			data-testid='issue'
 			className={styles()}
 		>
 			<Card.Content>

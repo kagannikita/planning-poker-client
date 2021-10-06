@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-export const useBeforeUnload = (value: any) => {
+export const useBeforeUnload = (value: unknown) => {
 	const handleBeforeunload = (e: BeforeUnloadEvent) => {
 		let returnValue
 		if (typeof value === 'function') {
