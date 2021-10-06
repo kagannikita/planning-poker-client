@@ -22,6 +22,7 @@ interface ChatProps {
 const Chat = ({ messages, yourMember, lobbyId, myRole, socketData }: ChatProps): JSX.Element => {
 	const inputRef = useRef() as MutableRefObject<HTMLTextAreaElement>
 	const [currMsg, setCurrMsg] = useState<string>('')
+	console.log(messages)
 	return (
 		<Comment.Group minimal className={s.chatBlock}>
 			<Header as="h3" dividing>
