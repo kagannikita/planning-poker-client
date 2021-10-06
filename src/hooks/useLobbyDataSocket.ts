@@ -8,6 +8,7 @@ import { VoteType } from '../interfaces/VoteType'
 import { IChat } from '../components/Chat/Chat'
 import { API } from '../interfaces/ApiEnum'
 
+
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby
 	chatMessages: IChat[]
@@ -57,7 +58,9 @@ export const useLobbyDataSocket = (
 		})
 
 		socketRef.on('player:deleted', () => {
+
 			router.push(API.FRONT_LINK)
+
 			sessionStorage.clear()
 		})
 
