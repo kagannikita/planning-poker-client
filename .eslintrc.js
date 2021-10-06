@@ -21,6 +21,7 @@ module.exports = {
 		'prettier/@typescript-eslint',
 	],
 	rules: {
+		'@typescript-eslint/no-non-null-assertion': 'off',
 		'no-unused-vars': 'off',
 		'@typescript-eslint/no-unused-vars': ['warn'],
 		'@typescript-eslint/no-var-requires': 'off',

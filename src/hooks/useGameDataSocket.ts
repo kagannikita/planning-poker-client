@@ -60,9 +60,9 @@ export const useGameDataSocket = (
 				issueScore: res
 			})
 		})
-		
+
 		socketRef.on('game:response-game-results', async () =>{
-			
+
 			setGameStatus(GameState.gameFinished)
 			setGameData({...GameData, status: GameState.gameFinished})
 		})

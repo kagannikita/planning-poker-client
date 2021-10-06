@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Header } from "semantic-ui-react";
+import React, {FC} from "react";
+import {Header} from "semantic-ui-react";
 import GameResultTable from "./GameResultTable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { IssueType } from "../../interfaces/IssueType";
@@ -7,10 +7,10 @@ import { IssueType } from "../../interfaces/IssueType";
 interface GameResultTableContainerProps {
   issues: IssueType[]
 }
- 
+
 const GameResultTableContainer: FC<GameResultTableContainerProps> = ({ issues}) => {
 
-	return ( 
+	return (
 		<>
 			<Header as='h3' textAlign="center">Game results</Header>
 			<GameResultTable issues={issues} />
@@ -25,5 +25,5 @@ const GameResultTableContainer: FC<GameResultTableContainerProps> = ({ issues}) 
 		</>
 	);
 }
- 
+
 export default GameResultTableContainer;

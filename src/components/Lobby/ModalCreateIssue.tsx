@@ -49,7 +49,7 @@ const ModalCreateIssue: FC<ModalCreateIssueProps> = (props) => {
 			errorName: false
 		})
 	}
-	
+
 	const createHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault()
 		if (newIssue.name && newIssue.link) {

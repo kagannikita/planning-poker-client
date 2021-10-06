@@ -3,8 +3,8 @@ import { IssueTypeAPI } from "../interfaces/IssueType"
 import * as XLSX from 'xlsx'
 
 export const uploadExcel = (
-	e: React.ChangeEvent<HTMLInputElement>, 
-	createIssuesFromFile: () => void, 
+	e: React.ChangeEvent<HTMLInputElement>,
+	createIssuesFromFile: () => void,
 	lobbyID: string) => {
 	const promise = new Promise((resolve, reject) => {
 		const fileReader = new FileReader()

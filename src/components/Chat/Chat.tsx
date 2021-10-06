@@ -29,7 +29,7 @@ const Chat = ({ messages, yourMember, lobbyId, myRole, socketData }: ChatProps):
 			</Header>
 			<div className="chat">
 				<div className="chat__content">
-					{messages.map((mess) => {
+					{messages?.map((mess) => {
 						return (
 							<ChatMessage
 								key={mess.id}
