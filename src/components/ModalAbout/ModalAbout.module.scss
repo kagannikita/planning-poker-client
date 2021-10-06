@@ -7,11 +7,23 @@
 }
 
 .itemPic {
-	margin-right: 50px;
+	margin-right: 25px;
+	margin-left: 25px;
 	max-width: 150px;
 }
 
 .itemDescription {
 	font-size: 1.1rem;
 	font-weight: 400;
+}
+
+.modalFooter {
+	justify-content: center;
+	border: none;
+	margin: 0;
+}
+
+.modalDescription {
+	font-size: 2rem;
+	font-weight: bold;
 }
