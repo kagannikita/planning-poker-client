@@ -1,10 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import Home from '.';
+import Home from './pages/index';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { playerSlice } from '../store/playerData';
+import { playerSlice } from './store/playerData';
 
 const storeMock = createStore(playerSlice.reducer)
 
