@@ -36,7 +36,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({
 				return card
 			}),
 		)
-	}, [settings.scoreTypeShort, setCards, cards])
+	}, [settings.scoreTypeShort,])
 
 	const [cardCovers, setCardCovers] = useState([
 		{

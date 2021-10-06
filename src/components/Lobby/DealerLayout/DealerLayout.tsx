@@ -86,7 +86,7 @@ const DealerLayout = ({ dealerPlayer, socketData }: DealerLayoutProps): JSX.Elem
 
 	useEffect(() => {
 		setDeckOfCards()
-	}, [settings.deckOfCards, setDeckOfCards])
+	}, [settings.deckOfCards])
 
 	const gameSettings = {
 		is_dealer_play: settings.masterAsPlayer,

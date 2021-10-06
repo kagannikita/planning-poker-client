@@ -86,7 +86,6 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	if (GameData?.status === GameState.gameFinished) {
 		alert('Game finished! Now you can download results')
 		// setModalMessageState({
-		// 	...modalMessageState
 		// 	message: `Game finished`,
 		// 	modalIsOpen: true,
 		// })

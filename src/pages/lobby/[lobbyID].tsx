@@ -25,14 +25,14 @@ const LobbyPage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSid
 		if (id === null) router.push('/404')
 
 		setPlayerId(id as string)
-	}, [playerId, router])
+	}, [playerId])
 
 	const sockets = useMemo(() => io(API.MAIN_API), [playerId])
 	const dataSocket = useLobbyDataSocket(sockets, props.lobbyId, playerId, props.messages)
 	const player = dataSocket?.lobbyData?.players.find((player) => player.id === playerId) as IPlayer
 	useEffect(() => {
 		setLoading(false)
-	}, [player, router])
+	}, [player])
 
 	return (
 		<>
