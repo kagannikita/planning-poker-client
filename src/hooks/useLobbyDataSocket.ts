@@ -1,12 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useBeforeUnload } from '.'
-import { ILobby, IPlayer } from '../interfaces/LobbyTypes'
-import { IssueType } from '../interfaces/IssueType'
+import {Dispatch, SetStateAction, useEffect, useState} from 'react'
+import {useBeforeUnload} from '.'
+import {ILobby} from '../interfaces/LobbyTypes'
+import {IssueType} from '../interfaces/IssueType'
 import router from 'next/router'
-import { LocalStorageEnum } from '../interfaces/localStorageEnum'
-import { VoteType } from '../interfaces/VoteType'
-import { ChatMessageProps } from '../components/Chat/ChatMessage'
-import { IChat } from '../components/Chat/Chat'
+import {LocalStorageEnum} from '../interfaces/localStorageEnum'
+import {VoteType} from '../interfaces/VoteType'
+import {IChat} from '../components/Chat/Chat'
 
 export interface IUseLobbyDataSocket {
 	lobbyData: ILobby

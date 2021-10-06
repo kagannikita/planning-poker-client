@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { ISettings } from '../../interfaces/SettingsTypes'
+import React from 'react'
+import {ISettings} from '../../interfaces/SettingsTypes'
 
 type TimerProps = {
 	time: number

@@ -1,8 +1,8 @@
-import React, { FC, useState } from 'react'
-import { Button, Form, Input, Modal, Select } from 'semantic-ui-react'
-import { IModalCreateIssue } from './DealerLayout/IssueContainer'
-import { IssueType } from '../../interfaces/IssueType'
-import { IssuesAPI } from '../../api/IssuesAPI'
+import React, {FC, useState} from 'react'
+import {Button, Form, Modal} from 'semantic-ui-react'
+import {IModalCreateIssue} from './DealerLayout/IssueContainer'
+import {IssueType} from '../../interfaces/IssueType'
+import {IssuesAPI} from '../../api/IssuesAPI'
 
 interface ModalCreateIssueProps {
 	ModalCreate: IModalCreateIssue
@@ -49,7 +49,7 @@ const ModalCreateIssue: FC<ModalCreateIssueProps> = (props) => {
 			errorName: false
 		})
 	}
-	
+
 	const createHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault()
 		if (newIssue.name && newIssue.link) {

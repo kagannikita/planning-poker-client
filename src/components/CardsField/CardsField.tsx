@@ -19,6 +19,7 @@ type CardsFieldProps = {
 	setDefaultCover?: (index: number) => void
 	setSelectedCard?: (cardName: string) => void
 	gameData?: GameDataType
+	voteAfterRoundEnd?: boolean
 }
 
 const CardsField: React.FC<CardsFieldProps> = ({
@@ -30,6 +31,7 @@ const CardsField: React.FC<CardsFieldProps> = ({
 	setDefaultCover,
 	setSelectedCard,
 	gameData,
+	voteAfterRoundEnd = false,
 }: CardsFieldProps) => {
 	const [indexOfSelectedCard, setIndexOfSelectedCard] = useState<number | null>(null)
 
@@ -43,14 +45,19 @@ const CardsField: React.FC<CardsFieldProps> = ({
 		setIndexOfSelectedCard(index)
 	}
 
-	return (
-		<div
-			className={
-				gameData && gameData?.status !== GameState.started ? `${cls.cardsField} ${cls.cardsDisabled}` : cls.cardsField
+	const fieldCls = () => {
+		if (gameData && gameData.status !== GameState.started) {
+			if (gameData.status === GameState.roundFinished && voteAfterRoundEnd) {
+				return cls.cardsField
 			}
-		>
-			{
-				cards.length ? cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
+			return [cls.cardsField, cls.cardsDisabled].join(' ')
+		}
+		return cls.cardsField
+	}
+	return (
+		<div className={fieldCls()}>
+			{cards.length ? (
+				cards.map(({ image, scoreTypeShort = 'default', name = 'unknown' }, index) => {
 					let cardIsSelected = false
 					if (pickCards && indexOfSelectedCard === index) cardIsSelected = true
 					return (
@@ -68,9 +75,12 @@ const CardsField: React.FC<CardsFieldProps> = ({
 							setCardValue={setCardValue}
 						/>
 					)
-				}) : <><h2>No result cards</h2></>
-			}
-
+				})
+			) : (
+				<>
+					<h2>No result cards</h2>
+				</>
+			)}
 		</div>
 	)
 }

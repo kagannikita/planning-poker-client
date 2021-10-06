@@ -1,6 +1,6 @@
 import { createContext } from "react"
 import io from 'socket.io-client'
-import { API } from "src/interfaces/ApiEnum"
+import { API } from "../interfaces/ApiEnum"
 
 // const socket = useMemo(() => io(API.MAIN_API, { query: props.lobbyId }), [playerId])
 

@@ -48,3 +48,8 @@ body {
 	background-color: rgba(0, 0, 0, 0.2);
 	border-radius: 15px;
 }
+
+#modalAboutContentBox {
+	display: flex;
+	flex-direction: column;
+}
