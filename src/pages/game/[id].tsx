@@ -53,7 +53,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 	const socket = useMemo(() => io(API.MAIN_API), [playerId])
 
 	const dataSocket = useLobbyDataSocket(socket, props.lobbyId, playerId)
-
+	
 	const CurrentIssueId= {
 		id: dataSocket?.lobbyData?.issues.find(iss => iss.score === '-')?.id || 'finished',
 	}
@@ -242,9 +242,7 @@ const GamePage = ({ ...props }: InferGetServerSidePropsType<typeof getServerSide
 								removeIssue={dataSocket.removeIssue}
 								updateIssue={dataSocket.updateIssue}
 								CurrentIssueId={CurrentIssueId}
-								createIssuesFromFile={function (): void {
-									throw new Error('Function not implemented.')
-								}}
+								createIssuesFromFile={dataSocket?.createIssuesFromFile}
 							/>
 						</Grid.Column>
 					</Grid>
